@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/viewmodels/profile_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/address_view.dart';
+import 'package:franchisemarketturkiye/views/profile/change_password_view.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -82,7 +83,14 @@ class _ProfileViewState extends State<ProfileView> {
                 _buildMenuItem(
                   icon: Icons.shield_outlined,
                   title: 'Güvenlik İşlemleri',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChangePasswordView(),
+                      ),
+                    );
+                  },
                 ),
                 _buildMenuItem(
                   icon: Icons.location_on_outlined,

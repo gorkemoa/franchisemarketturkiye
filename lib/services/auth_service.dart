@@ -102,6 +102,28 @@ class AuthService {
     }
   }
 
+  Future<ApiResult<void>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final token = await getToken();
+    if (token == null) {
+      return ApiResult.failure('Not authenticated');
+    }
+
+    final result = await _apiClient.put(
+      ApiConstants.updatePassword,
+      token: token,
+      body: {'current_password': currentPassword, 'new_password': newPassword},
+    );
+
+    if (result.isSuccess) {
+      return ApiResult.success(null);
+    } else {
+      return ApiResult.failure(result.error ?? 'Failed to update password');
+    }
+  }
+
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);

@@ -169,7 +169,7 @@ class _AddressViewState extends State<AddressView> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.04), // Subtle shadow
@@ -215,9 +215,9 @@ class _AddressViewState extends State<AddressView> {
     required String Function(T) itemLabel,
   }) {
     if (items.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Liste boş')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Zorunlu alanları doldurmalısınız.')),
+      );
       return;
     }
 
@@ -355,7 +355,7 @@ class _AddressViewState extends State<AddressView> {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),

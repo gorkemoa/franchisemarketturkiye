@@ -16,4 +16,5 @@ class ApiConstants {
   static String districts(String cityId) =>
       '$baseUrl/api/v1/cities/$cityId/districts';
   static const String updateAddress = '$baseUrl/api/v1/customers/address';
+  static const String updatePassword = '$baseUrl/api/v1/customers/password';
 }

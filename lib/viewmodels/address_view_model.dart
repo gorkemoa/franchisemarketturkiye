@@ -57,20 +57,29 @@ class AddressViewModel extends ChangeNotifier {
       streetController.text = customer.street ?? '';
       addressDetailController.text = customer.address ?? '';
 
-      // If we want to match City/District by name it's hard without IDs in Customer.
-      // But if customer.city is a name, we can try to find it in _cities list
+      // Match city by ID
       if (customer.city != null && _cities.isNotEmpty) {
         try {
+          // Try exact ID match first
           _selectedCity = _cities.firstWhere(
-            (c) => c.name.toUpperCase() == customer.city!.toUpperCase(),
+            (c) => c.id == customer.city,
+            orElse: () => _cities.firstWhere(
+              (c) => c.name.toUpperCase() == customer.city!.toUpperCase(),
+            ),
           );
+
           if (_selectedCity != null) {
             await _loadDistricts(_selectedCity!);
             if (customer.district != null) {
               try {
+                // Try exact ID match first for district
                 _selectedDistrict = _districts.firstWhere(
-                  (d) =>
-                      d.name.toUpperCase() == customer.district!.toUpperCase(),
+                  (d) => d.id == customer.district,
+                  orElse: () => _districts.firstWhere(
+                    (d) =>
+                        d.name.toUpperCase() ==
+                        customer.district!.toUpperCase(),
+                  ),
                 );
               } catch (_) {}
             }

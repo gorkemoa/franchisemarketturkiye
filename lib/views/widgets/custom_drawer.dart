@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
-import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -192,13 +191,9 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  late final CategoriesViewModel _viewModel;
-
   @override
   void initState() {
     super.initState();
-    _viewModel = CategoriesViewModel();
-    _viewModel.init(selected: 1);
   }
 
   @override
