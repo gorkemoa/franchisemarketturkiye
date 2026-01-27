@@ -12,6 +12,7 @@ import 'package:franchisemarketturkiye/views/home/app_footer.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
+import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -31,10 +32,10 @@ class _HomeViewState extends State<HomeView> {
     _viewModel = HomeViewModel();
     _viewModel.init();
     _pages = [
-      const Center(child: Text('Arama Sayfası')),
-      const Center(child: Text('Favoriler')),
+      const Center(child: Text('Yazarlar')),
+      const Center(child: Text('Arama')),
       _buildHomeContent(),
-      const Center(child: Text('Mesajlar')),
+      const CategoriesView(),
       const LoginView(),
     ];
   }
