@@ -44,6 +44,14 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _menuController, curve: Curves.easeIn));
+
+    // Rebuild when animation status changes to remove/add overlay from tree
+    _menuController.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed ||
+          status == AnimationStatus.completed) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -211,25 +219,26 @@ class CustomDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Menü Section
-                    _buildSectionTitle('Menü'),
+                    // Menü Section
+                    _buildSectionTitle('MENÜ'),
                     _buildMenuItem('FRANCHISE DOSYASI', isSelected: true),
                     _buildMenuItem('DERGİLER'),
                     _buildMenuItem('HİKAYEMİZ'),
                     _buildMenuItem('YAZAR BAŞVURUSU'),
                     _buildMenuItem('İLETİŞİM'),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
 
-                    // Kategoriler Section
-                    _buildSectionTitle('Kategoriler'),
-                    _buildCategoriesGrid(),
-
-                    const SizedBox(height: 12),
-
-                    // Bottom Banner
+                    // Banner
                     _buildBottomBanner(),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
+
+                    // Social Media Section
+                    _buildSectionTitle('SOSYAL MEDYA'),
+                    _buildSocialMedia(),
+
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -242,20 +251,21 @@ class CustomDrawer extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
               color: Colors.black,
+              letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 2),
-          Container(width: 64, height: 2, color: AppTheme.primaryColor),
+          const SizedBox(height: 4),
+          Container(width: 50, height: 2, color: AppTheme.primaryColor),
         ],
       ),
     );
@@ -264,20 +274,31 @@ class CustomDrawer extends StatelessWidget {
   Widget _buildMenuItem(String title, {bool isSelected = false}) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF5F5F5) : Colors.transparent,
+        color: isSelected
+            ? const Color(0xFFFFF1F2)
+            : Colors.transparent, // Light pink
+        borderRadius: BorderRadius.circular(2),
       ),
       child: ListTile(
         visualDensity: VisualDensity.compact,
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        leading: isSelected
+            ? const Icon(
+                Icons.chevron_right,
+                color: AppTheme.primaryColor,
+                size: 18,
+              )
+            : null,
+        horizontalTitleGap: 0,
         title: Text(
           title,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: 13,
             fontWeight: FontWeight.w600, // SemiBold
-            color: Colors.black,
+            color: isSelected ? AppTheme.primaryColor : Colors.black,
             letterSpacing: 0.3,
           ),
         ),
@@ -288,74 +309,36 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoriesGrid() {
-    final categories = [
-      _CategoryItem('GENEL', 'assets/hamburger_nav_icons/Frame.svg'),
-      _CategoryItem('FRANCHISE', 'assets/hamburger_nav_icons/Frame (1).svg'),
-      _CategoryItem('SEKTÖREL', 'assets/hamburger_nav_icons/Frame (2).svg'),
-      _CategoryItem('GİRİŞİMCİLİK', 'assets/hamburger_nav_icons/Frame (3).svg'),
-      _CategoryItem('TEKNOLOJİ', 'assets/hamburger_nav_icons/Frame (4).svg'),
-      _CategoryItem(
-        'SOSYAL SORUMLULUK',
-        'assets/hamburger_nav_icons/Frame (5).svg',
-      ),
-      _CategoryItem('ATAMA', 'assets/hamburger_nav_icons/Frame (6).svg'),
-      _CategoryItem(
-        'RESTORAN & KAFE',
-        'assets/hamburger_nav_icons/Frame (7).svg',
-      ),
+  Widget _buildSocialMedia() {
+    final socials = [
+      'assets/hamburger_nav_icons/facebook.svg',
+      'assets/hamburger_nav_icons/instagram.svg',
+      'assets/hamburger_nav_icons/youtube.svg',
+      'assets/hamburger_nav_icons/x_twitter.svg',
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.zero,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3.8, // Thinner vertically
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-        ),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final bool isSelected =
-              index == 0; // "GENEL" is selected in the image
-
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: socials.map((assetPath) {
           return Container(
+            margin: const EdgeInsets.only(right: 12),
+            width: 40,
+            height: 40,
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFF9F9F9) : Colors.transparent,
-              border: Border.all(
-                color: isSelected
-                    ? const Color(0xFFEEEEEE)
-                    : Colors.transparent,
-                width: 0.5,
-              ),
+              border: Border.all(color: const Color(0xFFEEEEEE)),
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: InkWell(
-              onTap: () {},
-              child: Row(
-                children: [
-                  const SizedBox(width: 10),
-                  SvgPicture.asset(category.iconPath, width: 16, height: 16),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      category.title,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
+            child: SvgPicture.asset(
+              assetPath,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
               ),
             ),
           );
-        },
+        }).toList(),
       ),
     );
   }
@@ -366,57 +349,51 @@ class CustomDrawer extends StatelessWidget {
       child: Stack(
         children: [
           ClipRRect(
+            borderRadius: BorderRadius.circular(4),
             child: Image.asset(
               'assets/FRANCHISE-WB-31-2.jpg',
               width: double.infinity,
-              height: 80,
+              height: 160, // Match image aspect better
               fit: BoxFit.cover,
             ),
           ),
           Container(
             width: double.infinity,
-            height: 80,
+            height: 160,
             decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
               gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Colors.black.withOpacity(0.6),
-                  Colors.black.withOpacity(0.2),
-                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
               ),
             ),
             padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1),
+                    border: Border.all(color: Colors.white, width: 1.5),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'SUNUM DOSYASI',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 11,
-                      ),
+                      SizedBox(width: 10),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 16),
                     ],
                   ),
                 ),
@@ -427,11 +404,4 @@ class CustomDrawer extends StatelessWidget {
       ),
     );
   }
-}
-
-class _CategoryItem {
-  final String title;
-  final String iconPath;
-
-  _CategoryItem(this.title, this.iconPath);
 }
