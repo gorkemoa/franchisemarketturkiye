@@ -2,6 +2,7 @@ import 'package:franchisemarketturkiye/app/api_constants.dart';
 import 'package:franchisemarketturkiye/core/network/api_client.dart';
 import 'package:franchisemarketturkiye/core/network/api_result.dart';
 import 'package:franchisemarketturkiye/models/login_response.dart';
+import 'package:franchisemarketturkiye/models/register_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -22,6 +23,34 @@ class AuthService {
       return ApiResult.success(loginResponse);
     } else {
       return ApiResult.failure(result.error ?? 'Login failed');
+    }
+  }
+
+  Future<ApiResult<RegisterResponse>> register({
+    required String firstname,
+    required String lastname,
+    required String email,
+    required String phone,
+    required String password,
+    required int newsletter,
+  }) async {
+    final result = await _apiClient.post(
+      ApiConstants.register,
+      body: {
+        'firstname': firstname,
+        'lastname': lastname,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'newsletter': newsletter,
+      },
+    );
+
+    if (result.isSuccess) {
+      final registerResponse = RegisterResponse.fromJson(result.data!);
+      return ApiResult.success(registerResponse);
+    } else {
+      return ApiResult.failure(result.error ?? 'Registration failed');
     }
   }
 

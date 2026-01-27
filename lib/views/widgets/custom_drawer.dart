@@ -262,6 +262,7 @@ class CustomDrawer extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: Colors.black,
               letterSpacing: 0.5,
+              fontFamily: 'BioSans',
             ),
           ),
           const SizedBox(height: 4),
@@ -300,6 +301,7 @@ class CustomDrawer extends StatelessWidget {
             fontWeight: FontWeight.w600, // SemiBold
             color: isSelected ? AppTheme.primaryColor : Colors.black,
             letterSpacing: 0.3,
+            fontFamily: 'BioSans',
           ),
         ),
         onTap: () {
@@ -391,6 +393,7 @@ class CustomDrawer extends StatelessWidget {
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'BioSans',
                         ),
                       ),
                       SizedBox(width: 10),

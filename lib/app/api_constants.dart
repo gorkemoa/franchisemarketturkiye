@@ -10,4 +10,5 @@ class ApiConstants {
   static const String categories = '$baseUrl/api/v1/categories';
   static const String blogs = '$baseUrl/api/v1/blogs';
   static const String login = '$baseUrl/api/v1/customers/login';
+  static const String register = '$baseUrl/api/v1/customers/register';
 }
