@@ -11,6 +11,8 @@ import 'package:franchisemarketturkiye/views/widgets/franchise_files_list.dart';
 import 'package:franchisemarketturkiye/views/widgets/contact_section.dart';
 import 'package:franchisemarketturkiye/views/widgets/app_footer.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
+import 'package:franchisemarketturkiye/views/auth/login_view.dart';
+import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -22,315 +24,265 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late final HomeViewModel _viewModel;
   int _currentIndex = 2; // Home is index 2
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _viewModel = HomeViewModel();
     _viewModel.init();
+    _pages = [
+      const Center(child: Text('Arama Sayfası')),
+      const Center(child: Text('Favoriler')),
+      _buildHomeContent(),
+      const Center(child: Text('Mesajlar')),
+      const LoginView(),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        title: SvgPicture.asset(
-          'assets/logo.svg',
-          height: 30,
-          placeholderBuilder: (context) => Text(
-            'FRANCHISE MARKET',
-            style: Theme.of(context).appBarTheme.titleTextStyle,
-          ),
-        ),
-        centerTitle: true,
-        actions: const [
-          // Removed search and profile as they are now in the bottom bar
-        ],
-
-        leading: Builder(
-          builder: (context) => IconButton(
-            onPressed: () => Scaffold.of(context).openDrawer(),
-            icon: const Icon(Icons.menu),
-          ),
-        ),
-      ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Center(
-                child: SvgPicture.asset('assets/logo.svg', height: 40),
+      appBar: _currentIndex != 4
+          ? AppBar(
+              title: SvgPicture.asset(
+                'assets/logo.svg',
+                height: 30,
+                placeholderBuilder: (context) => const Text('FRANCHISE MARKET'),
               ),
-            ),
-            Expanded(
-              child: ListenableBuilder(
-                listenable: _viewModel,
-                builder: (context, child) {
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: _viewModel.categories.length,
-                    itemBuilder: (context, index) {
-                      final category = _viewModel.categories[index];
-                      return ListTile(
-                        leading:
-                            category.imageUrl != null &&
-                                category.imageUrl!.endsWith('.svg')
-                            ? SvgPicture.network(
-                                category.imageUrl!,
-                                width: 20,
-                                height: 20,
-                                colorFilter: const ColorFilter.mode(
-                                  AppTheme.textPrimary,
-                                  BlendMode.srcIn,
-                                ),
-                              )
-                            : const Icon(Icons.category_outlined),
-                        title: Text(
-                          category.name,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        trailing: category.count != null
-                            ? Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                                child: Text(
-                                  '${category.count}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              )
-                            : null,
-                        onTap: () {
-                          // Navigate to category detail
-                          Navigator.pop(context);
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, child) {
-          if (_viewModel.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (_viewModel.errorMessage != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(_viewModel.errorMessage!),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _viewModel.refresh,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: _viewModel.refresh,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Top Hero Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildStaticSlider(context, 'assets/hero_2.jpg'),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Second Static Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildStaticSlider(
-                      context,
-                      'assets/FRANCHISE-WB-31-2.jpg',
+              centerTitle: false, // Logo on the left
+              automaticallyImplyLeading:
+                  false, // Remove default back/menu button
+              actions: [
+                Builder(
+                  builder: (context) => IconButton(
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    icon: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(width: 20, height: 2, color: Colors.black),
+                        const SizedBox(height: 4),
+                        Container(width: 14, height: 2, color: Colors.black),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                ),
+                const SizedBox(width: 8),
+              ],
+            )
+          : null,
+      drawer: _currentIndex != 4 ? const CustomDrawer() : null,
+      drawerEdgeDragWidth: MediaQuery.of(
+        context,
+      ).size.width, // Allow swiping from any point or just more area
 
-                  // Brand Ticker Section (Full Width)
-                  const BrandTicker(),
-                  const SizedBox(height: 16),
-
-                  // Blog Horizontal Slider (Featured Blogs)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SizedBox(
-                      height: 380, // Reduced from 500
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _viewModel.featuredBlogs.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: SizedBox(
-                              width: 280, // Reduced from 320
-                              child: BlogCard(
-                                blog: _viewModel.featuredBlogs[index],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Dynamic Slider Moved to Bottom
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: FranchiseFilesList(),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: BlogSlider(blogs: _viewModel.sliderBlogs),
-                  ),
-                  const SizedBox(height: 16),
-
-                  ..._viewModel.selectedCategoryBlogs
-                      .take(2)
-                      .toList()
-                      .asMap()
-                      .entries
-                      .expand((entry) {
-                        final index = entry.key;
-                        final section = Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: CategoryBlogSection(categoryBlog: entry.value),
-                        );
-
-                        if (index == 0) {
-                          return [
-                            section,
-                            const SizedBox(height: 16),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: ClipRRect(
-                                child: Image.asset(
-                                  'assets/ads_31-22.jpg',
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ];
-                        }
-                        return [section, const SizedBox(height: 16)];
-                      }),
-                  // New Marketing Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/panino-1.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Marketing Talks Moved to Bottom
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: MarketingTalksSection(
-                      talks: _viewModel.marketingTalks,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Bottom Analysis Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/analiz.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Contact Us Section
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: ContactSection(),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Bottom Ad Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/02.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Gymboree Image
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/gymboree.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Footer Section
-                  const AppFooter(),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
-          // Add navigation logic here if needed
         },
       ),
+    );
+  }
+
+  Widget _buildHomeContent() {
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, child) {
+        if (_viewModel.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (_viewModel.errorMessage != null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(_viewModel.errorMessage!),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _viewModel.refresh,
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: _viewModel.refresh,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Hero Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildStaticSlider(context, 'assets/hero_2.jpg'),
+                ),
+                const SizedBox(height: 16),
+
+                // Second Static Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildStaticSlider(
+                    context,
+                    'assets/FRANCHISE-WB-31-2.jpg',
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Brand Ticker Section (Full Width)
+                const BrandTicker(),
+                const SizedBox(height: 16),
+
+                // Blog Horizontal Slider (Featured Blogs)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SizedBox(
+                    height: 380, // Reduced from 500
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _viewModel.featuredBlogs.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: SizedBox(
+                            width: 280, // Reduced from 320
+                            child: BlogCard(
+                              blog: _viewModel.featuredBlogs[index],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Dynamic Slider Moved to Bottom
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: FranchiseFilesList(),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: BlogSlider(blogs: _viewModel.sliderBlogs),
+                ),
+                const SizedBox(height: 16),
+
+                ..._viewModel.selectedCategoryBlogs
+                    .take(2)
+                    .toList()
+                    .asMap()
+                    .entries
+                    .expand((entry) {
+                      final index = entry.key;
+                      final section = Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: CategoryBlogSection(categoryBlog: entry.value),
+                      );
+
+                      if (index == 0) {
+                        return [
+                          section,
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: ClipRRect(
+                              child: Image.asset(
+                                'assets/ads_31-22.jpg',
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ];
+                      }
+                      return [section, const SizedBox(height: 16)];
+                    }),
+                // New Marketing Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/panino-1.jpg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Marketing Talks Moved to Bottom
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: MarketingTalksSection(
+                    talks: _viewModel.marketingTalks,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Bottom Analysis Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/analiz.jpg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Contact Us Section
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: ContactSection(),
+                ),
+                const SizedBox(height: 16),
+
+                // Bottom Ad Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/02.jpg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Gymboree Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/gymboree.jpg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Footer Section
+                const AppFooter(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
