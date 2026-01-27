@@ -79,7 +79,7 @@ class CategoryDetailViewModel extends ChangeNotifier {
     _isLoading = false;
     if (result.isSuccess && result.data != null) {
       _blogs = result.data!.data.items;
-      _totalCount = result.data!.data.count;
+      _totalCount = result.data!.meta.totalItems;
       _hasMore = result.data!.meta.hasMore;
       _nextCursor = result.data!.meta.nextCursor;
     } else {

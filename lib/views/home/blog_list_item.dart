@@ -55,13 +55,12 @@ class BlogListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Tags
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
-                      if (blog.category != null &&
-                          blog.category!.name != null) ...[
+                      if (blog.category != null && blog.category!.name != null)
                         TagBadge(text: blog.category!.name!),
-                        const SizedBox(width: 8),
-                      ],
                       TagBadge(
                         text: blog.type.name ?? '',
                         color: AppTheme.textSecondary,
@@ -99,11 +98,15 @@ class BlogListItem extends StatelessWidget {
                       else
                         const Icon(Icons.person, size: 16, color: Colors.grey),
                       const SizedBox(width: 6),
-                      Text(
-                        blog.author.name ?? 'Yazar Bilgisi Yok',
-                        style: textTheme.titleMedium?.copyWith(
-                          fontSize: 9,
-                          color: AppTheme.textPrimary,
+                      Flexible(
+                        child: Text(
+                          blog.author.name ?? 'Yazar Bilgisi Yok',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleMedium?.copyWith(
+                            fontSize: 9,
+                            color: AppTheme.textPrimary,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),

@@ -207,12 +207,14 @@ class BlogMeta {
   final int limit;
   final int excludePinned;
   final bool hasMore;
+  final int totalItems;
   final String? nextCursor;
 
   BlogMeta({
     required this.limit,
     required this.excludePinned,
     required this.hasMore,
+    required this.totalItems,
     this.nextCursor,
   });
 
@@ -221,6 +223,7 @@ class BlogMeta {
       limit: json['limit'] as int,
       excludePinned: json['exclude_pinned'] as int,
       hasMore: json['has_more'] as bool,
+      totalItems: json['total_items'] as int? ?? 0,
       nextCursor: json['next_cursor'] as String?,
     );
   }
