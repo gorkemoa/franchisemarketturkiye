@@ -10,6 +10,7 @@ import 'package:franchisemarketturkiye/views/widgets/brand_ticker.dart';
 import 'package:franchisemarketturkiye/views/widgets/franchise_files_list.dart';
 import 'package:franchisemarketturkiye/views/widgets/contact_section.dart';
 import 'package:franchisemarketturkiye/views/widgets/app_footer.dart';
+import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -20,6 +21,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final HomeViewModel _viewModel;
+  int _currentIndex = 2; // Home is index 2
 
   @override
   void initState() {
@@ -42,20 +44,10 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(
-            onPressed: () {},
-            icon: Container(
-              color: AppTheme.primaryColor,
-              child: const Icon(
-                Icons.person_outline,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-          ),
+        actions: const [
+          // Removed search and profile as they are now in the bottom bar
         ],
+
         leading: Builder(
           builder: (context) => IconButton(
             onPressed: () => Scaffold.of(context).openDrawer(),
@@ -328,6 +320,15 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          // Add navigation logic here if needed
         },
       ),
     );

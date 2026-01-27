@@ -9,4 +9,5 @@ class ApiConstants {
   static String blogDetail(int id) => '$baseUrl/api/v1/blogs/$id';
   static const String categories = '$baseUrl/api/v1/categories';
   static const String blogs = '$baseUrl/api/v1/blogs';
+  static const String login = '$baseUrl/api/v1/customers/login';
 }

@@ -4,6 +4,7 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/category.dart';
 import 'package:franchisemarketturkiye/viewmodels/category_detail_view_model.dart';
 import 'package:franchisemarketturkiye/views/widgets/blog_list_item.dart';
+import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 
 class CategoryDetailView extends StatefulWidget {
   final Category category;
@@ -38,7 +39,12 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginView()),
+              );
+            },
             icon: Container(
               color: AppTheme.primaryColor,
               child: const Icon(

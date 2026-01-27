@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/views/widgets/tag_badge.dart';
+import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/viewmodels/blog_detail_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -113,6 +114,28 @@ class _BlogDetailViewState extends State<BlogDetailView> {
               fontWeight: FontWeight.w700,
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginView()),
+                );
+              },
+              icon: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(
+                  Icons.person_outline,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+          ],
         ),
 
         // 📝 Content Section
