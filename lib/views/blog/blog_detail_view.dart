@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
-import 'package:franchisemarketturkiye/views/widgets/tag_badge.dart';
+import 'package:franchisemarketturkiye/views/home/tag_badge.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/viewmodels/blog_detail_view_model.dart';

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/home_view_model.dart';
-import 'package:franchisemarketturkiye/views/widgets/blog_card.dart';
-import 'package:franchisemarketturkiye/views/widgets/blog_slider.dart';
-import 'package:franchisemarketturkiye/views/widgets/category_blog_section.dart';
-import 'package:franchisemarketturkiye/views/widgets/marketing_talks_section.dart';
-import 'package:franchisemarketturkiye/views/widgets/brand_ticker.dart';
-import 'package:franchisemarketturkiye/views/widgets/franchise_files_list.dart';
-import 'package:franchisemarketturkiye/views/widgets/contact_section.dart';
-import 'package:franchisemarketturkiye/views/widgets/app_footer.dart';
+import 'package:franchisemarketturkiye/views/home/blog_card.dart';
+import 'package:franchisemarketturkiye/views/home/blog_slider.dart';
+import 'package:franchisemarketturkiye/views/home/category_blog_section.dart';
+import 'package:franchisemarketturkiye/views/home/marketing_talks_section.dart';
+import 'package:franchisemarketturkiye/views/home/brand_ticker.dart';
+import 'package:franchisemarketturkiye/views/home/franchise_files_list.dart';
+import 'package:franchisemarketturkiye/views/home/contact_section.dart';
+import 'package:franchisemarketturkiye/views/home/app_footer.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
@@ -42,43 +41,8 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      appBar: _currentIndex != 4
-          ? AppBar(
-              title: SvgPicture.asset(
-                'assets/logo.svg',
-                height: 30,
-                placeholderBuilder: (context) => const Text('FRANCHISE MARKET'),
-              ),
-              centerTitle: false, // Logo on the left
-              automaticallyImplyLeading:
-                  false, // Remove default back/menu button
-              actions: [
-                Builder(
-                  builder: (context) => IconButton(
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                    icon: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(width: 20, height: 2, color: Colors.black),
-                        const SizedBox(height: 4),
-                        Container(width: 14, height: 2, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-            )
-          : null,
-      drawer: _currentIndex != 4 ? const CustomDrawer() : null,
-      drawerEdgeDragWidth: MediaQuery.of(
-        context,
-      ).size.width, // Allow swiping from any point or just more area
-
-      body: IndexedStack(index: _currentIndex, children: _pages),
+    return GlobalScaffold(
+      showAppBar: _currentIndex != 4, // Hide AppBar for LoginView
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -87,6 +51,7 @@ class _HomeViewState extends State<HomeView> {
           });
         },
       ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
     );
   }
 

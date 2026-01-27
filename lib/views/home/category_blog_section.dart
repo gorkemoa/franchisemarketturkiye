@@ -3,7 +3,7 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/models/category_blog.dart';
 import 'package:franchisemarketturkiye/views/blog/blog_detail_view.dart';
-import 'package:franchisemarketturkiye/views/widgets/tag_badge.dart';
+import 'package:franchisemarketturkiye/views/home/tag_badge.dart';
 
 class CategoryBlogSection extends StatelessWidget {
   final CategoryBlog categoryBlog;

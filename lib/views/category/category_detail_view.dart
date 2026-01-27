@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/category.dart';
 import 'package:franchisemarketturkiye/viewmodels/category_detail_view_model.dart';
-import 'package:franchisemarketturkiye/views/widgets/blog_list_item.dart';
+import 'package:franchisemarketturkiye/views/home/blog_list_item.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 
 class CategoryDetailView extends StatefulWidget {

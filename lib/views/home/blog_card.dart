@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/views/blog/blog_detail_view.dart';
-import 'package:franchisemarketturkiye/views/widgets/tag_badge.dart';
+import 'package:franchisemarketturkiye/views/home/tag_badge.dart';
 
-class BlogListItem extends StatelessWidget {
+class BlogCard extends StatelessWidget {
   final Blog blog;
 
-  const BlogListItem({super.key, required this.blog});
+  const BlogCard({super.key, required this.blog});
 
   @override
   Widget build(BuildContext context) {
@@ -23,34 +23,34 @@ class BlogListItem extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
+        decoration: BoxDecoration(
+          color: AppTheme.cardColor,
+          border: Border.all(color: AppTheme.borderColor),
+        ),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image
-            ClipRRect(
-              child: Image.network(
-                blog.imageUrl,
-                height: 100,
-                width: 140,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 100,
-                  width: 140,
-                  color: Colors.grey[100],
-                  child: const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: Colors.grey,
-                      size: 20,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: ClipRRect(
+                child: Image.network(
+                  blog.imageUrl,
+                  height: 155,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 160,
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: Icon(Icons.broken_image, color: Colors.grey),
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
-            // Content
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,10 +61,7 @@ class BlogListItem extends StatelessWidget {
                         TagBadge(text: blog.category!.name),
                         const SizedBox(width: 8),
                       ],
-                      TagBadge(
-                        text: blog.type.name,
-                        color: AppTheme.textSecondary,
-                      ),
+                      TagBadge(text: blog.type.name),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -73,19 +70,15 @@ class BlogListItem extends StatelessWidget {
                     blog.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleLarge?.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      height: 1.3,
-                    ),
+                    style: textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 8),
-                  // Author & Date
+                  const SizedBox(height: 10),
+                  // Author row
                   Row(
                     children: [
                       Container(
-                        width: 16,
-                        height: 16,
+                        width: 24,
+                        height: 24,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
@@ -94,29 +87,23 @@ class BlogListItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        blog.author.name,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontSize: 9,
-                          color: AppTheme.textPrimary,
-                        ),
-                      ),
                       const SizedBox(width: 8),
-                      Container(
-                        width: 3,
-                        height: 3,
-                        decoration: const BoxDecoration(
-                          color: Colors.grey,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        "${blog.dateAdded.day} ${_getMonthMap()[blog.dateAdded.month]}",
-                        style: textTheme.bodySmall,
-                      ),
+                      Text(blog.author.name, style: textTheme.titleMedium),
                     ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Date
+                  Text(
+                    "${blog.dateAdded.day} ${_getMonthMap()[blog.dateAdded.month]} ${blog.dateAdded.year}",
+                    style: textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 8),
+                  // Description
+                  Text(
+                    _stripHtml(blog.description),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.bodyLarge,
                   ),
                 ],
               ),
@@ -125,6 +112,10 @@ class BlogListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _stripHtml(String htmlString) {
+    return htmlString.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ').trim();
   }
 
   Map<int, String> _getMonthMap() {

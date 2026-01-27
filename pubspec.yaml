@@ -75,6 +75,7 @@ flutter:
   assets:
     - assets/
     - assets/bottombar_icons/
+    - assets/hamburger_nav_icons/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

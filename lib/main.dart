@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
-import 'package:franchisemarketturkiye/views/home_view.dart';
+import 'package:franchisemarketturkiye/views/home/home_view.dart';
 
 import 'package:flutter/services.dart';
 

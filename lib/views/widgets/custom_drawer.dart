@@ -2,95 +2,260 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 
-class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+class GlobalScaffold extends StatefulWidget {
+  final Widget body;
+  final Widget? bottomNavigationBar;
+  final Widget? title;
+  final bool showAppBar;
+
+  const GlobalScaffold({
+    super.key,
+    required this.body,
+    this.bottomNavigationBar,
+    this.title,
+    this.showAppBar = true,
+  });
+
+  @override
+  State<GlobalScaffold> createState() => _GlobalScaffoldState();
+}
+
+class _GlobalScaffoldState extends State<GlobalScaffold>
+    with SingleTickerProviderStateMixin {
+  bool _isMenuOpen = false;
+  late AnimationController _menuController;
+  late Animation<Offset> _drawerOffset;
+  late Animation<double> _barrierOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+
+    _drawerOffset = Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _menuController, curve: Curves.easeOutQuart),
+        );
+
+    _barrierOpacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _menuController, curve: Curves.easeIn));
+  }
+
+  @override
+  void dispose() {
+    _menuController.dispose();
+    super.dispose();
+  }
+
+  void _toggleMenu() {
+    setState(() {
+      _isMenuOpen = !_isMenuOpen;
+      if (_isMenuOpen) {
+        _menuController.forward();
+      } else {
+        _menuController.reverse();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      child: Column(
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title:
+                  widget.title ??
+                  SvgPicture.asset(
+                    'assets/logo.svg',
+                    height: 30,
+                    placeholderBuilder: (context) =>
+                        const Text('FRANCHISE MARKET'),
+                  ),
+              centerTitle: false,
+              automaticallyImplyLeading: false,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    onPressed: _toggleMenu,
+                    icon: _buildAnimatedIcon(),
+                  ),
+                ),
+              ],
+            )
+          : null,
+      body: Stack(
         children: [
-          // Header with Logo and Close Button
-          _buildHeader(context),
+          // Main Content
+          widget.body,
 
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          // Menu Overlay
+          if (_isMenuOpen || !_menuController.isDismissed)
+            Positioned.fill(
+              child: Stack(
                 children: [
-                  // Menü Section
-                  _buildSectionTitle('Menü'),
-                  _buildMenuItem('FRANCHISE DOSYASI', isSelected: true),
-                  _buildMenuItem('DERGİLER'),
-                  _buildMenuItem('HİKAYEMİZ'),
-                  _buildMenuItem('YAZAR BAŞVURUSU'),
-                  _buildMenuItem('İLETİŞİM'),
-
-                  const SizedBox(height: 24),
-
-                  // Kategoriler Section
-                  _buildSectionTitle('Kategoriler'),
-                  _buildCategoriesGrid(),
-
-                  const SizedBox(height: 24),
-
-                  // Bottom Banner
-                  _buildBottomBanner(),
-
-                  const SizedBox(height: 24),
+                  GestureDetector(
+                    onTap: _toggleMenu,
+                    child: FadeTransition(
+                      opacity: _barrierOpacity,
+                      child: Container(color: Colors.black.withOpacity(0.5)),
+                    ),
+                  ),
+                  SlideTransition(
+                    position: _drawerOffset,
+                    child: const Align(
+                      alignment: Alignment.topCenter,
+                      child: CustomDrawer(),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
         ],
       ),
+      bottomNavigationBar: widget.bottomNavigationBar,
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 10,
-        bottom: 10,
-        left: 16,
-        right: 16,
-      ),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SvgPicture.asset('assets/logo.svg', height: 30),
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close, size: 28),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+  Widget _buildAnimatedIcon() {
+    return AnimatedBuilder(
+      animation: _menuController,
+      builder: (context, child) {
+        return SizedBox(
+          width: 24,
+          height: 24,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Transform.translate(
+                offset: Offset(0, -3 + (3 * _menuController.value)),
+                child: Transform.rotate(
+                  angle: _menuController.value * (3.14159 / 4),
+                  child: Container(
+                    width: 20,
+                    height: 2,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(
+                  _menuController.value * -3,
+                  3 - (3 * _menuController.value),
+                ),
+                child: Transform.rotate(
+                  angle: _menuController.value * (-3.14159 / 4),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      width: 14 + (6 * _menuController.value),
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        );
+      },
+    );
+  }
+}
+
+class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({super.key});
+
+  // Removed static show method as we will use Stack in HomeView for better control
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 8,
+      shadowColor: Colors.black.withOpacity(0.2),
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(24),
+        bottomRight: Radius.circular(24),
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(24),
+            bottomRight: Radius.circular(24),
+          ),
+        ),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Menü Section
+                    _buildSectionTitle('Menü'),
+                    _buildMenuItem('FRANCHISE DOSYASI', isSelected: true),
+                    _buildMenuItem('DERGİLER'),
+                    _buildMenuItem('HİKAYEMİZ'),
+                    _buildMenuItem('YAZAR BAŞVURUSU'),
+                    _buildMenuItem('İLETİŞİM'),
+
+                    const SizedBox(height: 12),
+
+                    // Kategoriler Section
+                    _buildSectionTitle('Kategoriler'),
+                    _buildCategoriesGrid(),
+
+                    const SizedBox(height: 12),
+
+                    // Bottom Banner
+                    _buildBottomBanner(),
+
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 4),
-          Container(width: 40, height: 2, color: AppTheme.primaryColor),
+          const SizedBox(height: 2),
+          Container(width: 64, height: 2, color: AppTheme.primaryColor),
         ],
       ),
     );
@@ -99,19 +264,21 @@ class CustomDrawer extends StatelessWidget {
   Widget _buildMenuItem(String title, {bool isSelected = false}) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
       decoration: BoxDecoration(
         color: isSelected ? const Color(0xFFF5F5F5) : Colors.transparent,
-        borderRadius: BorderRadius.circular(4),
       ),
       child: ListTile(
+        visualDensity: VisualDensity.compact,
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         title: Text(
           title,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w600, // SemiBold
             color: Colors.black,
-            letterSpacing: 0.5,
+            letterSpacing: 0.3,
           ),
         ),
         onTap: () {
@@ -140,16 +307,16 @@ class CustomDrawer extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 2.5,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+          childAspectRatio: 3.8, // Thinner vertically
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
         ),
         itemCount: categories.length,
         itemBuilder: (context, index) {
@@ -159,22 +326,27 @@ class CustomDrawer extends StatelessWidget {
 
           return Container(
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFF5F5F5) : Colors.transparent,
-              borderRadius: BorderRadius.circular(4),
+              color: isSelected ? const Color(0xFFF9F9F9) : Colors.transparent,
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFFEEEEEE)
+                    : Colors.transparent,
+                width: 0.5,
+              ),
             ),
             child: InkWell(
               onTap: () {},
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
-                  SvgPicture.asset(category.iconPath, width: 24, height: 24),
+                  const SizedBox(width: 10),
+                  SvgPicture.asset(category.iconPath, width: 16, height: 16),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       category.title,
                       style: const TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.w600, // SemiBold
+                        fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
@@ -194,19 +366,17 @@ class CustomDrawer extends StatelessWidget {
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
             child: Image.asset(
-              'assets/panino-1.jpg', // Using panino-1 as a placeholder or close match
+              'assets/FRANCHISE-WB-31-2.jpg',
               width: double.infinity,
-              height: 100,
+              height: 80,
               fit: BoxFit.cover,
             ),
           ),
           Container(
             width: double.infinity,
-            height: 100,
+            height: 80,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
@@ -237,15 +407,15 @@ class CustomDrawer extends StatelessWidget {
                         'SUNUM DOSYASI',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       const Icon(
                         Icons.arrow_forward,
                         color: Colors.white,
-                        size: 14,
+                        size: 11,
                       ),
                     ],
                   ),
