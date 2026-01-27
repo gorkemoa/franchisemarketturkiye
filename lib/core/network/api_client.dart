@@ -145,4 +145,62 @@ class ApiClient {
       return ApiResult.failure('Network Error: $e');
     }
   }
+
+  Future<ApiResult<Map<String, dynamic>>> postMultipart(
+    String url, {
+    Map<String, String>? fields,
+    Map<String, String>? files,
+    String? token,
+  }) async {
+    Logger.logRequest('POST MULTIPART', url, body: fields);
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(url));
+
+      request.headers['Accept'] = 'application/json';
+      request.headers['X-API-KEY'] = ApiConstants.apiKey;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+
+      if (files != null) {
+        for (var entry in files.entries) {
+          if (entry.value.isNotEmpty) {
+            request.files.add(
+              await http.MultipartFile.fromPath(entry.key, entry.value),
+            );
+          }
+        }
+      }
+
+      final streamedResponse = await _client.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
+
+      dynamic bodyLog;
+      try {
+        bodyLog = jsonDecode(response.body);
+      } catch (_) {
+        bodyLog = response.body;
+      }
+
+      Logger.logResponse(url, response.statusCode, bodyLog);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final decodedBody = bodyLog is Map<String, dynamic>
+            ? bodyLog
+            : jsonDecode(response.body);
+        return ApiResult.success(decodedBody as Map<String, dynamic>);
+      } else {
+        return ApiResult.failure(
+          'Request failed with status: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      Logger.logError(url, e.toString());
+      return ApiResult.failure('Network Error: $e');
+    }
+  }
 }

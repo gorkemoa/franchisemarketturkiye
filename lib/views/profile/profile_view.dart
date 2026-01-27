@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/viewmodels/profile_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/address_view.dart';
 import 'package:franchisemarketturkiye/views/profile/change_password_view.dart';
+import 'package:franchisemarketturkiye/views/profile/writer_application_view.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -105,9 +106,16 @@ class _ProfileViewState extends State<ProfileView> {
                   },
                 ),
                 _buildMenuItem(
-                  icon: Icons.storefront_outlined,
-                  title: 'Franchise Başvuruları',
-                  onTap: () {},
+                  icon: Icons.edit_note_outlined,
+                  title: 'Yazar Başvurusu',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WriterApplicationView(),
+                      ),
+                    );
+                  },
                 ),
                 _buildMenuItem(
                   icon: Icons.logout,
