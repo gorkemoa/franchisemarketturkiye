@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -183,10 +184,22 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
   }
 }
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
 
-  // Removed static show method as we will use Stack in HomeView for better control
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  late final CategoriesViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = CategoriesViewModel();
+    _viewModel.init(selected: 1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +220,7 @@ class CustomDrawer extends StatelessWidget {
           ),
         ),
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -218,7 +231,6 @@ class CustomDrawer extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Menü Section
                     // Menü Section
                     _buildSectionTitle('MENÜ'),
                     _buildMenuItem('FRANCHISE DOSYASI', isSelected: true),
@@ -272,7 +284,11 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(String title, {bool isSelected = false}) {
+  Widget _buildMenuItem(
+    String title, {
+    bool isSelected = false,
+    VoidCallback? onTap,
+  }) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -304,9 +320,11 @@ class CustomDrawer extends StatelessWidget {
             fontFamily: 'BioSans',
           ),
         ),
-        onTap: () {
-          // TODO: Implement navigation
-        },
+        onTap:
+            onTap ??
+            () {
+              // TODO: Implement navigation
+            },
       ),
     );
   }

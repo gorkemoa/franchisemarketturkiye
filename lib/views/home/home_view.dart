@@ -11,6 +11,8 @@ import 'package:franchisemarketturkiye/views/home/contact_section.dart';
 import 'package:franchisemarketturkiye/views/home/app_footer.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
+import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
+import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 
@@ -24,19 +26,38 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late final HomeViewModel _viewModel;
   int _currentIndex = 2; // Home is index 2
-  late final List<Widget> _pages;
+  List<Widget> _pages = [];
+  final AuthService _authService = AuthService();
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
     _viewModel = HomeViewModel();
     _viewModel.init();
+    _updatePages();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final loggedIn = await _authService.isLoggedIn();
+    if (mounted) {
+      setState(() {
+        _isLoggedIn = loggedIn;
+        _updatePages();
+      });
+    }
+  }
+
+  void _updatePages() {
     _pages = [
       const Center(child: Text('Yazarlar')),
       const Center(child: Text('Arama')),
       _buildHomeContent(),
       const CategoriesView(),
-      const LoginView(),
+      _isLoggedIn
+          ? ProfileView(onLogout: _checkLoginStatus)
+          : LoginView(onLoginSuccess: _checkLoginStatus),
     ];
   }
 

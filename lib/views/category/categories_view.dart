@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
+import 'package:franchisemarketturkiye/views/category/category_detail_view.dart';
 
 class CategoriesView extends StatefulWidget {
   const CategoriesView({super.key});
@@ -70,55 +71,66 @@ class _CategoriesViewState extends State<CategoriesView> {
                   final category = _viewModel.categories[index];
                   final isSelected = index == 0; // Match image (GENEL selected)
 
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFFF5F5F5)
-                          : Colors.transparent,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(
-                          _getCategoryIcon(category.name),
-                          width: 24,
-                          height: 24,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                category.name
-                                    .replaceAll('i', 'İ')
-                                    .toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontFamily: 'BioSans',
-                                ),
-                              ),
-                              if (category.description != null &&
-                                  category.description!.isNotEmpty) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  category.description!,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black.withOpacity(0.5),
-                                  ),
-                                ),
-                              ],
-                            ],
+                  return Material(
+                    color: isSelected
+                        ? const Color(0xFFF5F5F5)
+                        : Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CategoryDetailView(category: category),
                           ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 16,
                         ),
-                      ],
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              _getCategoryIcon(category.name),
+                              width: 24,
+                              height: 24,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    category.name
+                                        .replaceAll('i', 'İ')
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontFamily: 'BioSans',
+                                    ),
+                                  ),
+                                  if (category.description != null &&
+                                      category.description!.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      category.description!,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black.withOpacity(0.5),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 },

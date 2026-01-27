@@ -8,16 +8,21 @@ import 'package:franchisemarketturkiye/app/api_constants.dart';
 class ApiClient {
   final http.Client _client = http.Client();
 
-  Future<ApiResult<Map<String, dynamic>>> get(String url) async {
+  Future<ApiResult<Map<String, dynamic>>> get(
+    String url, {
+    String? token,
+  }) async {
     Logger.logRequest('GET', url);
     try {
-      final response = await _client.get(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          'X-API-KEY': ApiConstants.apiKey,
-        },
-      );
+      final headers = {
+        'Accept': 'application/json',
+        'X-API-KEY': ApiConstants.apiKey,
+      };
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      final response = await _client.get(Uri.parse(url), headers: headers);
 
       // Basic body decoding for logging purpose (if json)
       dynamic bodyLog;
@@ -48,16 +53,22 @@ class ApiClient {
   Future<ApiResult<Map<String, dynamic>>> post(
     String url, {
     Map<String, dynamic>? body,
+    String? token,
   }) async {
     Logger.logRequest('POST', url, body: body);
     try {
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': ApiConstants.apiKey,
+      };
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
       final response = await _client.post(
         Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-API-KEY': ApiConstants.apiKey,
-        },
+        headers: headers,
         body: jsonEncode(body),
       );
 

@@ -4,7 +4,9 @@ import 'package:franchisemarketturkiye/viewmodels/login_view_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  final VoidCallback? onLoginSuccess;
+
+  const LoginView({super.key, this.onLoginSuccess});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -168,7 +170,7 @@ class _LoginViewState extends State<LoginView> {
         _buildActionButton('Giriş Yap', () async {
           final success = await _viewModel.login();
           if (success && mounted) {
-            Navigator.pop(context);
+            widget.onLoginSuccess?.call();
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Başarıyla giriş yapıldı'),

@@ -3,11 +3,28 @@ import 'package:franchisemarketturkiye/core/network/api_client.dart';
 import 'package:franchisemarketturkiye/core/network/api_result.dart';
 import 'package:franchisemarketturkiye/models/login_response.dart';
 import 'package:franchisemarketturkiye/models/register_response.dart';
+import 'package:franchisemarketturkiye/models/profile_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final ApiClient _apiClient = ApiClient();
   static const String _tokenKey = 'access_token';
+
+  Future<ApiResult<ProfileResponse>> getMe() async {
+    final token = await getToken();
+    if (token == null) {
+      return ApiResult.failure('Not authenticated');
+    }
+
+    final result = await _apiClient.get(ApiConstants.customersMe, token: token);
+
+    if (result.isSuccess) {
+      final profileResponse = ProfileResponse.fromJson(result.data!);
+      return ApiResult.success(profileResponse);
+    } else {
+      return ApiResult.failure(result.error ?? 'Failed to fetch profile');
+    }
+  }
 
   Future<ApiResult<LoginResponse>> login(String email, String password) async {
     final result = await _apiClient.post(

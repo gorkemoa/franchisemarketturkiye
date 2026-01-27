@@ -26,7 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: SizedBox(
-          height: 75,
+          height: 65,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -84,7 +84,7 @@ class CustomBottomNavBar extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         color: Colors.transparent, // Ensure it catches taps
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: SvgPicture.asset(path, fit: BoxFit.contain),
       ),
     );

@@ -13,16 +13,16 @@ class CategoriesViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> init() async {
-    await fetchCategories();
+  Future<void> init({int selected = 0}) async {
+    await fetchCategories(selected: selected);
   }
 
-  Future<void> fetchCategories() async {
+  Future<void> fetchCategories({int selected = 0}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    final result = await _categoryService.getCategories();
+    final result = await _categoryService.getCategories(selected: selected);
 
     if (result.isSuccess) {
       _categories = result.data ?? [];
