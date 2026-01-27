@@ -89,58 +89,58 @@ class Blog {
 
 class BlogCategory {
   final int id;
-  final String name;
-  final String link;
+  final String? name;
+  final String? link;
 
-  BlogCategory({required this.id, required this.name, required this.link});
+  BlogCategory({required this.id, this.name, this.link});
 
   factory BlogCategory.fromJson(Map<String, dynamic> json) {
     return BlogCategory(
       id: json['id'] as int,
-      name: json['name'] as String,
-      link: json['link'] as String,
+      name: json['name'] as String?,
+      link: json['link'] as String?,
     );
   }
 }
 
 class BlogType {
   final int id;
-  final String name;
-  final String link;
+  final String? name;
+  final String? link;
 
-  BlogType({required this.id, required this.name, required this.link});
+  BlogType({required this.id, this.name, this.link});
 
   factory BlogType.fromJson(Map<String, dynamic> json) {
     return BlogType(
       id: json['id'] as int,
-      name: json['name'] as String,
-      link: json['link'] as String,
+      name: json['name'] as String?,
+      link: json['link'] as String?,
     );
   }
 }
 
 class BlogAuthor {
   final int id;
-  final String name;
-  final String link;
-  final String image;
-  final String imageUrl;
+  final String? name;
+  final String? link;
+  final String? image;
+  final String? imageUrl;
 
   BlogAuthor({
     required this.id,
-    required this.name,
-    required this.link,
-    required this.image,
-    required this.imageUrl,
+    this.name,
+    this.link,
+    this.image,
+    this.imageUrl,
   });
 
   factory BlogAuthor.fromJson(Map<String, dynamic> json) {
     return BlogAuthor(
       id: json['id'] as int,
-      name: json['name'] as String,
-      link: json['link'] as String,
-      image: json['image'] as String,
-      imageUrl: json['image_url'] as String,
+      name: json['name'] as String?,
+      link: json['link'] as String?,
+      image: json['image'] as String?,
+      imageUrl: json['image_url'] as String?,
     );
   }
 }
@@ -157,6 +157,71 @@ class BlogResponse {
           .map((item) => Blog.fromJson(item))
           .toList(),
       count: json['count'] as int,
+    );
+  }
+}
+
+class CategoryBlogsResponse {
+  final bool success;
+  final CategoryBlogsData data;
+  final BlogMeta meta;
+
+  CategoryBlogsResponse({
+    required this.success,
+    required this.data,
+    required this.meta,
+  });
+
+  factory CategoryBlogsResponse.fromJson(Map<String, dynamic> json) {
+    return CategoryBlogsResponse(
+      success: json['success'] as bool,
+      data: CategoryBlogsData.fromJson(json['data']),
+      meta: BlogMeta.fromJson(json['meta']),
+    );
+  }
+}
+
+class CategoryBlogsData {
+  final BlogCategory category;
+  final List<Blog> items;
+  final int count;
+
+  CategoryBlogsData({
+    required this.category,
+    required this.items,
+    required this.count,
+  });
+
+  factory CategoryBlogsData.fromJson(Map<String, dynamic> json) {
+    return CategoryBlogsData(
+      category: BlogCategory.fromJson(json['category']),
+      items: (json['items'] as List<dynamic>)
+          .map((item) => Blog.fromJson(item))
+          .toList(),
+      count: json['count'] as int,
+    );
+  }
+}
+
+class BlogMeta {
+  final int limit;
+  final int excludePinned;
+  final bool hasMore;
+  final String? nextCursor;
+
+  BlogMeta({
+    required this.limit,
+    required this.excludePinned,
+    required this.hasMore,
+    this.nextCursor,
+  });
+
+  factory BlogMeta.fromJson(Map<String, dynamic> json) {
+    return BlogMeta(
+      limit: json['limit'] as int,
+      excludePinned: json['exclude_pinned'] as int,
+      hasMore: json['has_more'] as bool,
+      nextCursor: json['next_cursor'] as String?,
     );
   }
 }

@@ -25,7 +25,7 @@ class CategoriesViewModel extends ChangeNotifier {
     final result = await _categoryService.getCategories(selected: selected);
 
     if (result.isSuccess) {
-      _categories = result.data ?? [];
+      _categories = List<Category>.from(result.data ?? []);
     } else {
       _errorMessage = result.error;
     }

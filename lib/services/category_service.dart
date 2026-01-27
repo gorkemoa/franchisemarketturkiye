@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:franchisemarketturkiye/app/api_constants.dart';
 import 'package:franchisemarketturkiye/core/network/api_client.dart';
 import 'package:franchisemarketturkiye/core/network/api_result.dart';
@@ -32,6 +33,7 @@ class CategoryService {
   }
 
   Future<ApiResult<Category>> getCategoryById(int categoryId) async {
+    debugPrint('CategoryService.getCategoryById: $categoryId');
     final result = await _apiClient.get(
       ApiConstants.categoryDetail(categoryId),
     );

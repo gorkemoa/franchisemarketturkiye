@@ -1,4 +1,5 @@
 import 'package:franchisemarketturkiye/app/api_constants.dart';
+import 'package:franchisemarketturkiye/app/app_constants.dart';
 import 'package:franchisemarketturkiye/core/network/api_client.dart';
 import 'package:franchisemarketturkiye/core/network/api_result.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
@@ -114,6 +115,32 @@ class BlogService {
         } else {
           return ApiResult.failure('Blog not found');
         }
+      } catch (e) {
+        return ApiResult.failure('Parsing Error: $e');
+      }
+    } else {
+      return ApiResult.failure(result.error ?? 'Unknown Error');
+    }
+  }
+
+  Future<ApiResult<CategoryBlogsResponse>> getBlogsByCategory(
+    int categoryId, {
+    int limit = AppConstants.defaultLimit,
+    String? cursor,
+    int excludePinned = 0,
+  }) async {
+    String url =
+        '${ApiConstants.categoryBlogs(categoryId)}?limit=$limit&exclude_pinned=$excludePinned';
+    if (cursor != null) {
+      url += '&cursor=$cursor';
+    }
+
+    final result = await _apiClient.get(url);
+
+    if (result.isSuccess && result.data != null) {
+      try {
+        final response = CategoryBlogsResponse.fromJson(result.data!);
+        return ApiResult.success(response);
       } catch (e) {
         return ApiResult.failure('Parsing Error: $e');
       }

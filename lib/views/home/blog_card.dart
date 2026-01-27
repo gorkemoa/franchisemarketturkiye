@@ -57,11 +57,12 @@ class BlogCard extends StatelessWidget {
                   // Tags
                   Row(
                     children: [
-                      if (blog.category != null) ...[
-                        TagBadge(text: blog.category!.name),
+                      if (blog.category != null &&
+                          blog.category!.name != null) ...[
+                        TagBadge(text: blog.category!.name!),
                         const SizedBox(width: 8),
                       ],
-                      TagBadge(text: blog.type.name),
+                      TagBadge(text: blog.type.name ?? ''),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -76,19 +77,25 @@ class BlogCard extends StatelessWidget {
                   // Author row
                   Row(
                     children: [
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: NetworkImage(blog.author.imageUrl),
-                            fit: BoxFit.cover,
+                      if (blog.author.imageUrl != null)
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: NetworkImage(blog.author.imageUrl!),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ),
+                        )
+                      else
+                        const Icon(Icons.person, size: 24, color: Colors.grey),
                       const SizedBox(width: 8),
-                      Text(blog.author.name, style: textTheme.titleMedium),
+                      Text(
+                        blog.author.name ?? 'Yazar Bilgisi Yok',
+                        style: textTheme.titleMedium,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),

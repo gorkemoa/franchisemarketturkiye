@@ -3,6 +3,7 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/models/category_blog.dart';
 import 'package:franchisemarketturkiye/views/blog/blog_detail_view.dart';
+import 'package:franchisemarketturkiye/views/category/category_detail_view.dart';
 import 'package:franchisemarketturkiye/views/home/tag_badge.dart';
 
 class CategoryBlogSection extends StatelessWidget {
@@ -54,7 +55,14 @@ class CategoryBlogSection extends StatelessWidget {
               width: 200,
               child: TextButton(
                 onPressed: () {
-                  // Navigate to category detail
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryDetailView(
+                        categoryId: categoryBlog.categoryId,
+                      ),
+                    ),
+                  );
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: const Color(0xFFF4F4F4),
@@ -131,11 +139,11 @@ class _CategoryBlogItem extends StatelessWidget {
             // Tags
             Row(
               children: [
-                if (blog.category != null) ...[
-                  TagBadge(text: blog.category!.name.toUpperCase()),
+                if (blog.category != null && blog.category!.name != null) ...[
+                  TagBadge(text: blog.category!.name!.toUpperCase()),
                   const SizedBox(width: 8),
                 ],
-                TagBadge(text: blog.type.name.toUpperCase()),
+                TagBadge(text: (blog.type.name ?? '').toUpperCase()),
               ],
             ),
             const SizedBox(height: 10),
@@ -150,19 +158,25 @@ class _CategoryBlogItem extends StatelessWidget {
             // Author Row
             Row(
               children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NetworkImage(blog.author.imageUrl),
-                      fit: BoxFit.fill,
+                if (blog.author.imageUrl != null)
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(blog.author.imageUrl!),
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  ),
-                ),
+                  )
+                else
+                  const Icon(Icons.person, size: 24, color: Colors.grey),
                 const SizedBox(width: 12),
-                Text(blog.author.name, style: textTheme.titleMedium),
+                Text(
+                  blog.author.name ?? 'Yazar Bilgisi Yok',
+                  style: textTheme.titleMedium,
+                ),
               ],
             ),
             const SizedBox(height: 4),

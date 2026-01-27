@@ -57,12 +57,13 @@ class BlogListItem extends StatelessWidget {
                   // Tags
                   Row(
                     children: [
-                      if (blog.category != null) ...[
-                        TagBadge(text: blog.category!.name),
+                      if (blog.category != null &&
+                          blog.category!.name != null) ...[
+                        TagBadge(text: blog.category!.name!),
                         const SizedBox(width: 8),
                       ],
                       TagBadge(
-                        text: blog.type.name,
+                        text: blog.type.name ?? '',
                         color: AppTheme.textSecondary,
                       ),
                     ],
@@ -83,20 +84,23 @@ class BlogListItem extends StatelessWidget {
                   // Author & Date
                   Row(
                     children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: NetworkImage(blog.author.imageUrl),
-                            fit: BoxFit.cover,
+                      if (blog.author.imageUrl != null)
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: NetworkImage(blog.author.imageUrl!),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ),
+                        )
+                      else
+                        const Icon(Icons.person, size: 16, color: Colors.grey),
                       const SizedBox(width: 6),
                       Text(
-                        blog.author.name,
+                        blog.author.name ?? 'Yazar Bilgisi Yok',
                         style: textTheme.titleMedium?.copyWith(
                           fontSize: 9,
                           color: AppTheme.textPrimary,

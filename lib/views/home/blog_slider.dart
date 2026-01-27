@@ -186,8 +186,8 @@ class _BlogSliderState extends State<BlogSlider> {
                 children: [
                   // Category Badge (At the top)
                   // Category Badge (Grayish transparent)
-                  if (blog.category != null)
-                    TagBadge(text: blog.category!.name, isDark: true),
+                  if (blog.category != null && blog.category!.name != null)
+                    TagBadge(text: blog.category!.name!, isDark: true),
                   const Spacer(),
                   // Title (Large and Bold)
                   Text(
@@ -213,7 +213,7 @@ class _BlogSliderState extends State<BlogSlider> {
                   Row(
                     children: [
                       Text(
-                        blog.author.name,
+                        blog.author.name ?? 'Yazar Bilgisi Yok',
                         style: textTheme.titleMedium?.copyWith(
                           color: Colors.white,
                         ),

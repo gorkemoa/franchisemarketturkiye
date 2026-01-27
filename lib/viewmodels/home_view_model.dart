@@ -60,7 +60,7 @@ class HomeViewModel extends ChangeNotifier {
       _featuredBlogs = featuredResult.data ?? [];
       _selectedCategoryBlogs = selectedCategoryResult.data ?? [];
       _marketingTalks = marketingTalksResult.data ?? [];
-      _categories = categoriesResult.data ?? [];
+      _categories = List<Category>.from(categoriesResult.data ?? []);
     } else {
       _errorMessage =
           sliderResult.error ??

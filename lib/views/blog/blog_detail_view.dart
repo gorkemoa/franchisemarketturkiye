@@ -168,11 +168,12 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                     // Category & Date Row
                     Row(
                       children: [
-                        if (blog.category != null)
-                          TagBadge(text: blog.category!.name),
+                        if (blog.category != null &&
+                            blog.category!.name != null)
+                          TagBadge(text: blog.category!.name!),
                         const SizedBox(width: 8),
                         TagBadge(
-                          text: blog.type.name,
+                          text: blog.type.name ?? '',
                           color: const Color(0xFF666666),
                         ),
                         const Spacer(),
@@ -206,13 +207,18 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                       children: [
                         CircleAvatar(
                           radius: 14,
-                          backgroundImage: NetworkImage(blog.author.imageUrl),
+                          backgroundImage: blog.author.imageUrl != null
+                              ? NetworkImage(blog.author.imageUrl!)
+                              : null,
+                          child: blog.author.imageUrl == null
+                              ? const Icon(Icons.person, size: 14)
+                              : null,
                           backgroundColor: Colors.grey[200],
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            blog.author.name,
+                            blog.author.name ?? 'Yazar Bilgisi Yok',
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
