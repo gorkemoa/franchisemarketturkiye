@@ -121,29 +121,4 @@ class BlogService {
       return ApiResult.failure(result.error ?? 'Unknown Error');
     }
   }
-
-  Future<ApiResult<BlogResponse>> getBlogsByCategory(
-    String categoryLink, {
-    int page = 1,
-  }) async {
-    final result = await _apiClient.get(
-      '${ApiConstants.blogs}?category=$categoryLink&page=$page',
-    );
-
-    if (result.isSuccess && result.data != null) {
-      try {
-        final data = result.data!['data'];
-        if (data != null) {
-          final response = BlogResponse.fromJson(data);
-          return ApiResult.success(response);
-        } else {
-          return ApiResult.failure('No data found');
-        }
-      } catch (e) {
-        return ApiResult.failure('Parsing Error: $e');
-      }
-    } else {
-      return ApiResult.failure(result.error ?? 'Unknown Error');
-    }
-  }
 }

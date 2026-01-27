@@ -87,3 +87,13 @@ class CategoryResponse {
     );
   }
 }
+
+class CategoryDetailResponse {
+  final Category item;
+
+  CategoryDetailResponse({required this.item});
+
+  factory CategoryDetailResponse.fromJson(Map<String, dynamic> json) {
+    return CategoryDetailResponse(item: Category.fromJson(json['item']));
+  }
+}

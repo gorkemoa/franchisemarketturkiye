@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:franchisemarketturkiye/viewmodels/writer_application_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/contact_view_model.dart';
+import 'package:franchisemarketturkiye/app/app_theme.dart';
 
-class WriterApplicationView extends StatefulWidget {
-  const WriterApplicationView({super.key});
+class ContactView extends StatefulWidget {
+  const ContactView({super.key});
 
   @override
-  State<WriterApplicationView> createState() => _WriterApplicationViewState();
+  State<ContactView> createState() => _ContactViewState();
 }
 
-class _WriterApplicationViewState extends State<WriterApplicationView> {
-  final WriterApplicationViewModel _viewModel = WriterApplicationViewModel();
+class _ContactViewState extends State<ContactView> {
+  final ContactViewModel _viewModel = ContactViewModel();
 
   @override
   void dispose() {
@@ -22,9 +23,7 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Yazar Başvurusu',
-        ), // As requested by user "Franchise Başvuruları" though it is writer app
+        title: const Text('İletişim'),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -39,24 +38,32 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Başvuru Formu',
+                  'Bize Ulaşın',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
+                    fontFamily: 'BioSans',
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Aşağıdaki formu doldurarak başvurunuzu bize iletebilirsiniz.',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  'Aşağıdaki formu doldurarak bizimle iletişime geçebilirsiniz.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                    fontFamily: 'BioSans',
+                  ),
                 ),
                 const SizedBox(height: 24),
 
                 if (_viewModel.errorMessage != null) ...[
                   Container(
                     padding: const EdgeInsets.all(10),
-                    color: Colors.red.shade50,
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     width: double.infinity,
                     child: Text(
                       _viewModel.errorMessage!,
@@ -68,7 +75,10 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
                 if (_viewModel.successMessage != null) ...[
                   Container(
                     padding: const EdgeInsets.all(10),
-                    color: Colors.green.shade50,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     width: double.infinity,
                     child: Text(
                       _viewModel.successMessage!,
@@ -78,24 +88,10 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
                   const SizedBox(height: 16),
                 ],
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextFieldGroup(
-                        label: 'AD *',
-                        hint: 'Adınız',
-                        controller: _viewModel.firstNameController,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildTextFieldGroup(
-                        label: 'SOYAD *',
-                        hint: 'Soyadınız',
-                        controller: _viewModel.lastNameController,
-                      ),
-                    ),
-                  ],
+                _buildTextFieldGroup(
+                  label: 'AD SOYAD *',
+                  hint: 'Adınız Soyadınız',
+                  controller: _viewModel.fullNameController,
                 ),
                 const SizedBox(height: 16),
 
@@ -116,83 +112,13 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
                 const SizedBox(height: 16),
 
                 _buildTextFieldGroup(
-                  label: 'SOSYAL MEDYA',
-                  hint: 'Instagram, LinkedIn vb.',
-                  controller: _viewModel.socialMediaController,
-                ),
-                const SizedBox(height: 16),
-
-                _buildTextFieldGroup(
-                  label: 'ADRES',
-                  hint: 'Açık adresiniz',
-                  controller: _viewModel.addressController,
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-
-                _buildTextFieldGroup(
-                  label: 'MESAJINIZ',
+                  label: 'MESAJINIZ *',
                   hint: 'Bize iletmek istediğiniz mesaj...',
                   controller: _viewModel.messageController,
                   maxLines: 4,
                 ),
-                const SizedBox(height: 16),
-
-                // CV Upload
-                const Text(
-                  'CV (PDF, DOC, DOCX)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                InkWell(
-                  onTap: _viewModel.pickCv,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.attach_file, color: Colors.grey.shade600),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _viewModel.cvName ?? 'Dosya Seçiniz',
-                            style: TextStyle(
-                              color: _viewModel.cvName != null
-                                  ? Colors.black87
-                                  : Colors.grey.shade400,
-                              fontSize: 14,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (_viewModel.cvName != null)
-                          IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: _viewModel.removeCv,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-
                 const SizedBox(height: 32),
+
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -200,14 +126,14 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
                     onPressed: _viewModel.isLoading
                         ? null
                         : () {
-                            _viewModel.submitApplication();
+                            _viewModel.sendMessage();
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFD50000),
+                      backgroundColor: AppTheme.primaryColor,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: _viewModel.isLoading
@@ -220,10 +146,11 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
                             ),
                           )
                         : const Text(
-                            'Başvuruyu Gönder',
+                            'GÖNDER',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'BioSans',
                             ),
                           ),
                   ),
@@ -252,6 +179,7 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: Colors.grey,
+            fontFamily: 'BioSans',
           ),
         ),
         const SizedBox(height: 8),
@@ -259,15 +187,19 @@ class _WriterApplicationViewState extends State<WriterApplicationView> {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
             maxLines: maxLines,
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14, fontFamily: 'BioSans'),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade400,
+                fontFamily: 'BioSans',
+              ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,

@@ -7,9 +7,14 @@ import 'package:franchisemarketturkiye/views/home/blog_list_item.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 
 class CategoryDetailView extends StatefulWidget {
-  final Category category;
+  final Category? category;
+  final int? categoryId;
 
-  const CategoryDetailView({super.key, required this.category});
+  const CategoryDetailView({super.key, this.category, this.categoryId})
+    : assert(
+        category != null || categoryId != null,
+        'Either category or categoryId must be provided',
+      );
 
   @override
   State<CategoryDetailView> createState() => _CategoryDetailViewState();
@@ -21,7 +26,10 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
   @override
   void initState() {
     super.initState();
-    _viewModel = CategoryDetailViewModel(category: widget.category);
+    _viewModel = CategoryDetailViewModel(
+      category: widget.category,
+      categoryId: widget.categoryId,
+    );
     _viewModel.init();
   }
 
@@ -59,6 +67,31 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, child) {
+          if (_viewModel.isLoading && _viewModel.category == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (_viewModel.errorMessage != null && _viewModel.category == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_viewModel.errorMessage!),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _viewModel.init,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final category = _viewModel.category;
+          if (category == null) {
+            return const Center(child: Text('Kategori bulunamadı.'));
+          }
+
           return CustomScrollView(
             slivers: [
               // Breadcrumb & Header
@@ -71,7 +104,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                       // Breadcrumb
                       Row(
                         children: [
-                          Text(
+                          const Text(
                             'Ana Sayfa',
                             style: TextStyle(
                               color: AppTheme.textSecondary,
@@ -84,8 +117,8 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                             color: AppTheme.textSecondary,
                           ),
                           Text(
-                            _viewModel.category.name,
-                            style: TextStyle(
+                            category.name,
+                            style: const TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 12,
                             ),
@@ -95,7 +128,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                       const SizedBox(height: 16),
                       // Title
                       Text(
-                        _viewModel.category.name,
+                        category.name,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
@@ -104,9 +137,9 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                       ),
                       const SizedBox(height: 8),
                       // Description
-                      if (_viewModel.category.description != null)
+                      if (category.description != null)
                         Text(
-                          _viewModel.category.description!,
+                          category.description!,
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppTheme.textSecondary,
@@ -115,7 +148,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                       const SizedBox(height: 8),
                       // Count
                       Text(
-                        '${_viewModel.totalCount > 0 ? _viewModel.totalCount : (_viewModel.category.count ?? 0)} gönderi',
+                        '${_viewModel.totalCount > 0 ? _viewModel.totalCount : (category.count ?? 0)} gönderi',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppTheme.textTertiary,
@@ -129,11 +162,11 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
 
               // Blog List
               if (_viewModel.isLoading)
-                const SliverFillRemaining(
+                const SliverToBoxAdapter(
                   child: Center(child: CircularProgressIndicator()),
                 )
               else if (_viewModel.errorMessage != null)
-                SliverFillRemaining(
+                SliverToBoxAdapter(
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +174,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                         Text(_viewModel.errorMessage!),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: _viewModel.fetchBlogs,
+                          onPressed: _viewModel.init,
                           child: const Text('Retry'),
                         ),
                       ],

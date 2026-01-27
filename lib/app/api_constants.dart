@@ -19,4 +19,6 @@ class ApiConstants {
   static const String updatePassword = '$baseUrl/api/v1/customers/password';
   static const String writerApplications =
       '$baseUrl/api/v1/writer-applications';
+  static const String contact = '$baseUrl/api/v1/contact';
+  static String categoryDetail(int id) => '$baseUrl/api/v1/categories/$id';
 }

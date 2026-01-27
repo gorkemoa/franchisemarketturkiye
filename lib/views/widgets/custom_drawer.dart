@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
+import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -228,11 +230,37 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   children: [
                     // Menü Section
                     _buildSectionTitle('MENÜ'),
-                    _buildMenuItem('FRANCHISE DOSYASI', isSelected: true),
+                    _buildMenuItem(
+                      'FRANCHISE DOSYASI',
+                      isSelected: true,
+                      onTap: () {
+                        // TODO: Implement Franchise Dosyasi navigation
+                      },
+                    ),
                     _buildMenuItem('DERGİLER'),
                     _buildMenuItem('HİKAYEMİZ'),
-                    _buildMenuItem('YAZAR BAŞVURUSU'),
-                    _buildMenuItem('İLETİŞİM'),
+                    _buildMenuItem(
+                      'YAZAR BAŞVURUSU',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileView(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildMenuItem(
+                      'İLETİŞİM',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ContactView(),
+                          ),
+                        );
+                      },
+                    ),
 
                     const SizedBox(height: 20),
 

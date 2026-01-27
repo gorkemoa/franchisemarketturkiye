@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/viewmodels/address_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/change_password_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/contact_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/profile_view_model.dart';
-import 'package:franchisemarketturkiye/views/profile/address_view.dart';
-import 'package:franchisemarketturkiye/views/profile/change_password_view.dart';
-import 'package:franchisemarketturkiye/views/profile/writer_application_view.dart';
+import 'package:franchisemarketturkiye/viewmodels/writer_application_view_model.dart';
+import 'package:franchisemarketturkiye/views/profile/widgets/account_info_panel.dart';
+import 'package:franchisemarketturkiye/views/profile/widgets/address_settings_panel.dart';
+import 'package:franchisemarketturkiye/views/profile/widgets/contact_panel.dart';
+import 'package:franchisemarketturkiye/views/profile/widgets/security_settings_panel.dart';
+import 'package:franchisemarketturkiye/views/profile/widgets/writer_application_panel.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -14,13 +21,40 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  late final ProfileViewModel _viewModel;
+  late final ProfileViewModel _profileViewModel;
+  late final ChangePasswordViewModel _passwordViewModel;
+  late final AddressViewModel _addressViewModel;
+  late final WriterApplicationViewModel _writerViewModel;
+  late final ContactViewModel _contactViewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ProfileViewModel();
+    _profileViewModel = ProfileViewModel();
+    _passwordViewModel = ChangePasswordViewModel();
+    _addressViewModel = AddressViewModel();
+    _writerViewModel = WriterApplicationViewModel();
+    _contactViewModel = ContactViewModel();
   }
+
+  @override
+  void dispose() {
+    _profileViewModel.dispose();
+    _passwordViewModel.dispose();
+    _addressViewModel.dispose();
+    _writerViewModel.dispose();
+    _contactViewModel.dispose();
+    super.dispose();
+  }
+
+  final List<String> _sections = [
+    'Hesap Bilgilerim',
+    'Güvenlik İşlemleri',
+    'Adres İşlemleri',
+    'Yazar Başvurusu',
+    'İletişim',
+  ];
+  String _selectedSection = 'Hesap Bilgilerim';
 
   @override
   Widget build(BuildContext context) {
@@ -33,244 +67,121 @@ class _ProfileViewState extends State<ProfileView> {
         elevation: 0,
         foregroundColor: Colors.black,
       ),
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, child) {
-          if (_viewModel.isLoading && _viewModel.customer == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (_viewModel.errorMessage != null && _viewModel.customer == null) {
-            return Center(child: Text(_viewModel.errorMessage!));
-          }
-
-          if (_viewModel.customer == null) {
-            return const Center(child: SizedBox());
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Greeting and User Title
-                Text(
-                  '${_viewModel.firstNameController.text} ${_viewModel.lastNameController.text}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // Section Title
-                const Text(
-                  'Hesap Bilgilerim',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Form
-                _buildForm(),
-
-                const SizedBox(height: 48),
-
-                // Navigation Items (Sidebar items adapted)
-                _buildMenuItem(
-                  icon: Icons.shield_outlined,
-                  title: 'Güvenlik İşlemleri',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChangePasswordView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.location_on_outlined,
-                  title: 'Adres İşlemleri',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddressView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.edit_note_outlined,
-                  title: 'Yazar Başvurusu',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WriterApplicationView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.logout,
-                  title: 'Çıkış Yap',
-                  onTap: () async {
-                    await _viewModel.logout();
-                    widget.onLogout?.call();
-                  },
-                  isDestructive: true,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: _buildTextFieldGroup(
-                label: 'AD',
-                controller: _viewModel.firstNameController,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(color: Colors.grey.shade100),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedSection,
+                  isExpanded: true,
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: AppTheme.primaryColor,
+                  ),
+                  iconSize: 28,
+                  borderRadius: BorderRadius.circular(12),
+                  dropdownColor: Colors.white,
+                  elevation: 4,
+                  items: _sections.map((String section) {
+                    final isSelected = section == _selectedSection;
+                    return DropdownMenuItem<String>(
+                      value: section,
+                      child: Text(
+                        section,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? AppTheme.primaryColor
+                              : Colors.black87,
+                          fontFamily: 'BioSans',
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedSection = newValue;
+                      });
+                    }
+                  },
+                ),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildTextFieldGroup(
-                label: 'SOYAD',
-                controller: _viewModel.lastNameController,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        _buildTextFieldGroup(
-          label: 'TELEFON',
-          controller: _viewModel.phoneController,
-          keyboardType: TextInputType.phone,
-        ),
-        const SizedBox(height: 16),
-        _buildTextFieldGroup(
-          label: 'E-POSTA',
-          controller: _viewModel.emailController,
-          keyboardType: TextInputType.emailAddress,
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
+
+            const SizedBox(height: 24),
+
+            // Dynamic Content Body
+            _buildSelectedSection(),
+
+            const SizedBox(height: 40),
+
+            // Logout Button (Always visible at bottom)
             SizedBox(
-              height: 24,
-              width: 24,
-              child: Checkbox(
-                value: _viewModel.newsletter,
-                onChanged: _viewModel.setNewsletter,
-                activeColor: Colors.red,
-                side: BorderSide(color: Colors.grey.shade400, width: 1.5),
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  await _profileViewModel.logout();
+                  widget.onLogout?.call();
+                },
+                icon: const Icon(Icons.logout, color: Colors.red),
+                label: const Text(
+                  'Çıkış Yap',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(width: 8),
-            const Text(
-              'Bülten Aboneliği',
-              style: TextStyle(color: Colors.black54, fontSize: 13),
-            ),
+            const SizedBox(height: 20),
           ],
         ),
-        const SizedBox(height: 32),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {
-              // TODO: Implement update
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD50000), // Red color from image
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
-            ),
-            child: const Text(
-              'Bilgilerini Güncelle',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTextFieldGroup({
-    required String label,
-    required TextEditingController controller,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: TextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            style: const TextStyle(fontSize: 14),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-              isDense: true,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isDestructive = false,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: isDestructive ? Colors.red : Colors.black54),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: isDestructive ? Colors.red : Colors.black87,
-        ),
       ),
-      onTap: onTap,
     );
+  }
+
+  Widget _buildSelectedSection() {
+    switch (_selectedSection) {
+      case 'Hesap Bilgilerim':
+        return AccountInfoPanel(viewModel: _profileViewModel);
+      case 'Güvenlik İşlemleri':
+        return SecuritySettingsPanel(viewModel: _passwordViewModel);
+      case 'Adres İşlemleri':
+        return AddressSettingsPanel(viewModel: _addressViewModel);
+      case 'Yazar Başvurusu':
+        return WriterApplicationPanel(viewModel: _writerViewModel);
+      case 'İletişim':
+        return ContactPanel(viewModel: _contactViewModel);
+      default:
+        return AccountInfoPanel(viewModel: _profileViewModel);
+    }
   }
 }

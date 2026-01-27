@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/models/category.dart';
-import 'package:franchisemarketturkiye/services/blog_service.dart';
+import 'package:franchisemarketturkiye/services/category_service.dart';
 
 class CategoryDetailViewModel extends ChangeNotifier {
-  final BlogService _blogService;
-  final Category category;
+  final CategoryService _categoryService;
+  Category? _category;
+  final int? _categoryId;
 
-  CategoryDetailViewModel({required this.category, BlogService? blogService})
-    : _blogService = blogService ?? BlogService();
+  CategoryDetailViewModel({
+    Category? category,
+    int? categoryId,
+    CategoryService? categoryService,
+  }) : _category = category,
+       _categoryId = categoryId ?? category?.id,
+       _categoryService = categoryService ?? CategoryService();
+
+  Category? get category => _category;
 
   List<Blog> _blogs = [];
   List<Blog> get blogs => _blogs;
@@ -23,20 +31,23 @@ class CategoryDetailViewModel extends ChangeNotifier {
   int get totalCount => _totalCount;
 
   Future<void> init() async {
-    await fetchBlogs();
+    if (_category == null && _categoryId != null) {
+      await fetchCategory();
+    }
   }
 
-  Future<void> fetchBlogs() async {
+  Future<void> fetchCategory() async {
+    if (_categoryId == null) return;
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    final result = await _blogService.getBlogsByCategory(category.link);
+    final result = await _categoryService.getCategoryById(_categoryId);
 
     _isLoading = false;
     if (result.isSuccess && result.data != null) {
-      _blogs = result.data!.items;
-      _totalCount = result.data!.count;
+      _category = result.data;
     } else {
       _errorMessage = result.error ?? 'Unknown error occurred';
     }
