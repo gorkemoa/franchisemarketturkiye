@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/profile_view_model.dart';
+import 'package:franchisemarketturkiye/views/profile/address_view.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -23,168 +23,92 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light background
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Profilim'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+        title: const Text('Hesabım'),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
       ),
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, child) {
-          if (_viewModel.isLoading) {
+          if (_viewModel.isLoading && _viewModel.customer == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (_viewModel.customer == null) {
-            // Check error or just return empty/retry
-            if (_viewModel.errorMessage != null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(_viewModel.errorMessage!),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _viewModel.loadProfile,
-                      child: const Text('Tekrar Dene'),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return const Center(child: Text('Kullanıcı bilgisi bulunamadı.'));
+          if (_viewModel.errorMessage != null && _viewModel.customer == null) {
+            return Center(child: Text(_viewModel.errorMessage!));
           }
 
-          final customer = _viewModel.customer!;
+          if (_viewModel.customer == null) {
+            return const Center(child: SizedBox());
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Header Card
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                // Greeting and User Title
+                Text(
+                  '${_viewModel.firstNameController.text} ${_viewModel.lastNameController.text}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                        child: Text(
-                          (customer.firstname?.isNotEmpty == true
-                                  ? customer.firstname![0]
-                                  : '') +
-                              (customer.lastname?.isNotEmpty == true
-                                  ? customer.lastname![0]
-                                  : ''),
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${customer.firstname} ${customer.lastname}',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        customer.email ?? '',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                ),
+                const SizedBox(height: 32),
+
+                // Section Title
+                const Text(
+                  'Hesap Bilgilerim',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Info Sections
-                _buildInfoSection(
-                  title: 'İletişim Bilgileri',
-                  items: [
-                    _InfoItem(
-                      icon: Icons.phone,
-                      label: 'Telefon',
-                      value: customer.phone,
-                    ),
-                    _InfoItem(
-                      icon: Icons.email,
-                      label: 'E-posta',
-                      value: customer.email,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildInfoSection(
-                  title: 'Adres Bilgileri',
-                  items: [
-                    _InfoItem(
-                      icon: Icons.location_city,
-                      label: 'Şehir',
-                      value: customer.city,
-                    ),
-                    _InfoItem(
-                      icon: Icons.map,
-                      label: 'İlçe',
-                      value: customer.district,
-                    ),
-                    _InfoItem(
-                      icon: Icons.home,
-                      label: 'Adres',
-                      value: customer.address,
-                    ),
-                  ],
-                ),
+                // Form
+                _buildForm(),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 48),
 
-                // Logout Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _viewModel.logout();
-                      if (widget.onLogout != null) {
-                        widget.onLogout!();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                // Navigation Items (Sidebar items adapted)
+                _buildMenuItem(
+                  icon: Icons.shield_outlined,
+                  title: 'Güvenlik İşlemleri',
+                  onTap: () {},
+                ),
+                _buildMenuItem(
+                  icon: Icons.location_on_outlined,
+                  title: 'Adres İşlemleri',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddressView(),
                       ),
-                    ),
-                    child: const Text(
-                      'Çıkış Yap',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
+                ),
+                _buildMenuItem(
+                  icon: Icons.storefront_outlined,
+                  title: 'Franchise Başvuruları',
+                  onTap: () {},
+                ),
+                _buildMenuItem(
+                  icon: Icons.logout,
+                  title: 'Çıkış Yap',
+                  onTap: () async {
+                    await _viewModel.logout();
+                    widget.onLogout?.call();
+                  },
+                  isDestructive: true,
                 ),
               ],
             ),
@@ -194,81 +118,143 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildInfoSection({
-    required String title,
-    required List<_InfoItem> items,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+  Widget _buildForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildTextFieldGroup(
+                label: 'AD',
+                controller: _viewModel.firstNameController,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildTextFieldGroup(
+                label: 'SOYAD',
+                controller: _viewModel.lastNameController,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildTextFieldGroup(
+          label: 'TELEFON',
+          controller: _viewModel.phoneController,
+          keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 16),
+        _buildTextFieldGroup(
+          label: 'E-POSTA',
+          controller: _viewModel.emailController,
+          keyboardType: TextInputType.emailAddress,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            SizedBox(
+              height: 24,
+              width: 24,
+              child: Checkbox(
+                value: _viewModel.newsletter,
+                onChanged: _viewModel.setNewsletter,
+                activeColor: Colors.red,
+                side: BorderSide(color: Colors.grey.shade400, width: 1.5),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Bülten Aboneliği',
+              style: TextStyle(color: Colors.black54, fontSize: 13),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              // TODO: Implement update
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFD50000), // Red color from image
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+            ),
+            child: const Text(
+              'Bilgilerini Güncelle',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-          const Divider(height: 24),
-          ...items.map((item) {
-            if (item.value == null || item.value!.isEmpty)
-              return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(item.icon, size: 20, color: AppTheme.primaryColor),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.label,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          item.value!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
+        ),
+      ],
     );
   }
-}
 
-class _InfoItem {
-  final IconData icon;
-  final String label;
-  final String? value;
+  Widget _buildTextFieldGroup({
+    required String label,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            style: const TextStyle(fontSize: 14),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              isDense: true,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  _InfoItem({required this.icon, required this.label, this.value});
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon, color: isDestructive ? Colors.red : Colors.black54),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: isDestructive ? Colors.red : Colors.black87,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
 }

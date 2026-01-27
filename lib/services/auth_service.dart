@@ -71,6 +71,37 @@ class AuthService {
     }
   }
 
+  Future<ApiResult<void>> updateAddress({
+    required String cityId,
+    required String districtId,
+    required String neighbourhood,
+    required String street,
+    required String address,
+  }) async {
+    final token = await getToken();
+    if (token == null) {
+      return ApiResult.failure('Not authenticated');
+    }
+
+    final result = await _apiClient.post(
+      ApiConstants.updateAddress,
+      token: token,
+      body: {
+        'city_id': cityId,
+        'district_id': districtId,
+        'neighbourhood': neighbourhood,
+        'street': street,
+        'address': address,
+      },
+    );
+
+    if (result.isSuccess) {
+      return ApiResult.success(null);
+    } else {
+      return ApiResult.failure(result.error ?? 'Failed to update address');
+    }
+  }
+
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);

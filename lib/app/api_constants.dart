@@ -12,4 +12,8 @@ class ApiConstants {
   static const String login = '$baseUrl/api/v1/customers/login';
   static const String register = '$baseUrl/api/v1/customers/register';
   static const String customersMe = '$baseUrl/api/v1/customers/me';
+  static const String cities = '$baseUrl/api/v1/cities';
+  static String districts(String cityId) =>
+      '$baseUrl/api/v1/cities/$cityId/districts';
+  static const String updateAddress = '$baseUrl/api/v1/customers/address';
 }
