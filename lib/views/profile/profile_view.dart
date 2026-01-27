@@ -10,6 +10,7 @@ import 'package:franchisemarketturkiye/views/profile/widgets/address_settings_pa
 import 'package:franchisemarketturkiye/views/profile/widgets/contact_panel.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/security_settings_panel.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/writer_application_panel.dart';
+import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -58,14 +59,16 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Hesabım'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
+    return GlobalScaffold(
+      showBackButton: true,
+      title: const Text(
+        'Hesabım',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          fontFamily: 'BioSans',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

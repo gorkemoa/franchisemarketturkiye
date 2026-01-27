@@ -9,6 +9,8 @@ class GlobalScaffold extends StatefulWidget {
   final Widget? bottomNavigationBar;
   final Widget? title;
   final bool showAppBar;
+  final bool showBackButton;
+  final List<Widget>? actions;
 
   const GlobalScaffold({
     super.key,
@@ -16,6 +18,8 @@ class GlobalScaffold extends StatefulWidget {
     this.bottomNavigationBar,
     this.title,
     this.showAppBar = true,
+    this.showBackButton = false,
+    this.actions,
   });
 
   @override
@@ -82,9 +86,20 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
               title:
                   widget.title ??
                   SvgPicture.asset('assets/logo.svg', height: 30),
+              leading: widget.showBackButton
+                  ? IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                    )
+                  : null,
               centerTitle: false,
               automaticallyImplyLeading: false,
               actions: [
+                if (widget.actions != null) ...widget.actions!,
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(

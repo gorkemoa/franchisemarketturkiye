@@ -42,11 +42,15 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
         final category = _viewModel.category;
 
         return GlobalScaffold(
+          showBackButton: true,
           title: SvgPicture.asset(
             'assets/logo.svg',
             height: 30,
             placeholderBuilder: (context) => const Text('FRANCHISE MARKET'),
           ),
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          ],
           body: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo.metrics.pixels >=
@@ -104,7 +108,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Text(
-                        'ANA SAYFA',
+                        'KATEGORİLER',
                         style: TextStyle(
                           fontSize: 12,
                           color: AppTheme.textSecondary,
@@ -118,7 +122,7 @@ class _CategoryDetailViewState extends State<CategoryDetailView> {
                       color: AppTheme.textSecondary,
                     ),
                     Text(
-                      category.name.toUpperCase(),
+                      category.name.replaceAll('i', 'İ').toUpperCase(),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.primaryColor,

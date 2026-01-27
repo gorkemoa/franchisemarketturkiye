@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/viewmodels/contact_view_model.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 
 class ContactView extends StatefulWidget {
   const ContactView({super.key});
@@ -20,14 +21,16 @@ class _ContactViewState extends State<ContactView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('İletişim'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
+    return GlobalScaffold(
+      showBackButton: true,
+      title: const Text(
+        'İletişim',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          fontFamily: 'BioSans',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
