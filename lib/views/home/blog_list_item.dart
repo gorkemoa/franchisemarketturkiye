@@ -75,6 +75,7 @@ class BlogListItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.titleLarge?.copyWith(
                       fontSize: 14,
+                      fontFamily: 'BioSans',
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                     ),

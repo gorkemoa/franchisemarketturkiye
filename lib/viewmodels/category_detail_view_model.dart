@@ -23,7 +23,22 @@ class CategoryDetailViewModel extends ChangeNotifier {
   Category? get category => _category;
 
   List<Blog> _blogs = [];
-  List<Blog> get blogs => _blogs;
+  String _searchQuery = '';
+
+  List<Blog> get blogs {
+    if (_searchQuery.isEmpty) return _blogs;
+    return _blogs.where((blog) {
+      final title = blog.title.toLowerCase();
+      final description = blog.description.toLowerCase();
+      final query = _searchQuery.toLowerCase();
+      return title.contains(query) || description.contains(query);
+    }).toList();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

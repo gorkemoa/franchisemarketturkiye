@@ -16,56 +16,255 @@ class BlogDetailView extends StatefulWidget {
   State<BlogDetailView> createState() => _BlogDetailViewState();
 }
 
-class _BlogDetailViewState extends State<BlogDetailView> {
+class _BlogDetailViewState extends State<BlogDetailView>
+    with SingleTickerProviderStateMixin {
   late final BlogDetailViewModel _viewModel;
+  late final AnimationController _searchAnimationController;
+  late final Animation<double> _searchHeightAnimation;
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _isSearchVisible = false;
+  int _currentMatchIndex = 0;
+  List<int> _matchPositions = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _viewModel = BlogDetailViewModel(blogId: widget.blogId);
     _viewModel.init();
+
+    _searchAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _searchHeightAnimation = CurvedAnimation(
+      parent: _searchAnimationController,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchAnimationController.dispose();
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearchVisible = !_isSearchVisible;
+      if (_isSearchVisible) {
+        _searchAnimationController.forward();
+      } else {
+        _searchAnimationController.reverse();
+        _searchController.clear();
+        _searchQuery = '';
+        _matchPositions = [];
+        _currentMatchIndex = 0;
+      }
+    });
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+      _currentMatchIndex = 0;
+      _updateMatchPositions();
+    });
+  }
+
+  void _updateMatchPositions() {
+    if (_searchQuery.isEmpty || _viewModel.blog == null) {
+      _matchPositions = [];
+      return;
+    }
+
+    final content = _viewModel.blog!.description.toLowerCase();
+    final query = _searchQuery.toLowerCase();
+    _matchPositions = [];
+    int index = content.indexOf(query);
+    while (index != -1) {
+      _matchPositions.add(index);
+      index = content.indexOf(query, index + 1);
+    }
+
+    if (_matchPositions.isNotEmpty) {
+      _currentMatchIndex = 1;
+      _scrollToMatch();
+    }
+  }
+
+  void _nextMatch() {
+    if (_matchPositions.isEmpty) return;
+    setState(() {
+      _currentMatchIndex = (_currentMatchIndex % _matchPositions.length) + 1;
+      _scrollToMatch();
+    });
+  }
+
+  void _previousMatch() {
+    if (_matchPositions.isEmpty) return;
+    setState(() {
+      _currentMatchIndex =
+          (_currentMatchIndex - 2 + _matchPositions.length) %
+              _matchPositions.length +
+          1;
+      _scrollToMatch();
+    });
+  }
+
+  void _scrollToMatch() {
+    if (_matchPositions.isEmpty || _currentMatchIndex == 0) return;
+
+    // Simple estimation of scroll position based on character index
+    final content = _viewModel.blog!.description;
+    final position = _matchPositions[_currentMatchIndex - 1];
+    final ratio = position / content.length;
+
+    // Wait for frame to ensure content is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        // Adjust the ratio a bit because of header, images etc.
+        // This is an estimation since we don't have exact widget positions
+        _scrollController.animateTo(
+          maxScroll * ratio + 100, // +100 to offset header/image roughly
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  String _getHighlightedHtml(String html) {
+    if (_searchQuery.isEmpty) return html;
+
+    // Filter to only match text outside of HTML tags
+    final escapedQuery = RegExp.escape(_searchQuery);
+    final regex = RegExp('(?![^<>]*>)$escapedQuery', caseSensitive: false);
+
+    int count = 0;
+    return html.splitMapJoin(
+      regex,
+      onMatch: (m) {
+        count++;
+        final isCurrent = count == _currentMatchIndex;
+        // Current match is gold, others are bright yellow
+        final color = isCurrent ? '#FFD700' : '#FFFF00';
+        return '<mark id="match-$count" style="background-color: $color; color: black; padding: 0 2px; border-radius: 2px; font-weight: bold;">${m.group(0)}</mark>';
+      },
+      onNonMatch: (n) => n,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final blog = _viewModel.blog;
-
-    return GlobalScaffold(
-      showBackButton: true,
-      title: blog != null
-          ? Text(
-              blog.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, child) {
+        return GlobalScaffold(
+          showBackButton: true,
+          actions: [
+            IconButton(
+              onPressed: _toggleSearch,
+              icon: Icon(
+                _isSearchVisible ? Icons.close : Icons.search,
                 color: Colors.black,
               ),
-            )
-          : null,
-      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, child) {
-          if (_viewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primaryColor),
-            );
-          }
-
-          if (_viewModel.errorMessage != null) {
-            return _buildErrorWidget();
-          }
-
-          if (_viewModel.blog == null) {
-            return const Center(child: Text('Blog bulunamadı'));
-          }
-
-          return _buildContent(_viewModel.blog!);
-        },
-      ),
+            ),
+          ],
+          body: Column(
+            children: [
+              SizeTransition(
+                sizeFactor: _searchHeightAnimation,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        offset: const Offset(0, 4),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'Arama yapın...',
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (_matchPositions.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '$_currentMatchIndex/${_matchPositions.length}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: _previousMatch,
+                          icon: const Icon(Icons.keyboard_arrow_up),
+                        ),
+                        IconButton(
+                          onPressed: _nextMatch,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(child: _buildBody()),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  Widget _buildBody() {
+    if (_viewModel.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppTheme.primaryColor),
+      );
+    }
+
+    if (_viewModel.errorMessage != null) {
+      return _buildErrorWidget();
+    }
+
+    if (_viewModel.blog == null) {
+      return const Center(child: Text('Blog bulunamadı'));
+    }
+
+    return _buildContent(_viewModel.blog!);
   }
 
   Widget _buildErrorWidget() {
@@ -106,6 +305,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
 
   Widget _buildContent(Blog blog) {
     return SingleChildScrollView(
+      controller: _scrollController,
       physics: const BouncingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +401,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
 
                 // 🌐 HTML RICH CONTENT
                 HtmlWidget(
-                  blog.description,
+                  _getHighlightedHtml(blog.description),
                   onTapUrl: (url) async {
                     if (await canLaunchUrl(Uri.parse(url))) {
                       await launchUrl(Uri.parse(url));
