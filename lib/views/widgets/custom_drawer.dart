@@ -79,12 +79,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
           ? AppBar(
               title:
                   widget.title ??
-                  SvgPicture.asset(
-                    'assets/logo.svg',
-                    height: 30,
-                    placeholderBuilder: (context) =>
-                        const Text('FRANCHISE MARKET'),
-                  ),
+                  SvgPicture.asset('assets/logo.svg', height: 30),
               centerTitle: false,
               automaticallyImplyLeading: false,
               actions: [
@@ -135,6 +130,11 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
     return AnimatedBuilder(
       animation: _menuController,
       builder: (context, child) {
+        final color = Color.lerp(
+          Colors.black,
+          Colors.red,
+          _menuController.value,
+        );
         return SizedBox(
           width: 24,
           height: 24,
@@ -149,7 +149,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
                     width: 20,
                     height: 2,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: color,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -168,7 +168,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
                       width: 14 + (6 * _menuController.value),
                       height: 2,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: color,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -351,7 +351,7 @@ class CustomDrawer extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Image.asset(
-              'assets/FRANCHISE-WB-31-2.jpg',
+              'assets/hamburger_nav_icons/image.png',
               width: double.infinity,
               height: 160, // Match image aspect better
               fit: BoxFit.cover,
@@ -375,11 +375,12 @@ class CustomDrawer extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    horizontal: 16,
+                    vertical: 12,
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.white, width: 1.5),
+                    color: Colors.white.withOpacity(0.2),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
