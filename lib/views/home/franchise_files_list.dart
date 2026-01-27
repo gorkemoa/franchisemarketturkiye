@@ -52,26 +52,22 @@ class FranchiseFilesList extends StatelessWidget {
         // List
         Column(
           children: [
-            _buildItem(context, 'Kebo', 'assets/kebo.png'),
+            _buildItem(context, 'Kebo'),
             const SizedBox(height: 24),
-            _buildItem(context, 'Öküz Burger', 'assets/okuz_burger.png'),
+            _buildItem(context, 'Öküz Burger'),
             const SizedBox(height: 24),
-            _buildItem(context, 'She Accessories', 'assets/she.png'),
+            _buildItem(context, 'She Accessories'),
             const SizedBox(height: 24),
-            _buildItem(context, 'ÇÖPS', 'assets/cops.png'),
+            _buildItem(context, 'ÇÖPS'),
             const SizedBox(height: 24),
-            _buildItem(
-              context,
-              'John Filippo Pizza',
-              'assets/john_filippo.png',
-            ),
+            _buildItem(context, 'John Filippo Pizza'),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildItem(BuildContext context, String title, String imagePath) {
+  Widget _buildItem(BuildContext context, String title) {
     return Row(
       children: [
         // Logo Placeholder
@@ -82,25 +78,7 @@ class FranchiseFilesList extends StatelessWidget {
             color: const Color(0xFFF9F9F9),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Text(
-                    title[0],
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          child: ClipRRect(borderRadius: BorderRadius.circular(4)),
         ),
         const SizedBox(width: 16),
         // Title
