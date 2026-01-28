@@ -203,4 +203,45 @@ class ApiClient {
       return ApiResult.failure('Network Error: $e');
     }
   }
+
+  Future<ApiResult<List<int>>> downloadFile(
+    String url, {
+    required Function(double progress) onProgress,
+    String? token,
+  }) async {
+    Logger.logRequest('DOWNLOAD', url);
+    try {
+      final request = http.Request('GET', Uri.parse(url));
+      request.headers['Accept'] = 'application/json';
+      request.headers['X-API-KEY'] = ApiConstants.apiKey;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final streamedResponse = await _client.send(request);
+      final totalBytes = streamedResponse.contentLength ?? 0;
+      int receivedBytes = 0;
+      final List<int> bytes = [];
+
+      await for (var chunk in streamedResponse.stream) {
+        bytes.addAll(chunk);
+        receivedBytes += chunk.length;
+        if (totalBytes > 0) {
+          onProgress(receivedBytes / totalBytes);
+        }
+      }
+
+      if (streamedResponse.statusCode >= 200 &&
+          streamedResponse.statusCode < 300) {
+        return ApiResult.success(bytes);
+      } else {
+        return ApiResult.failure(
+          'Download failed with status: ${streamedResponse.statusCode}',
+        );
+      }
+    } catch (e) {
+      Logger.logError(url, e.toString());
+      return ApiResult.failure('Download Error: $e');
+    }
+  }
 }

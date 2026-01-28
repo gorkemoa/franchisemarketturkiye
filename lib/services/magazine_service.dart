@@ -51,4 +51,11 @@ class MagazineService {
       return ApiResult.failure(result.error ?? 'Unknown Error');
     }
   }
+
+  Future<ApiResult<List<int>>> downloadMagazine(
+    String url, {
+    required Function(double progress) onProgress,
+  }) async {
+    return await _apiClient.downloadFile(url, onProgress: onProgress);
+  }
 }
