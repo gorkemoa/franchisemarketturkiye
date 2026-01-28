@@ -102,6 +102,35 @@ class AuthService {
     }
   }
 
+  Future<ApiResult<void>> updateProfile({
+    required String firstname,
+    required String lastname,
+    required String phone,
+    required int newsletter,
+  }) async {
+    final token = await getToken();
+    if (token == null) {
+      return ApiResult.failure('Not authenticated');
+    }
+
+    final result = await _apiClient.put(
+      ApiConstants.updateProfile,
+      token: token,
+      body: {
+        'firstname': firstname,
+        'lastname': lastname,
+        'phone': phone,
+        'newsletter': newsletter,
+      },
+    );
+
+    if (result.isSuccess) {
+      return ApiResult.success(null);
+    } else {
+      return ApiResult.failure(result.error ?? 'Profil güncelleme başarısız');
+    }
+  }
+
   Future<ApiResult<void>> updatePassword({
     required String currentPassword,
     required String newPassword,

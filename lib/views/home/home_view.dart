@@ -16,8 +16,10 @@ import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 import 'package:franchisemarketturkiye/views/author/authors_view.dart';
+import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -35,6 +37,7 @@ class _HomeViewState extends State<HomeView> {
 
   late final AuthorViewModel _authorsViewModel;
   late final CategoriesViewModel _categoriesViewModel;
+  late final FranchisesViewModel _franchisesViewModel;
 
   @override
   void initState() {
@@ -42,10 +45,12 @@ class _HomeViewState extends State<HomeView> {
     _viewModel = HomeViewModel();
     _authorsViewModel = AuthorViewModel();
     _categoriesViewModel = CategoriesViewModel();
+    _franchisesViewModel = FranchisesViewModel();
 
     _viewModel.init();
     _authorsViewModel.fetchAuthors();
     _categoriesViewModel.init();
+    _franchisesViewModel.fetchFranchises();
 
     _updatePages();
     _checkLoginStatus();
@@ -77,6 +82,11 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       currentIndex: _currentIndex,
+      onIndexChanged: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
       showSearch: _currentIndex == 0 || _currentIndex == 3,
       onSearchChanged: (query) {
         if (_currentIndex == 0) {
@@ -175,7 +185,24 @@ class _HomeViewState extends State<HomeView> {
                 // Dynamic Slider Moved to Bottom
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: FranchiseFilesList(),
+                  child: ListenableBuilder(
+                    listenable: _franchisesViewModel,
+                    builder: (context, child) {
+                      return FranchiseFilesList(
+                        franchises: _franchisesViewModel.franchises,
+                        onListAll: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FranchisesView(
+                                viewModel: _franchisesViewModel,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Padding(

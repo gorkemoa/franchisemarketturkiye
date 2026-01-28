@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/models/franchise.dart';
+import 'package:franchisemarketturkiye/views/franchise/franchise_detail_view.dart';
 
 class FranchiseFilesList extends StatelessWidget {
-  const FranchiseFilesList({super.key});
+  final List<Franchise> franchises;
+  final VoidCallback onListAll;
+
+  const FranchiseFilesList({
+    super.key,
+    required this.franchises,
+    required this.onListAll,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (franchises.isEmpty) return const SizedBox.shrink();
+
     return Column(
       children: [
         // Header
@@ -31,9 +42,7 @@ class FranchiseFilesList extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to full list
-                },
+                onTap: onListAll,
                 child: Text(
                   'Tümünü Listele',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -51,49 +60,62 @@ class FranchiseFilesList extends StatelessWidget {
         const SizedBox(height: 16),
         // List
         Column(
-          children: [
-            _buildItem(context, 'Kebo'),
-            const SizedBox(height: 24),
-            _buildItem(context, 'Öküz Burger'),
-            const SizedBox(height: 24),
-            _buildItem(context, 'She Accessories'),
-            const SizedBox(height: 24),
-            _buildItem(context, 'ÇÖPS'),
-            const SizedBox(height: 24),
-            _buildItem(context, 'John Filippo Pizza'),
-          ],
+          children: franchises.take(5).map((franchise) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: _buildItem(context, franchise),
+            );
+          }).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildItem(BuildContext context, String title) {
-    return Row(
-      children: [
-        // Logo Placeholder
-        Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF9F9F9),
-            borderRadius: BorderRadius.circular(4),
+  Widget _buildItem(BuildContext context, Franchise franchise) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                FranchiseDetailView(franchiseId: franchise.id),
           ),
-          child: ClipRRect(borderRadius: BorderRadius.circular(4)),
-        ),
-        const SizedBox(width: 16),
-        // Title
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppTheme.textPrimary,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
+        );
+      },
+      child: Row(
+        children: [
+          // Logo
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F9F9),
+              border: Border.all(color: AppTheme.borderColor),
+            ),
+            child: ClipRRect(
+              child: Image.network(
+                franchise.logoUrl,
+                fit: BoxFit.fill,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.business, size: 16, color: Colors.grey),
+              ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 16),
+          // Title
+          Expanded(
+            child: Text(
+              franchise.title,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppTheme.textPrimary,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

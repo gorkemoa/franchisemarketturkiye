@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/login_view_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -231,6 +232,8 @@ class _LoginViewState extends State<LoginView> {
                     controller: _viewModel.phoneController,
                     hintText: '05xx xxx xx xx',
                     keyboardType: TextInputType.phone,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    maxLength: 16,
                   ),
                 ],
               ),
@@ -397,13 +400,18 @@ class _LoginViewState extends State<LoginView> {
     required String hintText,
     TextInputType? keyboardType,
     bool obscureText = false,
+    List<TextInputFormatter>? inputFormatters,
+    int? maxLength,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       decoration: InputDecoration(
         hintText: hintText,
+        counterText: '',
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
         filled: true,
         fillColor: Colors.white,

@@ -100,6 +100,22 @@ class _AuthorsViewState extends State<AuthorsView> {
                     ),
                   ),
                 )
+              else if (_viewModel.authors.isEmpty)
+                const SliverFillRemaining(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text(
+                        'Aradığınız kriterlere uygun yazar bulunamadı.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontFamily: 'BioSans',
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               else
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -176,7 +192,7 @@ class AuthorCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                author.fullname,
+                author.fullname.replaceAll('i', 'İ').toUpperCase(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

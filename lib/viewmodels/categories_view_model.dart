@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/models/category.dart';
 import 'package:franchisemarketturkiye/services/category_service.dart';
+import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class CategoriesViewModel extends ChangeNotifier {
   final CategoryService _categoryService = CategoryService();
@@ -14,7 +15,7 @@ class CategoriesViewModel extends ChangeNotifier {
   List<Category> get categories {
     if (_searchQuery.isEmpty) return _categories;
     return _categories
-        .where((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((c) => c.name.turkishContains(_searchQuery))
         .toList();
   }
 

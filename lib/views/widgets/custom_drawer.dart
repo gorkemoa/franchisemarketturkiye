@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
+import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
+import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 
 class GlobalScaffold extends StatefulWidget {
@@ -14,6 +16,8 @@ class GlobalScaffold extends StatefulWidget {
   final int? currentIndex;
   final bool showSearch;
   final ValueChanged<String>? onSearchChanged;
+  final ValueChanged<int>? onIndexChanged;
+  final Widget? endDrawer;
 
   const GlobalScaffold({
     super.key,
@@ -26,6 +30,8 @@ class GlobalScaffold extends StatefulWidget {
     this.currentIndex,
     this.showSearch = false,
     this.onSearchChanged,
+    this.onIndexChanged,
+    this.endDrawer,
   });
 
   @override
@@ -184,9 +190,17 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
                   onChanged: (value) {
                     widget.onSearchChanged?.call(value);
                   },
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Arama yapın...',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontFamily: 'Inter',
+                    ),
                     prefixIcon: const Icon(Icons.search, size: 20),
                     filled: true,
                     fillColor: Colors.grey[100],
@@ -224,9 +238,15 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
                         ),
                         SlideTransition(
                           position: _drawerOffset,
-                          child: const Align(
+                          child: Align(
                             alignment: Alignment.topCenter,
-                            child: CustomDrawer(),
+                            child: CustomDrawer(
+                              onIndexChanged: (index) {
+                                _toggleMenu();
+                                widget.onIndexChanged?.call(index);
+                              },
+                              currentIndex: widget.currentIndex,
+                            ),
                           ),
                         ),
                       ],
@@ -238,6 +258,7 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
         ],
       ),
       bottomNavigationBar: widget.bottomNavigationBar,
+      endDrawer: widget.endDrawer,
     );
   }
 
@@ -299,7 +320,10 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
 }
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key});
+  final ValueChanged<int>? onIndexChanged;
+  final int? currentIndex;
+
+  const CustomDrawer({super.key, this.onIndexChanged, this.currentIndex});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -345,21 +369,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     _buildSectionTitle('MENÜ'),
                     _buildMenuItem(
                       'FRANCHISE DOSYASI',
-                      isSelected: true,
                       onTap: () {
-                        // TODO: Implement Franchise Dosyasi navigation
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FranchisesView(
+                              viewModel: FranchisesViewModel(),
+                            ),
+                          ),
+                        );
                       },
                     ),
                     _buildMenuItem(
                       'YAZARLAR',
+                      isSelected: widget.currentIndex == 0,
                       onTap: () {
-                        // In a real app we might want to use a callback to HomeView
-                        // or just push/pop. For now, let's just push it as a new view
-                        // if we want it to be a standalone page,
-                        // but since it's already in the bottom bar,
-                        // maybe the drawer should just close and switch tab?
-                        // However, CustomDrawer doesn't have access to HomeView's state easily.
-                        // I'll push it as a standalone page for now or just add the item.
+                        widget.onIndexChanged?.call(0);
                       },
                     ),
                     _buildMenuItem('DERGİLER'),

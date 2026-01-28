@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/models/author.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/services/author_service.dart';
+import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class AuthorDetailViewModel extends ChangeNotifier {
   final AuthorService _authorService;
@@ -18,7 +19,20 @@ class AuthorDetailViewModel extends ChangeNotifier {
   Author? get author => _author;
 
   List<Blog> _blogs = [];
-  List<Blog> get blogs => _blogs;
+  String _searchQuery = '';
+
+  List<Blog> get blogs {
+    if (_searchQuery.isEmpty) return _blogs;
+    return _blogs.where((blog) {
+      return blog.title.turkishContains(_searchQuery) ||
+          blog.description.turkishContains(_searchQuery);
+    }).toList();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

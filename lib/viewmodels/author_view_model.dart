@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/models/author.dart';
 import 'package:franchisemarketturkiye/services/author_service.dart';
+import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class AuthorViewModel extends ChangeNotifier {
   final AuthorService _authorService;
@@ -14,9 +15,7 @@ class AuthorViewModel extends ChangeNotifier {
   List<Author> get authors {
     if (_searchQuery.isEmpty) return _authors;
     return _authors
-        .where(
-          (a) => a.fullname.toLowerCase().contains(_searchQuery.toLowerCase()),
-        )
+        .where((a) => a.fullname.turkishContains(_searchQuery))
         .toList();
   }
 

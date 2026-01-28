@@ -23,6 +23,10 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController passwordConfirmController =
       TextEditingController();
 
+  LoginViewModel() {
+    phoneController.text = '0';
+  }
+
   bool _newsletter = false;
   bool get newsletter => _newsletter;
 

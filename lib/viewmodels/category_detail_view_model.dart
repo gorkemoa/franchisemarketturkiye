@@ -3,6 +3,7 @@ import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/models/category.dart';
 import 'package:franchisemarketturkiye/services/blog_service.dart';
 import 'package:franchisemarketturkiye/services/category_service.dart';
+import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class CategoryDetailViewModel extends ChangeNotifier {
   final CategoryService _categoryService;
@@ -28,10 +29,8 @@ class CategoryDetailViewModel extends ChangeNotifier {
   List<Blog> get blogs {
     if (_searchQuery.isEmpty) return _blogs;
     return _blogs.where((blog) {
-      final title = blog.title.toLowerCase();
-      final description = blog.description.toLowerCase();
-      final query = _searchQuery.toLowerCase();
-      return title.contains(query) || description.contains(query);
+      return blog.title.turkishContains(_searchQuery) ||
+          blog.description.turkishContains(_searchQuery);
     }).toList();
   }
 

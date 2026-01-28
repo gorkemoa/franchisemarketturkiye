@@ -55,6 +55,10 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
 
         return GlobalScaffold(
           showBackButton: true,
+          showSearch: true,
+          onSearchChanged: (value) {
+            _viewModel.setSearchQuery(value);
+          },
           body: RefreshIndicator(
             onRefresh: _viewModel.fetchAuthorBlogs,
             child: CustomScrollView(
@@ -80,6 +84,22 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
                             child: const Text('Tekrar Dene'),
                           ),
                         ],
+                      ),
+                    ),
+                  )
+                else if (_viewModel.blogs.isEmpty)
+                  const SliverFillRemaining(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Text(
+                          'Yazara ait aradığınız kriterlere uygun yazı bulunamadı.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontFamily: 'BioSans',
+                          ),
+                        ),
                       ),
                     ),
                   )
@@ -171,7 +191,7 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                '$author.fullname'.replaceAll('i', 'İ').toUpperCase(),
+                author.fullname.replaceAll('i', 'İ').toUpperCase(),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,

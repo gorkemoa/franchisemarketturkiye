@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/viewmodels/contact_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
 
@@ -42,6 +43,8 @@ class ContactPanel extends StatelessWidget {
                 label: 'TELEFON *',
                 controller: viewModel.phoneController,
                 keyboardType: TextInputType.phone,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 16,
               ),
               const SizedBox(height: 16),
               ProfileTextField(

@@ -44,7 +44,9 @@ class ProfileViewModel extends ChangeNotifier {
           if (_customer != null) {
             firstNameController.text = _customer!.firstname ?? '';
             lastNameController.text = _customer!.lastname ?? '';
-            phoneController.text = _customer!.phone ?? '';
+            phoneController.text = (_customer!.phone?.isNotEmpty == true)
+                ? _customer!.phone!
+                : '0';
             emailController.text = _customer!.email ?? '';
             _newsletter = _customer!.newsletter == "1";
           }
@@ -62,11 +64,33 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProfile() async {
-    // Implement update logic here
-    // For now, just show a simulation or print
-    await Future.delayed(const Duration(seconds: 1));
+  Future<bool> updateProfile() async {
+    _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
+
+    try {
+      final result = await _authService.updateProfile(
+        firstname: firstNameController.text.trim(),
+        lastname: lastNameController.text.trim(),
+        phone: phoneController.text.trim(),
+        newsletter: _newsletter ? 1 : 0,
+      );
+
+      if (result.isSuccess) {
+        await loadProfile(); // Refresh profile data
+        return true;
+      } else {
+        _errorMessage = result.error;
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = 'Beklenmedik bir hata oluştu: $e';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> logout() async {

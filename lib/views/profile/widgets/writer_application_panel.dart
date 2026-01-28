@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/viewmodels/writer_application_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
 
@@ -55,6 +56,8 @@ class WriterApplicationPanel extends StatelessWidget {
                 label: 'TELEFON *',
                 controller: viewModel.phoneController,
                 keyboardType: TextInputType.phone,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 16,
               ),
               const SizedBox(height: 16),
               ProfileTextField(

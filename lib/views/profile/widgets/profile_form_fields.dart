@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProfileTextField extends StatelessWidget {
   final String label;
@@ -7,6 +8,9 @@ class ProfileTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final int maxLines;
+  final bool enabled;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   const ProfileTextField({
     super.key,
@@ -15,6 +19,9 @@ class ProfileTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.maxLines = 1,
+    this.enabled = true,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -34,7 +41,7 @@ class ProfileTextField extends StatelessWidget {
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: enabled ? Colors.white : Colors.grey.shade100,
             border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(1),
           ),
@@ -43,10 +50,17 @@ class ProfileTextField extends StatelessWidget {
             keyboardType: keyboardType,
             obscureText: obscureText,
             maxLines: maxLines,
-            style: const TextStyle(fontSize: 14),
+            enabled: enabled,
+            inputFormatters: inputFormatters,
+            maxLength: maxLength,
+            style: TextStyle(
+              fontSize: 14,
+              color: enabled ? Colors.black87 : Colors.grey.shade500,
+            ),
             cursorColor: const Color(0xFFD50000),
             decoration: const InputDecoration(
               border: InputBorder.none,
+              counterText: '',
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: 12,

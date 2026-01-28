@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/viewmodels/profile_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
 
@@ -45,12 +46,15 @@ class AccountInfoPanel extends StatelessWidget {
                 label: 'TELEFON',
                 controller: viewModel.phoneController,
                 keyboardType: TextInputType.phone,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 16,
               ),
               const SizedBox(height: 16),
               ProfileTextField(
                 label: 'E-POSTA',
                 controller: viewModel.emailController,
                 keyboardType: TextInputType.emailAddress,
+                enabled: false,
               ),
               const SizedBox(height: 16),
               Row(
@@ -77,21 +81,48 @@ class AccountInfoPanel extends StatelessWidget {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement update
-                  },
+                  onPressed: viewModel.isLoading
+                      ? null
+                      : () async {
+                          final success = await viewModel.updateProfile();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  success
+                                      ? 'Profil başarıyla güncellendi'
+                                      : viewModel.errorMessage ??
+                                            'Bir hata oluştu',
+                                ),
+                                backgroundColor: success
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD50000),
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Text(
-                    'GÜNCELLE',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  child: viewModel.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'GÜNCELLE',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
               const SizedBox(height: 24),
