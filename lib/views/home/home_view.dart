@@ -16,10 +16,12 @@ import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 import 'package:franchisemarketturkiye/views/author/authors_view.dart';
-import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
+import 'package:franchisemarketturkiye/views/search/search_view.dart';
+import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -38,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
   late final AuthorViewModel _authorsViewModel;
   late final CategoriesViewModel _categoriesViewModel;
   late final FranchisesViewModel _franchisesViewModel;
+  late final SearchViewModel _searchViewModel;
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _HomeViewState extends State<HomeView> {
     _authorsViewModel = AuthorViewModel();
     _categoriesViewModel = CategoriesViewModel();
     _franchisesViewModel = FranchisesViewModel();
+    _searchViewModel = SearchViewModel();
 
     _viewModel.init();
     _authorsViewModel.fetchAuthors();
@@ -69,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
   void _updatePages() {
     _pages = [
       AuthorsView(viewModel: _authorsViewModel),
-      const Center(child: Text('Arama')),
+      SearchView(viewModel: _searchViewModel),
       _buildHomeContent(),
       CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
@@ -87,10 +91,13 @@ class _HomeViewState extends State<HomeView> {
           _currentIndex = index;
         });
       },
-      showSearch: _currentIndex == 0 || _currentIndex == 3,
+      showSearch:
+          _currentIndex == 0 || _currentIndex == 1 || _currentIndex == 3,
       onSearchChanged: (query) {
         if (_currentIndex == 0) {
           _authorsViewModel.setSearchQuery(query);
+        } else if (_currentIndex == 1) {
+          _searchViewModel.onSearchChanged(query);
         } else if (_currentIndex == 3) {
           _categoriesViewModel.setSearchQuery(query);
         }

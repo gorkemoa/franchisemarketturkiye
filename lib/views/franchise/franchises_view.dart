@@ -31,12 +31,14 @@ class _FranchisesViewState extends State<FranchisesView> {
     _searchController = TextEditingController(
       text: widget.viewModel.searchQuery,
     );
-    if (widget.viewModel.franchises.isEmpty) {
-      widget.viewModel.fetchFranchises();
-    }
-    if (widget.viewModel.categories.isEmpty) {
-      widget.viewModel.fetchCategories();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.viewModel.franchises.isEmpty) {
+        widget.viewModel.fetchFranchises();
+      }
+      if (widget.viewModel.categories.isEmpty) {
+        widget.viewModel.fetchCategories();
+      }
+    });
     _scrollController.addListener(_onScroll);
   }
 

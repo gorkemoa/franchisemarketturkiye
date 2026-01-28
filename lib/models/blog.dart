@@ -236,3 +236,66 @@ class BlogMeta {
     );
   }
 }
+
+class BlogSearchResponse {
+  final bool success;
+  final BlogSearchData data;
+  final BlogSearchMeta meta;
+
+  BlogSearchResponse({
+    required this.success,
+    required this.data,
+    required this.meta,
+  });
+
+  factory BlogSearchResponse.fromJson(Map<String, dynamic> json) {
+    return BlogSearchResponse(
+      success: json['success'] as bool? ?? false,
+      data: BlogSearchData.fromJson(json['data'] ?? {}),
+      meta: BlogSearchMeta.fromJson(json['meta'] ?? {}),
+    );
+  }
+}
+
+class BlogSearchData {
+  final List<Blog> items;
+  final int count;
+  final int total;
+  final bool hasMore;
+
+  BlogSearchData({
+    required this.items,
+    required this.count,
+    required this.total,
+    required this.hasMore,
+  });
+
+  factory BlogSearchData.fromJson(Map<String, dynamic> json) {
+    return BlogSearchData(
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((item) => Blog.fromJson(item))
+              .toList() ??
+          [],
+      count: json['count'] as int? ?? 0,
+      total: json['total'] as int? ?? 0,
+      hasMore: json['has_more'] as bool? ?? false,
+    );
+  }
+}
+
+class BlogSearchMeta {
+  final String q;
+  final int limit;
+  final int offset;
+
+  BlogSearchMeta({required this.q, required this.limit, required this.offset});
+
+  factory BlogSearchMeta.fromJson(Map<String, dynamic> json) {
+    return BlogSearchMeta(
+      q: json['q'] as String? ?? '',
+      limit: json['limit'] as int? ?? 10,
+      offset: json['offset'] as int? ?? 0,
+    );
+  }
+}

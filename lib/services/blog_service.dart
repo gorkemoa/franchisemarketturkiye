@@ -148,4 +148,31 @@ class BlogService {
       return ApiResult.failure(result.error ?? 'Unknown Error');
     }
   }
+
+  Future<ApiResult<BlogSearchResponse>> searchBlogs(
+    String query, {
+    int limit = AppConstants.defaultLimit,
+    int offset = 0,
+  }) async {
+    final uri = Uri.parse(ApiConstants.searchBlogs).replace(
+      queryParameters: {
+        'q': query,
+        'limit': limit.toString(),
+        'offset': offset.toString(),
+      },
+    );
+
+    final result = await _apiClient.get(uri.toString());
+
+    if (result.isSuccess && result.data != null) {
+      try {
+        final response = BlogSearchResponse.fromJson(result.data!);
+        return ApiResult.success(response);
+      } catch (e) {
+        return ApiResult.failure('Parsing Error: $e');
+      }
+    } else {
+      return ApiResult.failure(result.error ?? 'Unknown Error');
+    }
+  }
 }

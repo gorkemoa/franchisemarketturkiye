@@ -29,4 +29,5 @@ class ApiConstants {
   static const String franchises = '$baseUrl/api/v1/franchises';
   static const String franchiseCategories =
       '$baseUrl/api/v1/franchise-categories';
+  static const String searchBlogs = '$baseUrl/api/v1/blogs/search';
 }
