@@ -1,65 +1,41 @@
 import 'package:flutter/material.dart';
 
-class FillingLogoLoader extends StatefulWidget {
+class FillingLogoLoader extends StatelessWidget {
   final double size;
-  const FillingLogoLoader({super.key, this.size = 100.0});
+  final double progress; // 0.0 to 1.0
 
-  @override
-  State<FillingLogoLoader> createState() => _FillingLogoLoaderState();
-}
-
-class _FillingLogoLoaderState extends State<FillingLogoLoader>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  const FillingLogoLoader({
+    super.key,
+    this.size = 100.0,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: widget.size,
-      height: widget.size,
+      width: size,
+      height: size,
       child: Stack(
         children: [
           // Background: Pale/Ghost version
           Opacity(
             opacity: 0.3,
             child: Image.asset(
-              'assets/FranchiseIcon.png', // Assuming this is the correct asset path per user request
-              width: widget.size,
-              height: widget.size,
+              'assets/FranchiseIcon.png',
+              width: size,
+              height: size,
               fit: BoxFit.contain,
-              // color: Colors.grey, // Removed to show original color but pale
-              // colorBlendMode: BlendMode.srcIn,
             ),
           ),
           // Foreground: Filling version
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return ClipRect(
-                clipper: _FillingClipper(_controller.value),
-                child: Image.asset(
-                  'assets/FranchiseIcon.png',
-                  width: widget.size,
-                  height: widget.size,
-                  fit: BoxFit.contain,
-                ),
-              );
-            },
+          ClipRect(
+            clipper: _FillingClipper(progress),
+            child: Image.asset(
+              'assets/FranchiseIcon.png',
+              width: size,
+              height: size,
+              fit: BoxFit.contain,
+            ),
           ),
         ],
       ),
@@ -77,7 +53,7 @@ class _FillingClipper extends CustomClipper<Rect> {
     // Fill from bottom to top
     return Rect.fromLTRB(
       0,
-      size.height * (1 - progress),
+      size.height * (1 - progress.clamp(0.0, 1.0)),
       size.width,
       size.height,
     );
