@@ -3,6 +3,7 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 
 void main() {
@@ -20,18 +21,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: true,
-      title: 'Franchise Market Türkiye',
-      theme: AppTheme.lightTheme,
-      locale: const Locale('tr', 'TR'),
-      supportedLocales: const [Locale('tr', 'TR')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: const HomeView(),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: true,
+          title: 'Franchise Market Türkiye',
+          theme: AppTheme.lightTheme,
+          locale: const Locale('tr', 'TR'),
+          supportedLocales: const [Locale('tr', 'TR')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          builder: (context, child) {
+            return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(boldText: false, textScaleFactor: 1.0),
+                child: child!,
+              ),
+            );
+          },
+          home: const HomeView(),
+        );
+      },
     );
   }
 }

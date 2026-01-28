@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/magazine.dart';
@@ -116,6 +117,25 @@ class _HomeViewState extends State<HomeView> {
           });
         },
       ),
+      floatingActionButton: Transform.translate(
+        offset: const Offset(0, 7.5),
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              _currentIndex = 2;
+            });
+          },
+          child: SizedBox(
+            width: 85,
+            height: 85,
+            child: SvgPicture.asset(
+              'assets/bottombar_icons/${_currentIndex == 2 ? 'nav_middle_sel.svg' : 'nav_middle_sef.svg'}',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: IndexedStack(index: _currentIndex, children: _pages),
     );
   }
@@ -155,25 +175,25 @@ class _HomeViewState extends State<HomeView> {
                   if (banner.id == 1 && _viewModel.magazines.isNotEmpty) {
                     return [
                       _buildMagazineHero(context, banner, _viewModel.magazines),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                     ];
                   }
                   return [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: _buildBannerItem(context, banner.imageUrl),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                   ];
                 }).toList(),
 
                 // Brand Ticker Section (Full Width)
                 const BrandTicker(),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Blog Horizontal Slider (Featured Blogs)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: SizedBox(
                     height: 380, // Reduced from 500
                     child: ListView.builder(
@@ -181,7 +201,7 @@ class _HomeViewState extends State<HomeView> {
                       itemCount: _viewModel.featuredBlogs.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: 12),
+                          padding: EdgeInsets.only(right: 12),
                           child: SizedBox(
                             width: 280, // Reduced from 320
                             child: BlogCard(
@@ -193,11 +213,11 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Dynamic Slider Moved to Bottom
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ListenableBuilder(
                     listenable: _franchisesViewModel,
                     builder: (context, child) {
@@ -217,12 +237,12 @@ class _HomeViewState extends State<HomeView> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: BlogSlider(blogs: _viewModel.sliderBlogs),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 ..._viewModel.selectedCategoryBlogs
                     .take(2)
@@ -232,16 +252,16 @@ class _HomeViewState extends State<HomeView> {
                     .expand((entry) {
                       final index = entry.key;
                       final section = Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: CategoryBlogSection(categoryBlog: entry.value),
                       );
 
                       if (index == 0) {
                         return [
                           section,
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             child: ClipRRect(
                               child: Image.asset(
                                 'assets/ads_31-22.jpg',
@@ -250,14 +270,14 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                         ];
                       }
-                      return [section, const SizedBox(height: 16)];
+                      return [section, SizedBox(height: 16)];
                     }),
                 // New Marketing Image
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
                     child: Image.asset(
                       'assets/panino-1.jpg',
@@ -266,20 +286,20 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Marketing Talks Moved to Bottom
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: MarketingTalksSection(
                     talks: _viewModel.marketingTalks,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Bottom Analysis Image
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
                     child: Image.asset(
                       'assets/analiz.jpg',
@@ -288,18 +308,18 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Contact Us Section
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ContactSection(),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Bottom Ad Image
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
                     child: Image.asset(
                       'assets/02.jpg',
@@ -308,11 +328,11 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Gymboree Image
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
                     child: Image.asset(
                       'assets/gymboree.jpg',
@@ -321,10 +341,10 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // Footer Section
-                const AppFooter(),
+                AppFooter(),
               ],
             ),
           ),
@@ -339,11 +359,10 @@ class _HomeViewState extends State<HomeView> {
     List<Magazine> magazines,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
         child: Container(
           height: 612, // Taller height to accommodate overlay
-          width: 408,
           decoration: BoxDecoration(color: AppTheme.sliderBackground),
           child: Stack(
             children: [
@@ -386,13 +405,13 @@ class _HomeViewState extends State<HomeView> {
                           child: Container(
                             width: isFirst ? 90 : 80,
                             height: isFirst ? 110 : 100,
-                            margin: const EdgeInsets.only(right: 12),
+                            margin: EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.6),
                                   blurRadius: 15,
-                                  offset: const Offset(4, 4),
+                                  offset: Offset(4, 4),
                                 ),
                               ],
                             ),

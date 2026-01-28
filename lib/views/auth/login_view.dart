@@ -188,106 +188,52 @@ class _LoginViewState extends State<LoginView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('AD *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.firstNameController,
-                    hintText: 'Adınızı Giriniz',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('SOYAD *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.lastNameController,
-                    hintText: 'Soyadınızı Giriniz',
-                  ),
-                ],
-              ),
-            ),
-          ],
+        _buildTextFieldLabel('AD *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.firstNameController,
+          hintText: 'Adınızı Giriniz',
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('TELEFON *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.phoneController,
-                    hintText: '05xx xxx xx xx',
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    maxLength: 16,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('E-POSTA *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.emailController,
-                    hintText: 'E-Posta Adresinizi Giriniz',
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                ],
-              ),
-            ),
-          ],
+        _buildTextFieldLabel('SOYAD *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.lastNameController,
+          hintText: 'Soyadınızı Giriniz',
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('ŞİFRE *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.passwordController,
-                    hintText: 'Şifrenizi Giriniz',
-                    obscureText: true,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTextFieldLabel('ŞİFRE TEKRAR *'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                    controller: _viewModel.passwordConfirmController,
-                    hintText: 'Şifrenizi Tekrar Giriniz',
-                    obscureText: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
+        _buildTextFieldLabel('TELEFON *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.phoneController,
+          hintText: '05xx xxx xx xx',
+          keyboardType: TextInputType.phone,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          maxLength: 16,
+        ),
+        const SizedBox(height: 16),
+        _buildTextFieldLabel('E-POSTA *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.emailController,
+          hintText: 'E-Posta Adresinizi Giriniz',
+          keyboardType: TextInputType.emailAddress,
+        ),
+        const SizedBox(height: 16),
+        _buildTextFieldLabel('ŞİFRE *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.passwordController,
+          hintText: 'Şifrenizi Giriniz',
+          obscureText: true,
+        ),
+        const SizedBox(height: 16),
+        _buildTextFieldLabel('ŞİFRE TEKRAR *'),
+        const SizedBox(height: 8),
+        _buildTextField(
+          controller: _viewModel.passwordConfirmController,
+          hintText: 'Şifrenizi Tekrar Giriniz',
+          obscureText: true,
         ),
         const SizedBox(height: 24),
         Row(

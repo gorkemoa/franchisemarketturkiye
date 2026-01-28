@@ -20,6 +20,8 @@ class GlobalScaffold extends StatefulWidget {
   final ValueChanged<String>? onSearchChanged;
   final ValueChanged<int>? onIndexChanged;
   final Widget? endDrawer;
+  final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
 
   const GlobalScaffold({
     super.key,
@@ -34,6 +36,8 @@ class GlobalScaffold extends StatefulWidget {
     this.onSearchChanged,
     this.onIndexChanged,
     this.endDrawer,
+    this.floatingActionButton,
+    this.floatingActionButtonLocation,
   });
 
   @override
@@ -260,6 +264,8 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
         ],
       ),
       bottomNavigationBar: widget.bottomNavigationBar,
+      floatingActionButton: widget.floatingActionButton,
+      floatingActionButtonLocation: widget.floatingActionButtonLocation,
       endDrawer: widget.endDrawer,
     );
   }

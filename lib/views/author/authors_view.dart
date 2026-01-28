@@ -123,7 +123,7 @@ class _AuthorsViewState extends State<AuthorsView> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.72,
+                          childAspectRatio: 0.686,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),

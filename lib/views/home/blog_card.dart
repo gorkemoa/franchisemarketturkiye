@@ -32,7 +32,7 @@ class BlogCard extends StatelessWidget {
           children: [
             // Image
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: ClipRRect(
                 child: Image.network(
                   blog.imageUrl,
@@ -50,7 +50,7 @@ class BlogCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -60,12 +60,12 @@ class BlogCard extends StatelessWidget {
                       if (blog.category != null &&
                           blog.category!.name != null) ...[
                         TagBadge(text: blog.category!.name!),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                       ],
                       TagBadge(text: blog.type.name ?? ''),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   // Title
                   Text(
                     blog.title,
@@ -73,7 +73,7 @@ class BlogCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   // Author row
                   Row(
                     children: [
@@ -90,21 +90,21 @@ class BlogCard extends StatelessWidget {
                           ),
                         )
                       else
-                        const Icon(Icons.person, size: 24, color: Colors.grey),
-                      const SizedBox(width: 8),
+                        Icon(Icons.person, size: 24, color: Colors.grey),
+                      SizedBox(width: 8),
                       Text(
                         blog.author.name ?? 'Yazar Bilgisi Yok',
                         style: textTheme.titleMedium,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   // Date
                   Text(
                     "${blog.dateAdded.day} ${_getMonthMap()[blog.dateAdded.month]} ${blog.dateAdded.year}",
                     style: textTheme.bodySmall,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   // Description
                   Text(
                     _stripHtml(blog.description),

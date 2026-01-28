@@ -200,7 +200,7 @@ class _BlogDetailViewState extends State<BlogDetailView>
                         child: TextField(
                           controller: _searchController,
                           onChanged: _onSearchChanged,
-                          autofocus: true,
+                          autofocus: false,
                           decoration: InputDecoration(
                             hintText: 'Arama yapın...',
                             hintStyle: TextStyle(color: Colors.grey[400]),
