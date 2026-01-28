@@ -8,8 +8,11 @@ class SearchViewModel extends ChangeNotifier {
   final BlogService _blogService = BlogService();
 
   List<Blog> _blogs = [];
+  List<Blog> _recentlyViewed = [];
+  List<Blog> _recommendedBlogs = [];
   bool _isLoading = false;
   bool _isLoadingMore = false;
+  bool _isLoadingRecommended = false;
   String? _errorMessage;
   int _offset = 0;
   bool _hasMore = false;
@@ -17,11 +20,44 @@ class SearchViewModel extends ChangeNotifier {
   Timer? _debounce;
 
   List<Blog> get blogs => _blogs;
+  List<Blog> get recentlyViewed => _recentlyViewed;
+  List<Blog> get recommendedBlogs => _recommendedBlogs;
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
+  bool get isLoadingRecommended => _isLoadingRecommended;
   String? get errorMessage => _errorMessage;
   bool get hasMore => _hasMore;
   String get searchQuery => _searchQuery;
+
+  Future<void> init() async {
+    await fetchRecommendedBlogs();
+  }
+
+  Future<void> fetchRecommendedBlogs() async {
+    _isLoadingRecommended = true;
+    notifyListeners();
+
+    // Fetch Franchise category blogs (ID: 2 based on API specs)
+    final result = await _blogService.getBlogsByCategory(2, limit: 3);
+
+    if (result.isSuccess && result.data != null) {
+      _recommendedBlogs = result.data!.data.items;
+    }
+
+    _isLoadingRecommended = false;
+    notifyListeners();
+  }
+
+  void addToRecentlyViewed(Blog blog) {
+    if (_recentlyViewed.any((element) => element.id == blog.id)) {
+      _recentlyViewed.removeWhere((element) => element.id == blog.id);
+    }
+    _recentlyViewed.insert(0, blog);
+    if (_recentlyViewed.length > 5) {
+      _recentlyViewed.removeLast();
+    }
+    notifyListeners();
+  }
 
   void onSearchChanged(String query) {
     if (_searchQuery == query) return;
@@ -95,6 +131,11 @@ class SearchViewModel extends ChangeNotifier {
     _offset = 0;
     _hasMore = false;
     _errorMessage = null;
+    notifyListeners();
+  }
+
+  void clearRecentlyViewed() {
+    _recentlyViewed = [];
     notifyListeners();
   }
 

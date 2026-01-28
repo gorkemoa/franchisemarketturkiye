@@ -55,6 +55,7 @@ class _HomeViewState extends State<HomeView> {
     _authorsViewModel.fetchAuthors();
     _categoriesViewModel.init();
     _franchisesViewModel.fetchFranchises();
+    _searchViewModel.init();
 
     _updatePages();
     _checkLoginStatus();
@@ -73,7 +74,10 @@ class _HomeViewState extends State<HomeView> {
   void _updatePages() {
     _pages = [
       AuthorsView(viewModel: _authorsViewModel),
-      SearchView(viewModel: _searchViewModel),
+      SearchView(
+        viewModel: _searchViewModel,
+        categoriesViewModel: _categoriesViewModel,
+      ),
       _buildHomeContent(),
       CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
@@ -91,8 +95,7 @@ class _HomeViewState extends State<HomeView> {
           _currentIndex = index;
         });
       },
-      showSearch:
-          _currentIndex == 0 || _currentIndex == 1 || _currentIndex == 3,
+      showSearch: _currentIndex == 0 || _currentIndex == 3,
       onSearchChanged: (query) {
         if (_currentIndex == 0) {
           _authorsViewModel.setSearchQuery(query);

@@ -6,22 +6,25 @@ import 'package:franchisemarketturkiye/views/home/tag_badge.dart';
 
 class BlogListItem extends StatelessWidget {
   final Blog blog;
+  final VoidCallback? onTap;
 
-  const BlogListItem({super.key, required this.blog});
+  const BlogListItem({super.key, required this.blog, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BlogDetailView(blogId: blog.id),
-          ),
-        );
-      },
+      onTap:
+          onTap ??
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BlogDetailView(blogId: blog.id),
+              ),
+            );
+          },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
