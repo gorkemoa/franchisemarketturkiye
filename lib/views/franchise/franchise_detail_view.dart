@@ -82,12 +82,11 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
         children: [
           // Logo Section
           Container(
-            padding: const EdgeInsets.all(40),
             color: const Color(0xFFF9F9F9),
             height: 250,
             child: Image.network(
               franchise.logoUrl,
-              fit: BoxFit.contain,
+              fit: BoxFit.fill,
               errorBuilder: (context, error, stackTrace) =>
                   const Icon(Icons.business, size: 60, color: Colors.grey),
             ),
@@ -300,6 +299,8 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                               child: ProfileTextField(
                                 label: 'Ad',
                                 controller: firstnameController,
+                                textCapitalization: TextCapitalization.words,
+                                textInputAction: TextInputAction.next,
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -307,6 +308,8 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                               child: ProfileTextField(
                                 label: 'Soyad',
                                 controller: lastnameController,
+                                textCapitalization: TextCapitalization.words,
+                                textInputAction: TextInputAction.next,
                               ),
                             ),
                           ],
@@ -316,6 +319,8 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                           label: 'E-posta',
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [AutofillHints.email],
                         ),
                         const SizedBox(height: 16),
                         ProfileTextField(
@@ -326,6 +331,7 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           maxLength: 11,
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
                         Row(
@@ -370,6 +376,7 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                           label: 'Mesajınız',
                           controller: descriptionController,
                           maxLines: 4,
+                          textInputAction: TextInputAction.done,
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(

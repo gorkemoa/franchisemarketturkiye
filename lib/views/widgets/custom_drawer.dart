@@ -132,141 +132,151 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
         ? false
         : widget.showAppBar;
 
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      appBar: effectiveShowAppBar
-          ? AppBar(
-              title:
-                  widget.title ??
-                  SvgPicture.asset('assets/logo.svg', height: 30),
-              leading: widget.showBackButton
-                  ? IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 20,
-                        color: Colors.black,
+    final double appBarHeight = effectiveShowAppBar
+        ? (kToolbarHeight + MediaQuery.of(context).padding.top)
+        : 0;
+
+    return Stack(
+      children: [
+        Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: AppTheme.backgroundColor,
+          appBar: effectiveShowAppBar
+              ? AppBar(
+                  title:
+                      widget.title ??
+                      SvgPicture.asset('assets/logo.svg', height: 30),
+                  leading: widget.showBackButton
+                      ? IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: Colors.black,
+                          ),
+                        )
+                      : null,
+                  centerTitle: false,
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    if (widget.showSearch)
+                      IconButton(
+                        icon: Icon(
+                          _isSearchVisible ? Icons.close : Icons.search,
+                          color: Colors.black,
+                        ),
+                        onPressed: _toggleSearch,
                       ),
-                    )
-                  : null,
-              centerTitle: false,
-              automaticallyImplyLeading: false,
-              actions: [
-                if (widget.showSearch)
-                  IconButton(
-                    icon: Icon(
-                      _isSearchVisible ? Icons.close : Icons.search,
-                      color: Colors.black,
-                    ),
-                    onPressed: _toggleSearch,
-                  ),
-                if (widget.actions != null) ...widget.actions!,
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: IconButton(
-                    onPressed: _toggleMenu,
-                    icon: _buildAnimatedIcon(),
-                  ),
-                ),
-              ],
-            )
-          : null,
-      body: Column(
-        children: [
-          if (widget.showSearch)
-            SizeTransition(
-              sizeFactor: _searchHeightAnimation,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      offset: const Offset(0, 4),
-                      blurRadius: 10,
+                    if (widget.actions != null) ...widget.actions!,
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: IconButton(
+                        onPressed: _toggleMenu,
+                        icon: _buildAnimatedIcon(),
+                      ),
                     ),
                   ],
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) {
-                    widget.onSearchChanged?.call(value);
-                  },
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Arama yapın...',
-                    hintStyle: TextStyle(
-                      color: Colors.grey[400],
-                      fontFamily: 'Inter',
-                    ),
-                    prefixIcon: const Icon(Icons.search, size: 20),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
+                )
+              : null,
+          body: Column(
+            children: [
+              if (widget.showSearch)
+                SizeTransition(
+                  sizeFactor: _searchHeightAnimation,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 12,
+                      vertical: 16,
                     ),
-                  ),
-                ),
-              ),
-            ),
-          Expanded(
-            child: Stack(
-              children: [
-                // Main Content
-                widget.body,
-
-                // Menu Overlay
-                if (_isMenuOpen || !_menuController.isDismissed)
-                  Positioned.fill(
-                    child: Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleMenu,
-                          child: FadeTransition(
-                            opacity: _barrierOpacity,
-                            child: Container(
-                              color: Colors.black.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        SlideTransition(
-                          position: _drawerOffset,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: CustomDrawer(
-                              onIndexChanged: (index) {
-                                _toggleMenu();
-                                widget.onIndexChanged?.call(index);
-                              },
-                              currentIndex: widget.currentIndex,
-                            ),
-                          ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          offset: const Offset(0, 4),
+                          blurRadius: 10,
                         ),
                       ],
                     ),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        widget.onSearchChanged?.call(value);
+                      },
+                      style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Arama yapın...',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[400],
+                          fontFamily: 'Inter',
+                        ),
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
                   ),
+                ),
+              Expanded(child: widget.body),
+            ],
+          ),
+          bottomNavigationBar: widget.bottomNavigationBar,
+          floatingActionButton: widget.floatingActionButton,
+          floatingActionButtonLocation: widget.floatingActionButtonLocation,
+          endDrawer: widget.endDrawer,
+        ),
+        if (_isMenuOpen || !_menuController.isDismissed)
+          Positioned.fill(
+            top: appBarHeight,
+            child: Stack(
+              children: [
+                // Dimmed background - covers body and bottom bar
+                FadeTransition(
+                  opacity: _barrierOpacity,
+                  child: GestureDetector(
+                    onTap: _toggleMenu,
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(color: Colors.black.withOpacity(0.5)),
+                  ),
+                ),
+                // Gesture area covering screen below AppBar
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _toggleMenu,
+                  child: SlideTransition(
+                    position: _drawerOffset,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: GestureDetector(
+                        onTap:
+                            () {}, // Prevent closing when tapping inside the drawer
+                        child: CustomDrawer(
+                          onIndexChanged: (index) {
+                            _toggleMenu();
+                            widget.onIndexChanged?.call(index);
+                          },
+                          currentIndex: widget.currentIndex,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: widget.bottomNavigationBar,
-      floatingActionButton: widget.floatingActionButton,
-      floatingActionButtonLocation: widget.floatingActionButtonLocation,
-      endDrawer: widget.endDrawer,
+      ],
     );
   }
 

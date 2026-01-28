@@ -37,13 +37,19 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(_viewModel.isLogin ? 'Giriş Yap' : 'Kayıt Ol'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.only(
+          left: 24.0,
+          right: 24.0,
+          top: 24.0,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -138,6 +144,8 @@ class _LoginViewState extends State<LoginView> {
           controller: _viewModel.emailController,
           hintText: 'E-Posta Adresinizi Giriniz',
           keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          autofillHints: const [AutofillHints.email],
         ),
         const SizedBox(height: 24),
         _buildTextFieldLabel('ŞİFRENİZ'),
@@ -146,6 +154,7 @@ class _LoginViewState extends State<LoginView> {
           controller: _viewModel.passwordController,
           hintText: 'Şifrenizi Giriniz',
           obscureText: true,
+          textInputAction: TextInputAction.done,
         ),
         Align(
           alignment: Alignment.centerRight,
@@ -193,6 +202,8 @@ class _LoginViewState extends State<LoginView> {
         _buildTextField(
           controller: _viewModel.firstNameController,
           hintText: 'Adınızı Giriniz',
+          textCapitalization: TextCapitalization.words,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('SOYAD *'),
@@ -200,6 +211,8 @@ class _LoginViewState extends State<LoginView> {
         _buildTextField(
           controller: _viewModel.lastNameController,
           hintText: 'Soyadınızı Giriniz',
+          textCapitalization: TextCapitalization.words,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('TELEFON *'),
@@ -210,6 +223,7 @@ class _LoginViewState extends State<LoginView> {
           keyboardType: TextInputType.phone,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           maxLength: 16,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('E-POSTA *'),
@@ -218,6 +232,8 @@ class _LoginViewState extends State<LoginView> {
           controller: _viewModel.emailController,
           hintText: 'E-Posta Adresinizi Giriniz',
           keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          autofillHints: const [AutofillHints.email],
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('ŞİFRE *'),
@@ -226,6 +242,7 @@ class _LoginViewState extends State<LoginView> {
           controller: _viewModel.passwordController,
           hintText: 'Şifrenizi Giriniz',
           obscureText: true,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('ŞİFRE TEKRAR *'),
@@ -234,6 +251,7 @@ class _LoginViewState extends State<LoginView> {
           controller: _viewModel.passwordConfirmController,
           hintText: 'Şifrenizi Tekrar Giriniz',
           obscureText: true,
+          textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 24),
         Row(
@@ -348,6 +366,9 @@ class _LoginViewState extends State<LoginView> {
     bool obscureText = false,
     List<TextInputFormatter>? inputFormatters,
     int? maxLength,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    TextInputAction? textInputAction,
+    Iterable<String>? autofillHints,
   }) {
     return TextField(
       controller: controller,
@@ -355,6 +376,9 @@ class _LoginViewState extends State<LoginView> {
       obscureText: obscureText,
       inputFormatters: inputFormatters,
       maxLength: maxLength,
+      textCapitalization: textCapitalization,
+      textInputAction: textInputAction,
+      autofillHints: autofillHints,
       decoration: InputDecoration(
         hintText: hintText,
         counterText: '',

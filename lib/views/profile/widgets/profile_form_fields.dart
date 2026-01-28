@@ -11,6 +11,9 @@ class ProfileTextField extends StatelessWidget {
   final bool enabled;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
+  final TextCapitalization textCapitalization;
+  final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
 
   const ProfileTextField({
     super.key,
@@ -22,6 +25,9 @@ class ProfileTextField extends StatelessWidget {
     this.enabled = true,
     this.inputFormatters,
     this.maxLength,
+    this.textCapitalization = TextCapitalization.none,
+    this.textInputAction,
+    this.autofillHints,
   });
 
   @override
@@ -53,6 +59,9 @@ class ProfileTextField extends StatelessWidget {
             enabled: enabled,
             inputFormatters: inputFormatters,
             maxLength: maxLength,
+            textCapitalization: textCapitalization,
+            textInputAction: textInputAction,
+            autofillHints: autofillHints,
             style: TextStyle(
               fontSize: 14,
               color: enabled ? Colors.black87 : Colors.grey.shade500,
@@ -183,10 +192,7 @@ void showProfilePicker<T>({
     builder: (BuildContext context) {
       return Container(
         height: MediaQuery.of(context).size.height * 0.4,
-        padding: const EdgeInsets.only(top: 6.0),
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
+
         color: CupertinoColors.systemBackground.resolveFrom(context),
         child: SafeArea(
           top: false,
@@ -196,18 +202,23 @@ void showProfilePicker<T>({
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CupertinoButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    minSize: 44,
                     child: const Text(
                       'Vazgeç',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Colors.red, fontSize: 15),
                     ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    minSize: 44,
                     child: const Text(
                       'Bitti',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
+                        fontSize: 15,
                       ),
                     ),
                     onPressed: () {
