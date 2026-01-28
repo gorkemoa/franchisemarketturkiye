@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
@@ -531,32 +532,57 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
+  Future<void> _launchUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $urlString');
+    }
+  }
+
   Widget _buildSocialMedia() {
     final socials = [
-      'assets/hamburger_nav_icons/facebook.svg',
-      'assets/hamburger_nav_icons/instagram.svg',
-      'assets/hamburger_nav_icons/youtube.svg',
-      'assets/hamburger_nav_icons/x_twitter.svg',
+      {
+        'icon': 'assets/hamburger_nav_icons/facebook.svg',
+        'url': 'https://www.facebook.com/Franchisemtr',
+      },
+      {
+        'icon': 'assets/hamburger_nav_icons/instagram.svg',
+        'url': 'https://www.instagram.com/franchisemarketturkiye/',
+      },
+      {
+        'icon': 'assets/hamburger_nav_icons/youtube.svg',
+        'url': 'https://www.youtube.com/@FranchiseMarketTurkiye',
+      },
+      {
+        'icon': 'assets/hamburger_nav_icons/x_twitter.svg',
+        'url': 'https://x.com/Franchise_MTR',
+      },
     ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        children: socials.map((assetPath) {
-          return Container(
-            margin: const EdgeInsets.only(right: 12),
-            width: 40,
-            height: 40,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFEEEEEE)),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: SvgPicture.asset(
-              assetPath,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
+        children: socials.map((social) {
+          final String assetPath = social['icon']!;
+          final String url = social['url']!;
+
+          return GestureDetector(
+            onTap: url.isNotEmpty ? () => _launchUrl(url) : null,
+            child: Container(
+              margin: const EdgeInsets.only(right: 12),
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFEEEEEE)),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: SvgPicture.asset(
+                assetPath,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           );

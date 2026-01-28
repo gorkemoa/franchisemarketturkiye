@@ -145,7 +145,8 @@ class _LoginViewState extends State<LoginView> {
           hintText: 'E-Posta Adresinizi Giriniz',
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
-          autofillHints: const [AutofillHints.email],
+          enableSuggestions: false,
+          autocorrect: false,
         ),
         const SizedBox(height: 24),
         _buildTextFieldLabel('ŞİFRENİZ'),
@@ -163,6 +164,7 @@ class _LoginViewState extends State<LoginView> {
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               minimumSize: const Size(0, 0),
+
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: const Text(
@@ -233,7 +235,8 @@ class _LoginViewState extends State<LoginView> {
           hintText: 'E-Posta Adresinizi Giriniz',
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
-          autofillHints: const [AutofillHints.email],
+          enableSuggestions: false,
+          autocorrect: false,
         ),
         const SizedBox(height: 16),
         _buildTextFieldLabel('ŞİFRE *'),
@@ -369,6 +372,8 @@ class _LoginViewState extends State<LoginView> {
     TextCapitalization textCapitalization = TextCapitalization.none,
     TextInputAction? textInputAction,
     Iterable<String>? autofillHints,
+    bool enableSuggestions = true,
+    bool autocorrect = true,
   }) {
     return TextField(
       controller: controller,
@@ -379,6 +384,8 @@ class _LoginViewState extends State<LoginView> {
       textCapitalization: textCapitalization,
       textInputAction: textInputAction,
       autofillHints: autofillHints,
+      enableSuggestions: enableSuggestions,
+      autocorrect: autocorrect,
       decoration: InputDecoration(
         hintText: hintText,
         counterText: '',

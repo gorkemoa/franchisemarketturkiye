@@ -320,7 +320,8 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
-                          autofillHints: const [AutofillHints.email],
+                          enableSuggestions: false,
+                          autocorrect: false,
                         ),
                         const SizedBox(height: 16),
                         ProfileTextField(

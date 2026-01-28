@@ -14,6 +14,8 @@ class ProfileTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
+  final bool enableSuggestions;
+  final bool autocorrect;
 
   const ProfileTextField({
     super.key,
@@ -28,6 +30,8 @@ class ProfileTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction,
     this.autofillHints,
+    this.enableSuggestions = true,
+    this.autocorrect = true,
   });
 
   @override
@@ -62,6 +66,8 @@ class ProfileTextField extends StatelessWidget {
             textCapitalization: textCapitalization,
             textInputAction: textInputAction,
             autofillHints: autofillHints,
+            enableSuggestions: enableSuggestions,
+            autocorrect: autocorrect,
             style: TextStyle(
               fontSize: 14,
               color: enabled ? Colors.black87 : Colors.grey.shade500,
