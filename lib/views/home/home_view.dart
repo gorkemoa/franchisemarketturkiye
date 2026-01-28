@@ -15,6 +15,7 @@ import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
+import 'package:franchisemarketturkiye/views/author/authors_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -51,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
 
   void _updatePages() {
     _pages = [
-      const Center(child: Text('Yazarlar')),
+      const AuthorsView(),
       const Center(child: Text('Arama')),
       _buildHomeContent(),
       const CategoriesView(),
@@ -64,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return GlobalScaffold(
-      showAppBar: _currentIndex != 4, // Hide AppBar for LoginView
+      showAppBar: _currentIndex != 4,
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {

@@ -24,4 +24,5 @@ class ApiConstants {
   static String categoryBlogs(int id) => '$baseUrl/api/v1/categories/$id/blogs';
   static const String authors = '$baseUrl/api/v1/authors';
   static String authorDetail(int id) => '$baseUrl/api/v1/authors/$id';
+  static String authorBlogs(int id) => '$baseUrl/api/v1/authors/$id/blogs';
 }

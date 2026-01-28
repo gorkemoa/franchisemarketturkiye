@@ -51,4 +51,30 @@ class AuthorService {
       return ApiResult.failure(result.error ?? 'Unknown Error');
     }
   }
+
+  Future<ApiResult<AuthorBlogsResponse>> getAuthorBlogs(
+    int authorId, {
+    int limit = AppConstants.defaultLimit,
+    String? cursor,
+    int excludePinned = 0,
+  }) async {
+    String url =
+        '${ApiConstants.authorBlogs(authorId)}?limit=$limit&exclude_pinned=$excludePinned';
+    if (cursor != null) {
+      url += '&cursor=$cursor';
+    }
+
+    final result = await _apiClient.get(url);
+
+    if (result.isSuccess && result.data != null) {
+      try {
+        final response = AuthorBlogsResponse.fromJson(result.data!);
+        return ApiResult.success(response);
+      } catch (e) {
+        return ApiResult.failure('Parsing Error: $e');
+      }
+    } else {
+      return ApiResult.failure(result.error ?? 'Unknown Error');
+    }
+  }
 }

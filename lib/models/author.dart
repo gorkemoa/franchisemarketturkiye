@@ -1,3 +1,5 @@
+import 'package:franchisemarketturkiye/models/blog.dart';
+
 class Author {
   final int id;
   final String fullname;
@@ -128,6 +130,71 @@ class AuthorMeta {
   factory AuthorMeta.fromJson(Map<String, dynamic> json) {
     return AuthorMeta(
       limit: json['limit'] as int,
+      hasMore: json['has_more'] as bool,
+      nextCursor: json['next_cursor'] as String?,
+    );
+  }
+}
+
+class AuthorBlogsResponse {
+  final bool success;
+  final AuthorBlogsData data;
+  final AuthorBlogsMeta meta;
+
+  AuthorBlogsResponse({
+    required this.success,
+    required this.data,
+    required this.meta,
+  });
+
+  factory AuthorBlogsResponse.fromJson(Map<String, dynamic> json) {
+    return AuthorBlogsResponse(
+      success: json['success'] as bool,
+      data: AuthorBlogsData.fromJson(json['data']),
+      meta: AuthorBlogsMeta.fromJson(json['meta']),
+    );
+  }
+}
+
+class AuthorBlogsData {
+  final BlogAuthor author;
+  final List<Blog> items;
+  final int count;
+
+  AuthorBlogsData({
+    required this.author,
+    required this.items,
+    required this.count,
+  });
+
+  factory AuthorBlogsData.fromJson(Map<String, dynamic> json) {
+    return AuthorBlogsData(
+      author: BlogAuthor.fromJson(json['author']),
+      items: (json['items'] as List<dynamic>)
+          .map((item) => Blog.fromJson(item))
+          .toList(),
+      count: json['count'] as int,
+    );
+  }
+}
+
+class AuthorBlogsMeta {
+  final int limit;
+  final int excludePinned;
+  final bool hasMore;
+  final String? nextCursor;
+
+  AuthorBlogsMeta({
+    required this.limit,
+    required this.excludePinned,
+    required this.hasMore,
+    this.nextCursor,
+  });
+
+  factory AuthorBlogsMeta.fromJson(Map<String, dynamic> json) {
+    return AuthorBlogsMeta(
+      limit: json['limit'] as int,
+      excludePinned: json['exclude_pinned'] as int? ?? 0,
       hasMore: json['has_more'] as bool,
       nextCursor: json['next_cursor'] as String?,
     );

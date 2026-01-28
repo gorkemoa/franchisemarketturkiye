@@ -252,6 +252,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         // TODO: Implement Franchise Dosyasi navigation
                       },
                     ),
+                    _buildMenuItem(
+                      'YAZARLAR',
+                      onTap: () {
+                        // In a real app we might want to use a callback to HomeView
+                        // or just push/pop. For now, let's just push it as a new view
+                        // if we want it to be a standalone page,
+                        // but since it's already in the bottom bar,
+                        // maybe the drawer should just close and switch tab?
+                        // However, CustomDrawer doesn't have access to HomeView's state easily.
+                        // I'll push it as a standalone page for now or just add the item.
+                      },
+                    ),
                     _buildMenuItem('DERGİLER'),
                     _buildMenuItem('HİKAYEMİZ'),
                     _buildMenuItem(

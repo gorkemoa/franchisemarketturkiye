@@ -69,12 +69,9 @@ class _CategoriesViewState extends State<CategoriesView> {
                 itemCount: _viewModel.categories.length,
                 itemBuilder: (context, index) {
                   final category = _viewModel.categories[index];
-                  final isSelected = index == 0; // Match image (GENEL selected)
 
                   return Material(
-                    color: isSelected
-                        ? const Color(0xFFF5F5F5)
-                        : Colors.transparent,
+                    color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
                         Navigator.push(
