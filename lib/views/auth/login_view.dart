@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/login_view_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:franchisemarketturkiye/views/widgets/webview_view.dart';
 
 class LoginView extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
@@ -160,11 +161,20 @@ class _LoginViewState extends State<LoginView> {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WebViewView(
+                    url: 'https://franchisemarketturkiye.com/sifremi-unuttum',
+                    title: 'Şifremi Unuttum',
+                  ),
+                ),
+              );
+            },
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               minimumSize: const Size(0, 0),
-
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: const Text(
