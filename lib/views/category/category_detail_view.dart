@@ -21,13 +21,8 @@ class CategoryDetailView extends StatefulWidget {
   State<CategoryDetailView> createState() => _CategoryDetailViewState();
 }
 
-class _CategoryDetailViewState extends State<CategoryDetailView>
-    with SingleTickerProviderStateMixin {
+class _CategoryDetailViewState extends State<CategoryDetailView> {
   late final CategoryDetailViewModel _viewModel;
-  late final AnimationController _searchAnimationController;
-  late final Animation<double> _searchHeightAnimation;
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearchVisible = false;
 
   @override
   void initState() {
@@ -37,35 +32,6 @@ class _CategoryDetailViewState extends State<CategoryDetailView>
       categoryId: widget.categoryId,
     );
     _viewModel.init();
-
-    _searchAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _searchHeightAnimation = CurvedAnimation(
-      parent: _searchAnimationController,
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _searchAnimationController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _toggleSearch() {
-    setState(() {
-      _isSearchVisible = !_isSearchVisible;
-      if (_isSearchVisible) {
-        _searchAnimationController.forward();
-      } else {
-        _searchAnimationController.reverse();
-        _searchController.clear();
-        _viewModel.setSearchQuery('');
-      }
-    });
   }
 
   @override
@@ -77,72 +43,21 @@ class _CategoryDetailViewState extends State<CategoryDetailView>
 
         return GlobalScaffold(
           showBackButton: true,
-          actions: [
-            IconButton(
-              icon: Icon(
-                _isSearchVisible ? Icons.close : Icons.search,
-                color: Colors.black,
-              ),
-              onPressed: _toggleSearch,
-            ),
-          ],
-          body: Column(
-            children: [
-              SizeTransition(
-                sizeFactor: _searchHeightAnimation,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        offset: const Offset(0, 4),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (value) {
-                      _viewModel.setSearchQuery(value);
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Arama yapın...',
-                      hintStyle: TextStyle(color: Colors.grey[400]),
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels >=
-                            scrollInfo.metrics.maxScrollExtent - 200 &&
-                        !_viewModel.isLoading &&
-                        _viewModel.hasMore) {
-                      _viewModel.loadMoreBlogs();
-                    }
-                    return true;
-                  },
-                  child: _buildBody(category),
-                ),
-              ),
-            ],
+          showSearch: true,
+          onSearchChanged: (value) {
+            _viewModel.setSearchQuery(value);
+          },
+          body: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 200 &&
+                  !_viewModel.isLoading &&
+                  _viewModel.hasMore) {
+                _viewModel.loadMoreBlogs();
+              }
+              return true;
+            },
+            child: _buildBody(category),
           ),
         );
       },

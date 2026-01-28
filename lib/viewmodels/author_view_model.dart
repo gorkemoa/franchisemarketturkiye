@@ -9,13 +9,27 @@ class AuthorViewModel extends ChangeNotifier {
     : _authorService = authorService ?? AuthorService();
 
   List<Author> _authors = [];
-  List<Author> get authors => _authors;
+  String _searchQuery = '';
+
+  List<Author> get authors {
+    if (_searchQuery.isEmpty) return _authors;
+    return _authors
+        .where(
+          (a) => a.fullname.toLowerCase().contains(_searchQuery.toLowerCase()),
+        )
+        .toList();
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
 
   bool _hasMore = false;
   bool get hasMore => _hasMore;

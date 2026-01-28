@@ -5,7 +5,8 @@ import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 import 'package:franchisemarketturkiye/views/category/category_detail_view.dart';
 
 class CategoriesView extends StatefulWidget {
-  const CategoriesView({super.key});
+  final CategoriesViewModel? viewModel;
+  const CategoriesView({super.key, this.viewModel});
 
   @override
   State<CategoriesView> createState() => _CategoriesViewState();
@@ -17,8 +18,10 @@ class _CategoriesViewState extends State<CategoriesView> {
   @override
   void initState() {
     super.initState();
-    _viewModel = CategoriesViewModel();
-    _viewModel.init();
+    _viewModel = widget.viewModel ?? CategoriesViewModel();
+    if (widget.viewModel == null) {
+      _viewModel.init();
+    }
   }
 
   String _getCategoryIcon(String name) {

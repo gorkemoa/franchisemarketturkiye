@@ -12,6 +12,8 @@ class GlobalScaffold extends StatefulWidget {
   final bool showBackButton;
   final List<Widget>? actions;
   final int? currentIndex;
+  final bool showSearch;
+  final ValueChanged<String>? onSearchChanged;
 
   const GlobalScaffold({
     super.key,
@@ -22,6 +24,8 @@ class GlobalScaffold extends StatefulWidget {
     this.showBackButton = false,
     this.actions,
     this.currentIndex,
+    this.showSearch = false,
+    this.onSearchChanged,
   });
 
   @override
@@ -29,11 +33,17 @@ class GlobalScaffold extends StatefulWidget {
 }
 
 class _GlobalScaffoldState extends State<GlobalScaffold>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool _isMenuOpen = false;
   late AnimationController _menuController;
   late Animation<Offset> _drawerOffset;
   late Animation<double> _barrierOpacity;
+
+  // Search logic
+  late final AnimationController _searchAnimationController;
+  late final Animation<double> _searchHeightAnimation;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchVisible = false;
 
   @override
   void initState() {
@@ -60,12 +70,36 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
         setState(() {});
       }
     });
+
+    _searchAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _searchHeightAnimation = CurvedAnimation(
+      parent: _searchAnimationController,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     _menuController.dispose();
+    _searchAnimationController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearchVisible = !_isSearchVisible;
+      if (_isSearchVisible) {
+        _searchAnimationController.forward();
+      } else {
+        _searchAnimationController.reverse();
+        _searchController.clear();
+        widget.onSearchChanged?.call('');
+      }
+    });
   }
 
   void _toggleMenu() {
@@ -106,6 +140,14 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
               centerTitle: false,
               automaticallyImplyLeading: false,
               actions: [
+                if (widget.showSearch)
+                  IconButton(
+                    icon: Icon(
+                      _isSearchVisible ? Icons.close : Icons.search,
+                      color: Colors.black,
+                    ),
+                    onPressed: _toggleSearch,
+                  ),
                 if (widget.actions != null) ...widget.actions!,
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -117,33 +159,82 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
               ],
             )
           : null,
-      body: Stack(
+      body: Column(
         children: [
-          // Main Content
-          widget.body,
-
-          // Menu Overlay
-          if (_isMenuOpen || !_menuController.isDismissed)
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: _toggleMenu,
-                    child: FadeTransition(
-                      opacity: _barrierOpacity,
-                      child: Container(color: Colors.black.withOpacity(0.5)),
+          if (widget.showSearch)
+            SizeTransition(
+              sizeFactor: _searchHeightAnimation,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(0, 4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    widget.onSearchChanged?.call(value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Arama yapın...',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                   ),
-                  SlideTransition(
-                    position: _drawerOffset,
-                    child: const Align(
-                      alignment: Alignment.topCenter,
-                      child: CustomDrawer(),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
+          Expanded(
+            child: Stack(
+              children: [
+                // Main Content
+                widget.body,
+
+                // Menu Overlay
+                if (_isMenuOpen || !_menuController.isDismissed)
+                  Positioned.fill(
+                    child: Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: _toggleMenu,
+                          child: FadeTransition(
+                            opacity: _barrierOpacity,
+                            child: Container(
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                        SlideTransition(
+                          position: _drawerOffset,
+                          child: const Align(
+                            alignment: Alignment.topCenter,
+                            child: CustomDrawer(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: widget.bottomNavigationBar,

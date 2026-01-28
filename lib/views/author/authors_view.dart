@@ -6,7 +6,8 @@ import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
 import 'package:franchisemarketturkiye/views/author/author_detail_view.dart';
 
 class AuthorsView extends StatefulWidget {
-  const AuthorsView({super.key});
+  final AuthorViewModel? viewModel;
+  const AuthorsView({super.key, this.viewModel});
 
   @override
   State<AuthorsView> createState() => _AuthorsViewState();
@@ -19,8 +20,10 @@ class _AuthorsViewState extends State<AuthorsView> {
   @override
   void initState() {
     super.initState();
-    _viewModel = AuthorViewModel();
-    _viewModel.fetchAuthors();
+    _viewModel = widget.viewModel ?? AuthorViewModel();
+    if (widget.viewModel == null) {
+      _viewModel.fetchAuthors();
+    }
     _scrollController.addListener(_onScroll);
   }
 

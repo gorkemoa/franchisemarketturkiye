@@ -16,6 +16,8 @@ import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 import 'package:franchisemarketturkiye/views/author/authors_view.dart';
+import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -31,11 +33,20 @@ class _HomeViewState extends State<HomeView> {
   final AuthService _authService = AuthService();
   bool _isLoggedIn = false;
 
+  late final AuthorViewModel _authorsViewModel;
+  late final CategoriesViewModel _categoriesViewModel;
+
   @override
   void initState() {
     super.initState();
     _viewModel = HomeViewModel();
+    _authorsViewModel = AuthorViewModel();
+    _categoriesViewModel = CategoriesViewModel();
+
     _viewModel.init();
+    _authorsViewModel.fetchAuthors();
+    _categoriesViewModel.init();
+
     _updatePages();
     _checkLoginStatus();
   }
@@ -52,10 +63,10 @@ class _HomeViewState extends State<HomeView> {
 
   void _updatePages() {
     _pages = [
-      const AuthorsView(),
+      AuthorsView(viewModel: _authorsViewModel),
       const Center(child: Text('Arama')),
       _buildHomeContent(),
-      const CategoriesView(),
+      CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
           ? ProfileView(onLogout: _checkLoginStatus)
           : LoginView(onLoginSuccess: _checkLoginStatus),
@@ -66,6 +77,14 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       currentIndex: _currentIndex,
+      showSearch: _currentIndex == 0 || _currentIndex == 3,
+      onSearchChanged: (query) {
+        if (_currentIndex == 0) {
+          _authorsViewModel.setSearchQuery(query);
+        } else if (_currentIndex == 3) {
+          _categoriesViewModel.setSearchQuery(query);
+        }
+      },
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
