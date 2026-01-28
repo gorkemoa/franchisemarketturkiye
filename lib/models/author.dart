@@ -31,17 +31,19 @@ class Author {
 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
-      id: json['id'] as int,
-      fullname: json['fullname'] as String,
-      username: json['username'] as String,
+      id: json['id'] as int? ?? 0,
+      fullname: json['fullname'] as String? ?? '',
+      username: json['username'] as String? ?? '',
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      link: json['link'] as String,
-      image: json['image'] as String,
-      imageUrl: json['image_url'] as String,
+      link: json['link'] as String? ?? '',
+      image: json['image'] as String? ?? '',
+      imageUrl: json['image_url'] as String? ?? '',
       social: AuthorSocial.fromJson(json['social'] ?? {}),
       seo: AuthorSeo.fromJson(json['seo'] ?? {}),
-      dateAdded: DateTime.parse(json['date_added']),
+      dateAdded: json['date_added'] != null
+          ? DateTime.parse(json['date_added'])
+          : DateTime.now(),
       sortOrder: json['sort_order'] as int? ?? 0,
     );
   }
@@ -112,10 +114,12 @@ class AuthorListData {
 
   factory AuthorListData.fromJson(Map<String, dynamic> json) {
     return AuthorListData(
-      items: (json['items'] as List<dynamic>)
-          .map((item) => Author.fromJson(item))
-          .toList(),
-      count: json['count'] as int,
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((item) => Author.fromJson(item))
+              .toList() ??
+          [],
+      count: json['count'] as int? ?? 0,
     );
   }
 }
@@ -129,8 +133,8 @@ class AuthorMeta {
 
   factory AuthorMeta.fromJson(Map<String, dynamic> json) {
     return AuthorMeta(
-      limit: json['limit'] as int,
-      hasMore: json['has_more'] as bool,
+      limit: json['limit'] as int? ?? 10,
+      hasMore: json['has_more'] as bool? ?? false,
       nextCursor: json['next_cursor'] as String?,
     );
   }
@@ -149,9 +153,9 @@ class AuthorBlogsResponse {
 
   factory AuthorBlogsResponse.fromJson(Map<String, dynamic> json) {
     return AuthorBlogsResponse(
-      success: json['success'] as bool,
-      data: AuthorBlogsData.fromJson(json['data']),
-      meta: AuthorBlogsMeta.fromJson(json['meta']),
+      success: json['success'] as bool? ?? false,
+      data: AuthorBlogsData.fromJson(json['data'] ?? {}),
+      meta: AuthorBlogsMeta.fromJson(json['meta'] ?? {}),
     );
   }
 }
@@ -169,11 +173,13 @@ class AuthorBlogsData {
 
   factory AuthorBlogsData.fromJson(Map<String, dynamic> json) {
     return AuthorBlogsData(
-      author: BlogAuthor.fromJson(json['author']),
-      items: (json['items'] as List<dynamic>)
-          .map((item) => Blog.fromJson(item))
-          .toList(),
-      count: json['count'] as int,
+      author: BlogAuthor.fromJson(json['author'] ?? {}),
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((item) => Blog.fromJson(item))
+              .toList() ??
+          [],
+      count: json['count'] as int? ?? 0,
     );
   }
 }
@@ -193,9 +199,9 @@ class AuthorBlogsMeta {
 
   factory AuthorBlogsMeta.fromJson(Map<String, dynamic> json) {
     return AuthorBlogsMeta(
-      limit: json['limit'] as int,
+      limit: json['limit'] as int? ?? 10,
       excludePinned: json['exclude_pinned'] as int? ?? 0,
-      hasMore: json['has_more'] as bool,
+      hasMore: json['has_more'] as bool? ?? false,
       nextCursor: json['next_cursor'] as String?,
     );
   }

@@ -34,21 +34,25 @@ class Blog {
   factory Blog.fromJson(Map<String, dynamic> json) {
     return Blog(
       id: json['id'] as int,
-      title: json['title'] as String,
-      link: json['link'] as String,
-      image: json['image'] as String,
-      imageUrl: json['image_url'] as String,
-      description: json['description'] as String,
-      seoTitle: json['seo_title'] as String,
-      seoDescription: json['seo_description'] as String,
-      tags: json['tags'] as String,
-      dateAdded: DateTime.parse(json['date_added']),
-      dateUpdate: DateTime.parse(json['date_update']),
+      title: json['title'] as String? ?? '',
+      link: json['link'] as String? ?? '',
+      image: json['image'] as String? ?? '',
+      imageUrl: json['image_url'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      seoTitle: json['seo_title'] as String? ?? '',
+      seoDescription: json['seo_description'] as String? ?? '',
+      tags: json['tags'] as String? ?? '',
+      dateAdded: json['date_added'] != null
+          ? DateTime.parse(json['date_added'])
+          : DateTime.now(),
+      dateUpdate: json['date_update'] != null
+          ? DateTime.parse(json['date_update'])
+          : DateTime.now(),
       category: json['category'] != null
           ? BlogCategory.fromJson(json['category'])
           : null,
-      type: BlogType.fromJson(json['type']),
-      author: BlogAuthor.fromJson(json['author']),
+      type: BlogType.fromJson(json['type'] ?? {}),
+      author: BlogAuthor.fromJson(json['author'] ?? {}),
     );
   }
 
@@ -96,7 +100,7 @@ class BlogCategory {
 
   factory BlogCategory.fromJson(Map<String, dynamic> json) {
     return BlogCategory(
-      id: json['id'] as int,
+      id: json['id'] as int? ?? 0,
       name: json['name'] as String?,
       link: json['link'] as String?,
     );
@@ -112,7 +116,7 @@ class BlogType {
 
   factory BlogType.fromJson(Map<String, dynamic> json) {
     return BlogType(
-      id: json['id'] as int,
+      id: json['id'] as int? ?? 0,
       name: json['name'] as String?,
       link: json['link'] as String?,
     );
@@ -136,7 +140,7 @@ class BlogAuthor {
 
   factory BlogAuthor.fromJson(Map<String, dynamic> json) {
     return BlogAuthor(
-      id: json['id'] as int,
+      id: json['id'] as int? ?? 0,
       name: json['name'] as String?,
       link: json['link'] as String?,
       image: json['image'] as String?,
@@ -153,10 +157,12 @@ class BlogResponse {
 
   factory BlogResponse.fromJson(Map<String, dynamic> json) {
     return BlogResponse(
-      items: (json['items'] as List<dynamic>)
-          .map((item) => Blog.fromJson(item))
-          .toList(),
-      count: json['count'] as int,
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((item) => Blog.fromJson(item))
+              .toList() ??
+          [],
+      count: json['count'] as int? ?? 0,
     );
   }
 }
@@ -174,9 +180,9 @@ class CategoryBlogsResponse {
 
   factory CategoryBlogsResponse.fromJson(Map<String, dynamic> json) {
     return CategoryBlogsResponse(
-      success: json['success'] as bool,
-      data: CategoryBlogsData.fromJson(json['data']),
-      meta: BlogMeta.fromJson(json['meta']),
+      success: json['success'] as bool? ?? false,
+      data: CategoryBlogsData.fromJson(json['data'] ?? {}),
+      meta: BlogMeta.fromJson(json['meta'] ?? {}),
     );
   }
 }
@@ -194,11 +200,13 @@ class CategoryBlogsData {
 
   factory CategoryBlogsData.fromJson(Map<String, dynamic> json) {
     return CategoryBlogsData(
-      category: BlogCategory.fromJson(json['category']),
-      items: (json['items'] as List<dynamic>)
-          .map((item) => Blog.fromJson(item))
-          .toList(),
-      count: json['count'] as int,
+      category: BlogCategory.fromJson(json['category'] ?? {}),
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((item) => Blog.fromJson(item))
+              .toList() ??
+          [],
+      count: json['count'] as int? ?? 0,
     );
   }
 }
@@ -220,9 +228,9 @@ class BlogMeta {
 
   factory BlogMeta.fromJson(Map<String, dynamic> json) {
     return BlogMeta(
-      limit: json['limit'] as int,
-      excludePinned: json['exclude_pinned'] as int,
-      hasMore: json['has_more'] as bool,
+      limit: json['limit'] as int? ?? 10,
+      excludePinned: json['exclude_pinned'] as int? ?? 0,
+      hasMore: json['has_more'] as bool? ?? false,
       totalItems: json['total_items'] as int? ?? 0,
       nextCursor: json['next_cursor'] as String?,
     );

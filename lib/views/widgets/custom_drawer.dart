@@ -11,6 +11,7 @@ class GlobalScaffold extends StatefulWidget {
   final bool showAppBar;
   final bool showBackButton;
   final List<Widget>? actions;
+  final int? currentIndex;
 
   const GlobalScaffold({
     super.key,
@@ -20,6 +21,7 @@ class GlobalScaffold extends StatefulWidget {
     this.showAppBar = true,
     this.showBackButton = false,
     this.actions,
+    this.currentIndex,
   });
 
   @override
@@ -79,9 +81,14 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
 
   @override
   Widget build(BuildContext context) {
+    // Hide AppBar specifically for Profile page (index 4) if used as App Shell
+    final bool effectiveShowAppBar = widget.currentIndex == 4
+        ? false
+        : widget.showAppBar;
+
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: widget.showAppBar
+      appBar: effectiveShowAppBar
           ? AppBar(
               title:
                   widget.title ??

@@ -55,7 +55,6 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
 
         return GlobalScaffold(
           showBackButton: true,
-          title: author != null ? Text(author.fullname) : null,
           body: RefreshIndicator(
             onRefresh: _viewModel.fetchAuthorBlogs,
             child: CustomScrollView(
@@ -169,16 +168,20 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
           ],
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.article_outlined,
-                size: 16,
-                color: AppTheme.primaryColor,
-              ),
-              const SizedBox(width: 4),
               Text(
-                'TÜM YAZILARI',
+                '$author.fullname'.replaceAll('i', 'İ').toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary,
+                  letterSpacing: 0.5,
+                  fontFamily: 'BioSans',
+                ),
+              ),
+              Text(
+                ' YAZILARI'.replaceAll('i', 'İ').toUpperCase(),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -190,7 +193,12 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
             ],
           ),
           const SizedBox(height: 8),
-          Container(width: 40, height: 2, color: AppTheme.primaryColor),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(width: 40, height: 2, color: AppTheme.primaryColor),
+            ],
+          ),
         ],
       ),
     );

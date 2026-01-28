@@ -60,16 +60,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return GlobalScaffold(
-      showBackButton: true,
-      title: const Text(
-        'Hesabım',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-          fontFamily: 'BioSans',
-        ),
-      ),
+      showBackButton: false,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

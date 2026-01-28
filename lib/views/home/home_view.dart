@@ -65,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return GlobalScaffold(
-      showAppBar: _currentIndex != 4,
+      currentIndex: _currentIndex,
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
