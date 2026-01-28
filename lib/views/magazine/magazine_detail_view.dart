@@ -30,6 +30,72 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: true,
+      bottomNavigationBar: ListenableBuilder(
+        listenable: _viewModel,
+        builder: (context, _) {
+          final magazine = _viewModel.magazine;
+          if (magazine == null || _viewModel.isLoading) {
+            return const SizedBox.shrink();
+          }
+
+          return Container(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              MediaQuery.of(context).padding.bottom + 16,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  offset: const Offset(0, -4),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                if (magazine.fileUrl.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MagazineReaderView(
+                        pdfUrl: magazine.fileUrl,
+                        title: magazine.title,
+                      ),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 10,
+                ),
+                elevation: 0,
+                shape: RoundedRectangleBorder(),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'DERGİYİ OKU',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, child) {
@@ -38,7 +104,6 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
               child: CircularProgressIndicator(color: AppTheme.primaryColor),
             );
           }
-
           if (_viewModel.errorMessage != null) {
             return Center(
               child: Padding(
@@ -78,7 +143,6 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
               ),
             );
           }
-
           final magazine = _viewModel.magazine;
           if (magazine == null) return const SizedBox.shrink();
 
@@ -86,8 +150,6 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildHeader(context),
-                const SizedBox(height: 16),
                 // Cover Image
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -143,85 +205,14 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                           fontFamily: 'Inter',
                         ),
                       ),
+                      const SizedBox(height: 32), // Spacing for better look
                     ],
-                  ),
-                ),
-                // Read Button
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 24,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (magazine.fileUrl.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MagazineReaderView(
-                              pdfUrl: magazine.fileUrl,
-                              title: magazine.title,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'DERGİYİ OKU',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'BioSans',
-                      ),
-                    ),
                   ),
                 ),
               ],
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Row(
-        children: [
-          RichText(
-            text: const TextSpan(
-              children: [
-                TextSpan(
-                  text: 'DERGİ',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
-                    fontFamily: 'BioSans',
-                  ),
-                ),
-                TextSpan(
-                  text: ' DETAYI',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                    fontFamily: 'BioSans',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

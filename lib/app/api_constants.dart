@@ -32,4 +32,7 @@ class ApiConstants {
   static const String searchBlogs = '$baseUrl/api/v1/blogs/search';
   static const String magazines = '$baseUrl/api/v1/magazines';
   static String magazineDetail(int id) => '$baseUrl/api/v1/magazines/$id';
+  static const String banners = '$baseUrl/api/v1/banners';
+  static String franchiseApply(int id) =>
+      '$baseUrl/api/v1/franchises/$id/apply';
 }

@@ -68,4 +68,38 @@ class FranchiseService {
       return ApiResult.failure(result.error ?? 'Unknown Error');
     }
   }
+
+  Future<ApiResult<bool>> applyToFranchise({
+    required int franchiseId,
+    required String firstname,
+    required String lastname,
+    required String phone,
+    required String email,
+    required int city,
+    required int district,
+    required String description,
+  }) async {
+    final body = {
+      'firstname': firstname,
+      'lastname': lastname,
+      'phone': phone,
+      'email': email,
+      'city': city,
+      'district': district,
+      'description': description,
+    };
+
+    final result = await _apiClient.post(
+      ApiConstants.franchiseApply(franchiseId),
+      body: body,
+    );
+
+    if (result.isSuccess) {
+      return ApiResult.success(true);
+    } else {
+      return ApiResult.failure(
+        result.error ?? 'Başvuru sırasında bir hata oluştu.',
+      );
+    }
+  }
 }

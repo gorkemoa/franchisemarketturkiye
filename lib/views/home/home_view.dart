@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
+import 'package:franchisemarketturkiye/models/magazine.dart';
+import 'package:franchisemarketturkiye/models/banner.dart';
 import 'package:franchisemarketturkiye/viewmodels/home_view_model.dart';
 import 'package:franchisemarketturkiye/views/home/blog_card.dart';
 import 'package:franchisemarketturkiye/views/home/blog_slider.dart';
@@ -22,6 +24,7 @@ import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
 import 'package:franchisemarketturkiye/views/search/search_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
+import 'package:franchisemarketturkiye/views/magazine/magazine_detail_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -147,22 +150,22 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Hero Image
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildStaticSlider(context, 'assets/hero_2.jpg'),
-                ),
-                const SizedBox(height: 16),
-
-                // Second Static Image
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildStaticSlider(
-                    context,
-                    'assets/FRANCHISE-WB-31-2.jpg',
-                  ),
-                ),
-                const SizedBox(height: 16),
+                // Dynamic Banners
+                ..._viewModel.banners.expand((banner) {
+                  if (banner.id == 1 && _viewModel.magazines.isNotEmpty) {
+                    return [
+                      _buildMagazineHero(context, banner, _viewModel.magazines),
+                      const SizedBox(height: 16),
+                    ];
+                  }
+                  return [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildBannerItem(context, banner.imageUrl),
+                    ),
+                    const SizedBox(height: 16),
+                  ];
+                }).toList(),
 
                 // Brand Ticker Section (Full Width)
                 const BrandTicker(),
@@ -330,7 +333,99 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildStaticSlider(BuildContext context, String imagePath) {
+  Widget _buildMagazineHero(
+    BuildContext context,
+    HomeBanner banner,
+    List<Magazine> magazines,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ClipRRect(
+        child: Container(
+          height: 612, // Taller height to accommodate overlay
+          width: 408,
+          decoration: BoxDecoration(color: AppTheme.sliderBackground),
+          child: Stack(
+            children: [
+              // 1. Background Banner Image (The image with logo/text)
+              Positioned.fill(
+                child: Image.network(
+                  banner.imageUrl,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(color: AppTheme.sliderBackground),
+                ),
+              ),
+              // 2. Magazines Overlayed on top of the image
+              Positioned(
+                left: 12,
+                right: 0,
+                bottom: 20,
+                child: SizedBox(
+                  height: 250, // Container height for the row
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: magazines.take(4).length,
+                    itemBuilder: (context, index) {
+                      final magazine = magazines[index];
+                      final bool isFirst = index == 0;
+
+                      return Align(
+                        alignment: Alignment.bottomLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MagazineDetailView(magazineId: magazine.id),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: isFirst ? 90 : 80,
+                            height: isFirst ? 110 : 100,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.6),
+                                  blurRadius: 15,
+                                  offset: const Offset(4, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.network(
+                                magazine.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      color: Colors.white10,
+                                      child: const Icon(
+                                        Icons.book,
+                                        color: Colors.white24,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBannerItem(BuildContext context, String imageUrl) {
     return Container(
       width: double.infinity,
       height: 180,
@@ -340,12 +435,19 @@ class _HomeViewState extends State<HomeView> {
           children: [
             // Background Image
             Positioned.fill(
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.fill,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: AppTheme.sliderBackground),
-              ),
+              child: imageUrl.startsWith('http')
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.fill,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(color: AppTheme.sliderBackground),
+                    )
+                  : Image.asset(
+                      imageUrl,
+                      fit: BoxFit.fill,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(color: AppTheme.sliderBackground),
+                    ),
             ),
           ],
         ),
