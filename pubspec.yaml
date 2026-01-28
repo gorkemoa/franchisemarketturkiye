@@ -44,7 +44,7 @@ dependencies:
   flutter_widget_from_html: ^0.17.1
   shared_preferences: ^2.5.4
   file_picker: ^10.3.9
-  syncfusion_flutter_pdfviewer: ^32.1.25
+  flutter_pdf_flipbook: ^1.0.0
 
 dev_dependencies:
   flutter_test:

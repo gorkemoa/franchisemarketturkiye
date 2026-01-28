@@ -103,10 +103,9 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         magazine.imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 300,
                           color: Colors.grey[200],
@@ -129,7 +128,7 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                         magazine.title,
                         style: const TextStyle(
                           fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black,
                           fontFamily: 'BioSans',
                         ),
@@ -140,14 +139,13 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                         textStyle: const TextStyle(
                           fontSize: 15,
                           color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w400,
                           fontFamily: 'Inter',
-                          height: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
                 // Read Button
                 Padding(
                   padding: const EdgeInsets.symmetric(
