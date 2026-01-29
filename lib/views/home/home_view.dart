@@ -115,13 +115,42 @@ class _HomeViewState extends State<HomeView> {
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (_currentIndex == index) {
+            _onItemTapped(index);
+          } else {
+            setState(() {
+              _currentIndex = index;
+            });
+            _onItemTapped(index);
+          }
         },
       ),
       body: IndexedStack(index: _currentIndex, children: _pages),
     );
+  }
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        _authorsViewModel.fetchAuthors();
+        break;
+      case 1:
+        if (_searchViewModel.searchQuery.isNotEmpty) {
+          _searchViewModel.search(isRefresh: true);
+        } else {
+          _searchViewModel.init();
+        }
+        break;
+      case 2:
+        _viewModel.refresh();
+        break;
+      case 3:
+        _categoriesViewModel.fetchCategories();
+        break;
+      case 4:
+        _checkLoginStatus();
+        break;
+    }
   }
 
   Widget _buildHomeContent() {
