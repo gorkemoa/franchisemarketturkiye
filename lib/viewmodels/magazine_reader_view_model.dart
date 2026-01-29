@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/services/magazine_service.dart';
 
 class MagazineReaderViewModel extends ChangeNotifier {
-  final MagazineService _magazineService;
-
-  MagazineReaderViewModel({MagazineService? magazineService})
-    : _magazineService = magazineService ?? MagazineService();
+  MagazineReaderViewModel({MagazineService? magazineService});
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
@@ -26,22 +23,16 @@ class MagazineReaderViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Sadece progres takibi yapıyoruz, dosyayı kaydetmiyoruz (README uyumlu)
-      await _magazineService.downloadMagazine(
-        pdfUrl,
-        onProgress: (progress) {
-          _downloadProgress = progress;
-          notifyListeners();
-        },
-      );
-
-      // İndirme bittiğinde logoyu kaldırıp kütüphaneyi gösteriyoruz
+      // pdfrx kütüphanesi kendi içinde stream desteklediği için
+      // dosyayı komple RAM'e indirmek (byte list olarak tutmak)
+      // özellikle büyük dergilerde RAM dolmasına ve uygulamanın çökmesine neden oluyor.
+      // Bu yüzden doğrudan PDF görüntüsüne geçiyoruz.
       _isLoading = false;
       _showPdf = true;
     } catch (e) {
       _errorMessage = e.toString();
       _isLoading = false;
-      _showPdf = true; // Hata olsa da kütüphane kendi denesin
+      _showPdf = true;
     }
     notifyListeners();
   }

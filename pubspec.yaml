@@ -50,6 +50,12 @@ dependencies:
   connectivity_plus: ^7.0.0
   webview_flutter: ^4.13.1
   syncfusion_flutter_pdfviewer: ^32.1.25
+  turnable_page: 1.0.1
+  pdfrx: ^2.2.24
+  page_flip: 0.2.5+1
+  turn_page_transition: 0.5.0
+  firebase_core: ^4.4.0
+  firebase_messaging: ^16.1.1
 
 dev_dependencies:
   flutter_test:

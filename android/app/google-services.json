@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1088949266751",
+    "project_id": "franchisemarketturkiye-e51a1",
+    "storage_bucket": "franchisemarketturkiye-e51a1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088949266751:android:31e416d35c740114e8cb8a",
+        "android_client_info": {
+          "package_name": "com.smartmetrics.franchisemarketturkiye"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr3-LFAD2LAZPU0XafzbIcGxR3ZV4Qvog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088949266751:android:5462b42344c0fe36e8cb8a",
+        "android_client_info": {
+          "package_name": "com.smartmetrics.franchisemarketturkiyeApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr3-LFAD2LAZPU0XafzbIcGxR3ZV4Qvog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

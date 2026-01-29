@@ -113,7 +113,7 @@ class _MagazinesViewState extends State<MagazinesView> {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio:
-                              0.65, // Adjusted for magazine cover + details
+                              0.6, // Adjusted for magazine cover + details
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
@@ -215,7 +215,7 @@ class _MagazineCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: Image.network(
                   magazine.imageUrl,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   width: double.infinity,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[200],

@@ -1,4 +1,4 @@
-package com.smartmetrics.franchisemarketturkiye
+package com.smartmetrics.franchisemarketturkiyeApp
 
 import io.flutter.embedding.android.FlutterActivity
 
