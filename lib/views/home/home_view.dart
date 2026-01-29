@@ -43,6 +43,7 @@ class _HomeViewState extends State<HomeView> {
   late final CategoriesViewModel _categoriesViewModel;
   late final FranchisesViewModel _franchisesViewModel;
   late final SearchViewModel _searchViewModel;
+  final GlobalKey<ProfileViewState> _profileKey = GlobalKey<ProfileViewState>();
 
   @override
   void initState() {
@@ -83,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
       _buildHomeContent(),
       CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
-          ? ProfileView(onLogout: _checkLoginStatus)
+          ? ProfileView(key: _profileKey, onLogout: _checkLoginStatus)
           : LoginView(
               onLoginSuccess: () {
                 _checkLoginStatus();
@@ -149,6 +150,9 @@ class _HomeViewState extends State<HomeView> {
         break;
       case 4:
         _checkLoginStatus();
+        if (_isLoggedIn) {
+          _profileKey.currentState?.refresh();
+        }
         break;
     }
   }

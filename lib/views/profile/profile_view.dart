@@ -19,10 +19,10 @@ class ProfileView extends StatefulWidget {
   const ProfileView({super.key, this.onLogout, this.initialSection});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
+  State<ProfileView> createState() => ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
+class ProfileViewState extends State<ProfileView> {
   late final ProfileViewModel _profileViewModel;
   late final ChangePasswordViewModel _passwordViewModel;
   late final AddressViewModel _addressViewModel;
@@ -183,5 +183,9 @@ class _ProfileViewState extends State<ProfileView> {
       default:
         return AccountInfoPanel(viewModel: _profileViewModel);
     }
+  }
+
+  void refresh() {
+    _profileViewModel.loadProfile();
   }
 }

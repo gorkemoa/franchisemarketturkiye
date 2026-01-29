@@ -63,6 +63,8 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                     MaterialPageRoute(
                       builder: (context) => MagazineReaderView(
                         pdfUrl: magazine.fileUrl,
+                        coverUrl: magazine.imageUrl,
+                        magazineId: magazine.id,
                         title: magazine.title,
                       ),
                     ),
@@ -153,27 +155,34 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                 // Cover Image
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      child: Image.network(
-                        magazine.imageUrl,
-                        fit: BoxFit.fill,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          height: 300,
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Icon(Icons.broken_image, color: Colors.grey),
+                  child: Hero(
+                    tag: 'magazine_${magazine.id}',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        child: Image.network(
+                          magazine.imageUrl,
+                          fit: BoxFit.fill,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                height: 300,
+                                color: Colors.grey[200],
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
                         ),
                       ),
                     ),
