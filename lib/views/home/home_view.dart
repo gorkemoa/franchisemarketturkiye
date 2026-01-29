@@ -1,4 +1,3 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/magazine.dart';
@@ -85,7 +84,12 @@ class _HomeViewState extends State<HomeView> {
       CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
           ? ProfileView(onLogout: _checkLoginStatus)
-          : LoginView(onLoginSuccess: _checkLoginStatus),
+          : LoginView(
+              onLoginSuccess: () {
+                _checkLoginStatus();
+                setState(() => _currentIndex = 2);
+              },
+            ),
     ];
   }
 
@@ -116,25 +120,6 @@ class _HomeViewState extends State<HomeView> {
           });
         },
       ),
-      floatingActionButton: Transform.translate(
-        offset: const Offset(0, 7.5),
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _currentIndex = 2;
-            });
-          },
-          child: SizedBox(
-            width: 85,
-            height: 85,
-            child: SvgPicture.asset(
-              'assets/bottombar_icons/${_currentIndex == 2 ? 'nav_middle_sel.svg' : 'nav_middle_sef.svg'}',
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: IndexedStack(index: _currentIndex, children: _pages),
     );
   }
