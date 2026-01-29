@@ -8,7 +8,6 @@ import 'package:franchisemarketturkiye/views/home/blog_card.dart';
 import 'package:franchisemarketturkiye/views/home/blog_slider.dart';
 import 'package:franchisemarketturkiye/views/home/category_blog_section.dart';
 import 'package:franchisemarketturkiye/views/home/marketing_talks_section.dart';
-import 'package:franchisemarketturkiye/views/home/brand_ticker.dart';
 import 'package:franchisemarketturkiye/views/home/franchise_files_list.dart';
 import 'package:franchisemarketturkiye/views/home/contact_section.dart';
 import 'package:franchisemarketturkiye/views/home/app_footer.dart';
@@ -186,10 +185,6 @@ class _HomeViewState extends State<HomeView> {
                     SizedBox(height: 16),
                   ];
                 }).toList(),
-
-                // Brand Ticker Section (Full Width)
-                const BrandTicker(),
-                SizedBox(height: 16),
 
                 // Blog Horizontal Slider (Featured Blogs)
                 Padding(
