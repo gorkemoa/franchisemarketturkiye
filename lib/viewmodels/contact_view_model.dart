@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/services/contact_service.dart';
+import 'package:franchisemarketturkiye/services/auth_service.dart';
 
 class ContactViewModel extends ChangeNotifier {
   final ContactService _service = ContactService();
+  final AuthService _authService = AuthService();
+
+  ContactViewModel() {
+    _fetchProfile();
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -17,6 +23,21 @@ class ContactViewModel extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
+
+  Future<void> _fetchProfile() async {
+    final result = await _authService.getMe();
+    if (result.isSuccess && result.data?.data?.customer != null) {
+      final customer = result.data!.data!.customer!;
+      final firstName = customer.firstname ?? '';
+      final lastName = customer.lastname ?? '';
+      if (firstName.isNotEmpty || lastName.isNotEmpty) {
+        fullNameController.text = '$firstName $lastName'.trim();
+      }
+      emailController.text = customer.email ?? '';
+      phoneController.text = customer.phone ?? '';
+      notifyListeners();
+    }
+  }
 
   Future<void> sendMessage() async {
     if (fullNameController.text.isEmpty ||

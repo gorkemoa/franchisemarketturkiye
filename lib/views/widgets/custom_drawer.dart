@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
-import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazines_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/magazines_view_model.dart';
+import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -425,7 +425,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ProfileView(),
+                            builder: (context) => const ProfileView(
+                              initialSection: 'Yazar Başvurusu',
+                            ),
                           ),
                         );
                       },
@@ -436,7 +438,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ContactView(),
+                            builder: (context) =>
+                                const ProfileView(initialSection: 'İletişim'),
                           ),
                         );
                       },
@@ -594,63 +597,81 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget _buildBottomBanner() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.asset(
-              'assets/hamburger_nav_icons/image.png',
-              width: double.infinity,
-              height: 160, // Match image aspect better
-              fit: BoxFit.cover,
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            height: 160,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MagazineReaderView(
+                pdfUrl:
+                    'https://franchisemarketturkiye.com/assets/uploads/franchise-market-sunum-dosyasi.pdf',
+                title: 'SUNUM DOSYASI',
               ),
             ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1.5),
-                    color: Colors.white.withOpacity(0.2),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'SUNUM DOSYASI',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'BioSans',
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 16),
-                    ],
-                  ),
-                ),
-              ],
+          );
+        },
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.asset(
+                'assets/hamburger_nav_icons/image.png',
+                width: double.infinity,
+                height: 160, // Match image aspect better
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ],
+            Container(
+              width: double.infinity,
+              height: 160,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                ),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1.5),
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'SUNUM DOSYASI',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'BioSans',
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -14,8 +14,9 @@ import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
+  final String? initialSection;
 
-  const ProfileView({super.key, this.onLogout});
+  const ProfileView({super.key, this.onLogout, this.initialSection});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -36,6 +37,11 @@ class _ProfileViewState extends State<ProfileView> {
     _addressViewModel = AddressViewModel();
     _writerViewModel = WriterApplicationViewModel();
     _contactViewModel = ContactViewModel();
+
+    if (widget.initialSection != null &&
+        _sections.contains(widget.initialSection)) {
+      _selectedSection = widget.initialSection!;
+    }
   }
 
   @override

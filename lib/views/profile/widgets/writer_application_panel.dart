@@ -64,6 +64,8 @@ class WriterApplicationPanel extends StatelessWidget {
                 label: 'E-POSTA *',
                 controller: viewModel.emailController,
                 keyboardType: TextInputType.emailAddress,
+                enableSuggestions: false,
+                autocorrect: false,
               ),
               const SizedBox(height: 16),
               ProfileTextField(
@@ -74,7 +76,7 @@ class WriterApplicationPanel extends StatelessWidget {
               ProfileTextField(
                 label: 'ADRES',
                 controller: viewModel.addressController,
-                maxLines: 2,
+                maxLines: 6,
               ),
               const SizedBox(height: 16),
               ProfileTextField(

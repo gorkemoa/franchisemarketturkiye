@@ -51,6 +51,8 @@ class ContactPanel extends StatelessWidget {
                 label: 'E-POSTA *',
                 controller: viewModel.emailController,
                 keyboardType: TextInputType.emailAddress,
+                enableSuggestions: false,
+                autocorrect: false,
               ),
               const SizedBox(height: 16),
               ProfileTextField(
