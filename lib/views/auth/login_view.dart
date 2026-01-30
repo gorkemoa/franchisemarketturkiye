@@ -158,6 +158,8 @@ class _LoginViewState extends State<LoginView> {
           obscureText: true,
           textInputAction: TextInputAction.done,
         ),
+        const SizedBox(height: 14),
+
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
@@ -177,7 +179,7 @@ class _LoginViewState extends State<LoginView> {
               minimumSize: const Size(0, 0),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: const Text(
+            child: Text(
               'Şifremi Unuttum?',
               style: TextStyle(
                 color: AppTheme.textSecondary,
@@ -187,7 +189,7 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 14),
         _buildErrorMessage(),
         _buildActionButton('Giriş Yap', () async {
           final success = await _viewModel.login();

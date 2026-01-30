@@ -160,13 +160,7 @@ class _MagazineReaderViewState extends State<MagazineReaderView> {
                               ),
                             ),
                           )
-                        : const Center(
-                            child: Icon(
-                              Icons.picture_as_pdf,
-                              color: Colors.white,
-                              size: 64,
-                            ),
-                          ),
+                        : const Center(),
                   ),
                 ),
 

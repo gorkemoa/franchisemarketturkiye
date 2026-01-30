@@ -357,7 +357,13 @@ class _HomeViewState extends State<HomeView> {
                 SizedBox(height: 32),
 
                 // Footer Section
-                AppFooter(),
+                AppFooter(
+                  onIndexChanged: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                ),
               ],
             ),
           ),
