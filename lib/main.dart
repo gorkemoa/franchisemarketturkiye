@@ -6,7 +6,6 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/core/widgets/connectivity_wrapper.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:turnable_page/turnable_page.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
@@ -17,9 +16,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService.initialize();
-
-  // PDF loaders initialization for turnable_page
-  await TurnablePdf.initPDFLoaders();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
