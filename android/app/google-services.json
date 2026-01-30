@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1088949266751:android:f228d114f9fbc8e9e8cb8a",
+        "android_client_info": {
+          "package_name": "com.smartmetrics.franchise"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr3-LFAD2LAZPU0XafzbIcGxR3ZV4Qvog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1088949266751:android:31e416d35c740114e8cb8a",
         "android_client_info": {
           "package_name": "com.smartmetrics.franchisemarketturkiye"

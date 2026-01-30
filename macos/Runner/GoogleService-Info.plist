@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.smartmetrics.franchisemarketturkiye</string>
+	<string>com.smartmetrics.franchise</string>
 	<key>PROJECT_ID</key>
 	<string>franchisemarketturkiye-e51a1</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1088949266751:ios:07fbc22ccbb6d3e8e8cb8a</string>
+	<string>1:1088949266751:ios:84f9109770590486e8cb8a</string>
 </dict>
 </plist>

@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAr3-LFAD2LAZPU0XafzbIcGxR3ZV4Qvog',
-    appId: '1:1088949266751:android:5462b42344c0fe36e8cb8a',
+    appId: '1:1088949266751:android:f228d114f9fbc8e9e8cb8a',
     messagingSenderId: '1088949266751',
     projectId: 'franchisemarketturkiye-e51a1',
     storageBucket: 'franchisemarketturkiye-e51a1.firebasestorage.app',
@@ -63,19 +63,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCNxJw9Q7IQsgikxMCz-jDlrrgCp45bPSk',
-    appId: '1:1088949266751:ios:b6e5f092b6f1a713e8cb8a',
+    appId: '1:1088949266751:ios:84f9109770590486e8cb8a',
     messagingSenderId: '1088949266751',
     projectId: 'franchisemarketturkiye-e51a1',
     storageBucket: 'franchisemarketturkiye-e51a1.firebasestorage.app',
-    iosBundleId: 'com.smartmetrics.franchisemarketturkiyeApp',
+    iosBundleId: 'com.smartmetrics.franchise',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCNxJw9Q7IQsgikxMCz-jDlrrgCp45bPSk',
-    appId: '1:1088949266751:ios:07fbc22ccbb6d3e8e8cb8a',
+    appId: '1:1088949266751:ios:84f9109770590486e8cb8a',
     messagingSenderId: '1088949266751',
     projectId: 'franchisemarketturkiye-e51a1',
     storageBucket: 'franchisemarketturkiye-e51a1.firebasestorage.app',
-    iosBundleId: 'com.smartmetrics.franchisemarketturkiye',
+    iosBundleId: 'com.smartmetrics.franchise',
   );
+
 }

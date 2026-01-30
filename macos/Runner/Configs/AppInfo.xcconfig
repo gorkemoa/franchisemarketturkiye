@@ -8,7 +8,7 @@
 PRODUCT_NAME = franchisemarketturkiye
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.smartmetrics.franchisemarketturkiye
+PRODUCT_BUNDLE_IDENTIFIER = com.smartmetrics.franchise
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
