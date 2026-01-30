@@ -4,6 +4,10 @@ import 'package:franchisemarketturkiye/services/category_service.dart';
 import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class CategoriesViewModel extends ChangeNotifier {
+  static final CategoriesViewModel _instance = CategoriesViewModel._internal();
+  factory CategoriesViewModel() => _instance;
+  CategoriesViewModel._internal();
+
   final CategoryService _categoryService = CategoryService();
 
   List<Category> _categories = [];

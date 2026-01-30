@@ -11,12 +11,10 @@ import 'package:franchisemarketturkiye/services/category_service.dart';
 import 'package:franchisemarketturkiye/services/magazine_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  final BlogService _blogService;
-  final CategoryService _categoryService;
-  final BannerService _bannerService;
-  final MagazineService _magazineService;
+  static final HomeViewModel _instance = HomeViewModel._internal();
+  factory HomeViewModel() => _instance;
 
-  HomeViewModel({
+  HomeViewModel._internal({
     BlogService? blogService,
     CategoryService? categoryService,
     BannerService? bannerService,
@@ -25,6 +23,11 @@ class HomeViewModel extends ChangeNotifier {
        _categoryService = categoryService ?? CategoryService(),
        _bannerService = bannerService ?? BannerService(),
        _magazineService = magazineService ?? MagazineService();
+
+  final BlogService _blogService;
+  final CategoryService _categoryService;
+  final BannerService _bannerService;
+  final MagazineService _magazineService;
 
   List<Blog> _featuredBlogs = [];
   List<Blog> get featuredBlogs => _featuredBlogs;

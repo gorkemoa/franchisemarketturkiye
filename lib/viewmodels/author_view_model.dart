@@ -4,10 +4,12 @@ import 'package:franchisemarketturkiye/services/author_service.dart';
 import 'package:franchisemarketturkiye/core/extensions/turkish_string_extensions.dart';
 
 class AuthorViewModel extends ChangeNotifier {
-  final AuthorService _authorService;
-
-  AuthorViewModel({AuthorService? authorService})
+  static final AuthorViewModel _instance = AuthorViewModel._internal();
+  factory AuthorViewModel() => _instance;
+  AuthorViewModel._internal({AuthorService? authorService})
     : _authorService = authorService ?? AuthorService();
+
+  final AuthorService _authorService;
 
   List<Author> _authors = [];
   String _searchQuery = '';

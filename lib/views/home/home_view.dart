@@ -54,11 +54,22 @@ class _HomeViewState extends State<HomeView> {
     _franchisesViewModel = FranchisesViewModel();
     _searchViewModel = SearchViewModel();
 
-    _viewModel.init();
-    _authorsViewModel.fetchAuthors();
-    _categoriesViewModel.init();
-    _franchisesViewModel.fetchFranchises();
-    _searchViewModel.init();
+    // Only load if not already loaded (e.g. by SplashView)
+    if (_viewModel.featuredBlogs.isEmpty) {
+      _viewModel.init();
+    }
+    if (_authorsViewModel.authors.isEmpty) {
+      _authorsViewModel.fetchAuthors();
+    }
+    if (_categoriesViewModel.categories.isEmpty) {
+      _categoriesViewModel.init();
+    }
+    if (_franchisesViewModel.franchises.isEmpty) {
+      _franchisesViewModel.fetchFranchises();
+    }
+    if (_searchViewModel.recommendedBlogs.isEmpty) {
+      _searchViewModel.init();
+    }
 
     _updatePages();
     _checkLoginStatus();

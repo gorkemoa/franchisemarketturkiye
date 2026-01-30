@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:franchisemarketturkiye/viewmodels/home_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
+import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -33,7 +38,32 @@ class _SplashViewState extends State<SplashView>
   }
 
   void _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 4));
+    // Start loading data
+    final startTime = DateTime.now();
+
+    try {
+      // Parallel loading of all main data
+      await Future.wait([
+        HomeViewModel().init(),
+        AuthorViewModel().fetchAuthors(),
+        CategoriesViewModel().init(),
+        FranchisesViewModel().fetchFranchises(),
+        SearchViewModel().init(),
+      ]);
+    } catch (e) {
+      debugPrint('Error loading splash data: $e');
+      // Continue anyway, HomeView has its own error handling
+    }
+
+    final endTime = DateTime.now();
+    final elapsed = endTime.difference(startTime);
+    final remaining = const Duration(seconds: 4) - elapsed;
+
+    // Minimum 4 seconds splash or until data is loaded if it takes longer
+    if (remaining.inMilliseconds > 0) {
+      await Future.delayed(remaining);
+    }
+
     if (mounted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(

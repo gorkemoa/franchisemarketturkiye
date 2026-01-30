@@ -5,6 +5,10 @@ import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/services/blog_service.dart';
 
 class SearchViewModel extends ChangeNotifier {
+  static final SearchViewModel _instance = SearchViewModel._internal();
+  factory SearchViewModel() => _instance;
+  SearchViewModel._internal();
+
   final BlogService _blogService = BlogService();
 
   List<Blog> _blogs = [];
