@@ -47,5 +47,24 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Franchise Market Türkiye uygulaması, profil fotoğrafı yükleyebilmeniz veya yazı başvurularınızda görsel paylaşabilmeniz için galerinize erişim izni gerektirir.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>franchisemarketturkiye.com</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>franchise</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:franchisemarketturkiye/firebase_options.dart';
 import 'package:franchisemarketturkiye/services/notification_service.dart';
+import 'package:franchisemarketturkiye/services/deep_link_service.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/core/widgets/connectivity_wrapper.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
@@ -18,10 +19,13 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await NotificationService.initialize();
 
   // Initialize Pdfrx for Flutter
   await pdfrxFlutterInitialize();
+
+  // Initialize Services
+  await FirebaseMessagingService.initialize();
+  await DeepLinkService().initialize();
 
   // Setup global unauthorized handler
   ApiClient().onUnauthorized = () async {
