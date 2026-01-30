@@ -10,6 +10,9 @@ class LoginViewModel extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  int? _lastStatusCode;
+  int? get lastStatusCode => _lastStatusCode;
+
   bool _isLogin = true;
   bool get isLogin => _isLogin;
 
@@ -61,6 +64,7 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       _isLoading = false;
+      _lastStatusCode = result.statusCode;
       if (result.isSuccess) {
         if (result.data!.success) {
           notifyListeners();
@@ -119,6 +123,7 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       _isLoading = false;
+      _lastStatusCode = result.statusCode;
       if (result.isSuccess) {
         if (result.data!.success) {
           notifyListeners();

@@ -4,6 +4,8 @@ import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/login_view_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:franchisemarketturkiye/views/widgets/webview_view.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:franchisemarketturkiye/core/widgets/app_dialogs.dart';
 
 class LoginView extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
@@ -189,17 +191,26 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
-        const SizedBox(height: 14),
-        _buildErrorMessage(),
+
         _buildActionButton('Giriş Yap', () async {
           final success = await _viewModel.login();
           if (success && mounted) {
             widget.onLoginSuccess?.call();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Başarıyla giriş yapıldı'),
-                backgroundColor: Colors.green,
-              ),
+            AppDialogs.showStatusDialog(
+              context,
+              title: 'Başarılı',
+              message: 'Başarıyla giriş yapıldı',
+            );
+          } else if (mounted) {
+            AppDialogs.showStatusDialog(
+              context,
+              title: 'Hata',
+              message: _viewModel.errorMessage ?? 'Giriş yapılamadı.',
+              isError: true,
+              isServerError: _viewModel.lastStatusCode == 500,
+              onContactPressed: () {
+                launchUrl(Uri.parse('mailto:info@franchisemarketturkiye.com'));
+              },
             );
           }
         }),
@@ -321,45 +332,30 @@ class _LoginViewState extends State<LoginView> {
           ],
         ),
         const SizedBox(height: 24),
-        _buildErrorMessage(),
+
         _buildActionButton('Kayıt Ol', () async {
           final success = await _viewModel.register();
           if (success && mounted) {
-            // Navigator.pop(context); // Maybe redirect to login or show success?
-            // Usually after register, auto login or ask to login.
-            // Prompt says "Giriş" and response has success logic.
-            // For now, let's show success and maybe switch to login or pop.
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Kayıt başarılı! Lütfen giriş yapınız.'),
-                backgroundColor: Colors.green,
-              ),
+            AppDialogs.showStatusDialog(
+              context,
+              title: 'Başarılı',
+              message: 'Kayıt başarılı! Lütfen giriş yapınız.',
             );
             _viewModel.toggleAuthMode(); // Switch to login after success
+          } else if (mounted) {
+            AppDialogs.showStatusDialog(
+              context,
+              title: 'Hata',
+              message: _viewModel.errorMessage ?? 'Kayıt başarısız.',
+              isError: true,
+              isServerError: _viewModel.lastStatusCode == 500,
+              onContactPressed: () {
+                launchUrl(Uri.parse('mailto:info@franchisemarketturkiye.com'));
+              },
+            );
           }
         }),
       ],
-    );
-  }
-
-  Widget _buildErrorMessage() {
-    if (_viewModel.errorMessage == null) return const SizedBox.shrink();
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      margin: const EdgeInsets.only(bottom: 24),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        _viewModel.errorMessage!,
-        style: const TextStyle(
-          color: AppTheme.primaryColor,
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
     );
   }
 
@@ -409,15 +405,15 @@ class _LoginViewState extends State<LoginView> {
           vertical: 16,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: AppTheme.primaryColor),
         ),
       ),
@@ -434,7 +430,7 @@ class _LoginViewState extends State<LoginView> {
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         ),
         child: _viewModel.isLoading
             ? const SizedBox(

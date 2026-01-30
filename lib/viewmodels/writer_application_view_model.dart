@@ -22,6 +22,9 @@ class WriterApplicationViewModel extends ChangeNotifier {
   String? _successMessage;
   String? get successMessage => _successMessage;
 
+  int? _lastStatusCode;
+  int? get lastStatusCode => _lastStatusCode;
+
   String? _cvPath;
   String? get cvPath => _cvPath;
   String? get cvName => _cvPath?.split('/').last;
@@ -142,6 +145,7 @@ class WriterApplicationViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     _successMessage = null;
+    _lastStatusCode = null;
     notifyListeners();
 
     try {
@@ -157,6 +161,7 @@ class WriterApplicationViewModel extends ChangeNotifier {
       );
 
       if (result.isSuccess) {
+        _lastStatusCode = result.statusCode;
         _successMessage = "Başvurunuz başarıyla alındı.";
         firstNameController.clear();
         lastNameController.clear();
@@ -167,6 +172,7 @@ class WriterApplicationViewModel extends ChangeNotifier {
         messageController.clear();
         _cvPath = null;
       } else {
+        _lastStatusCode = result.statusCode;
         _errorMessage = result.error;
       }
     } catch (e) {

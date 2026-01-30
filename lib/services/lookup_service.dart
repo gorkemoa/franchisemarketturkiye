@@ -14,12 +14,18 @@ class LookupService {
         final data = result.data!['data'];
         final items = data['items'] as List;
         final cities = items.map((e) => City.fromJson(e)).toList();
-        return ApiResult.success(cities);
+        return ApiResult.success(cities, statusCode: result.statusCode);
       } catch (e) {
-        return ApiResult.failure('Parse Error: $e');
+        return ApiResult.failure(
+          'Parse Error: $e',
+          statusCode: result.statusCode,
+        );
       }
     } else {
-      return ApiResult.failure(result.error ?? 'Failed to load cities');
+      return ApiResult.failure(
+        result.error ?? 'Failed to load cities',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -31,12 +37,18 @@ class LookupService {
         final data = result.data!['data'];
         final items = data['items'] as List;
         final districts = items.map((e) => District.fromJson(e)).toList();
-        return ApiResult.success(districts);
+        return ApiResult.success(districts, statusCode: result.statusCode);
       } catch (e) {
-        return ApiResult.failure('Parse Error: $e');
+        return ApiResult.failure(
+          'Parse Error: $e',
+          statusCode: result.statusCode,
+        );
       }
     } else {
-      return ApiResult.failure(result.error ?? 'Failed to load districts');
+      return ApiResult.failure(
+        result.error ?? 'Failed to load districts',
+        statusCode: result.statusCode,
+      );
     }
   }
 }

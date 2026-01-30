@@ -20,9 +20,12 @@ class AuthService {
 
     if (result.isSuccess) {
       final profileResponse = ProfileResponse.fromJson(result.data!);
-      return ApiResult.success(profileResponse);
+      return ApiResult.success(profileResponse, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Failed to fetch profile');
+      return ApiResult.failure(
+        result.error ?? 'Failed to fetch profile',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -37,9 +40,12 @@ class AuthService {
       if (loginResponse.success && loginResponse.data?.accessToken != null) {
         await _saveToken(loginResponse.data!.accessToken!);
       }
-      return ApiResult.success(loginResponse);
+      return ApiResult.success(loginResponse, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Login failed');
+      return ApiResult.failure(
+        result.error ?? 'Login failed',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -65,9 +71,12 @@ class AuthService {
 
     if (result.isSuccess) {
       final registerResponse = RegisterResponse.fromJson(result.data!);
-      return ApiResult.success(registerResponse);
+      return ApiResult.success(registerResponse, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Registration failed');
+      return ApiResult.failure(
+        result.error ?? 'Registration failed',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -96,9 +105,12 @@ class AuthService {
     );
 
     if (result.isSuccess) {
-      return ApiResult.success(null);
+      return ApiResult.success(null, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Failed to update address');
+      return ApiResult.failure(
+        result.error ?? 'Failed to update address',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -125,9 +137,12 @@ class AuthService {
     );
 
     if (result.isSuccess) {
-      return ApiResult.success(null);
+      return ApiResult.success(null, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Profil güncelleme başarısız');
+      return ApiResult.failure(
+        result.error ?? 'Profil güncelleme başarısız',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -147,9 +162,12 @@ class AuthService {
     );
 
     if (result.isSuccess) {
-      return ApiResult.success(null);
+      return ApiResult.success(null, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Failed to update password');
+      return ApiResult.failure(
+        result.error ?? 'Failed to update password',
+        statusCode: result.statusCode,
+      );
     }
   }
 

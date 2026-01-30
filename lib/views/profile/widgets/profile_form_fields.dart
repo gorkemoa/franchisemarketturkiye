@@ -53,7 +53,7 @@ class ProfileTextField extends StatelessWidget {
           decoration: BoxDecoration(
             color: enabled ? Colors.white : Colors.grey.shade100,
             border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(1),
+            borderRadius: BorderRadius.zero,
           ),
           child: TextField(
             controller: controller,
@@ -139,7 +139,7 @@ class ProfileDropdown<T> extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(1),
+              borderRadius: BorderRadius.zero,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

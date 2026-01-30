@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/franchise.dart';
 import 'package:franchisemarketturkiye/models/lookup_models.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchise_detail_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
+import 'package:franchisemarketturkiye/core/widgets/app_dialogs.dart';
 
 class FranchiseDetailView extends StatefulWidget {
   final int franchiseId;
@@ -390,13 +392,11 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                                       phoneController.text.isEmpty ||
                                       selectedCity == null ||
                                       selectedDistrict == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Lütfen tüm alanları doldurun.',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
+                                    AppDialogs.showStatusDialog(
+                                      context,
+                                      title: 'Hata',
+                                      message: 'Lütfen tüm alanları doldurun.',
+                                      isError: true,
                                     );
                                     return;
                                   }
@@ -421,23 +421,28 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
 
                                   if (success) {
                                     Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Başvurunuz başarıyla alındı.',
-                                        ),
-                                        backgroundColor: Colors.green,
-                                      ),
+                                    AppDialogs.showStatusDialog(
+                                      context,
+                                      title: 'Başarılı',
+                                      message: 'Başvurunuz başarıyla alındı.',
                                     );
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
+                                    AppDialogs.showStatusDialog(
+                                      context,
+                                      title: 'Hata',
+                                      message:
                                           _viewModel.errorMessage ??
-                                              'Başvuru sırasında bir hata oluştu.',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
+                                          'Başvuru sırasında bir hata oluştu.',
+                                      isError: true,
+                                      isServerError:
+                                          _viewModel.lastStatusCode == 500,
+                                      onContactPressed: () {
+                                        launchUrl(
+                                          Uri.parse(
+                                            'mailto:info@franchisemarketturkiye.com',
+                                          ),
+                                        );
+                                      },
                                     );
                                   }
                                 },

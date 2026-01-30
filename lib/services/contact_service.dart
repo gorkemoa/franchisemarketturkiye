@@ -21,9 +21,12 @@ class ContactService {
     final result = await _apiClient.post(ApiConstants.contact, body: body);
 
     if (result.isSuccess) {
-      return ApiResult.success(null);
+      return ApiResult.success(null, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Mesaj gönderilemedi');
+      return ApiResult.failure(
+        result.error ?? 'Mesaj gönderilemedi',
+        statusCode: result.statusCode,
+      );
     }
   }
 }

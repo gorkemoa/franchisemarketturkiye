@@ -46,7 +46,10 @@ class ApiClient {
         final decodedBody = bodyLog is Map<String, dynamic>
             ? bodyLog
             : jsonDecode(response.body);
-        return ApiResult.success(decodedBody as Map<String, dynamic>);
+        return ApiResult.success(
+          decodedBody as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       } else {
         String? errorMessage;
         if (bodyLog is Map<String, dynamic>) {
@@ -64,6 +67,7 @@ class ApiClient {
         }
         return ApiResult.failure(
           errorMessage ?? 'Request failed with status: ${response.statusCode}',
+          statusCode: response.statusCode,
         );
       }
     } catch (e) {
@@ -108,7 +112,10 @@ class ApiClient {
         final decodedBody = bodyLog is Map<String, dynamic>
             ? bodyLog
             : jsonDecode(response.body);
-        return ApiResult.success(decodedBody as Map<String, dynamic>);
+        return ApiResult.success(
+          decodedBody as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       } else {
         String? errorMessage;
         if (bodyLog is Map<String, dynamic>) {
@@ -126,6 +133,7 @@ class ApiClient {
         }
         return ApiResult.failure(
           errorMessage ?? 'Request failed with status: ${response.statusCode}',
+          statusCode: response.statusCode,
         );
       }
     } catch (e) {
@@ -170,7 +178,10 @@ class ApiClient {
         final decodedBody = bodyLog is Map<String, dynamic>
             ? bodyLog
             : jsonDecode(response.body);
-        return ApiResult.success(decodedBody as Map<String, dynamic>);
+        return ApiResult.success(
+          decodedBody as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       } else {
         String? errorMessage;
         if (bodyLog is Map<String, dynamic>) {
@@ -188,6 +199,7 @@ class ApiClient {
         }
         return ApiResult.failure(
           errorMessage ?? 'Request failed with status: ${response.statusCode}',
+          statusCode: response.statusCode,
         );
       }
     } catch (e) {
@@ -242,7 +254,10 @@ class ApiClient {
         final decodedBody = bodyLog is Map<String, dynamic>
             ? bodyLog
             : jsonDecode(response.body);
-        return ApiResult.success(decodedBody as Map<String, dynamic>);
+        return ApiResult.success(
+          decodedBody as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
       } else {
         String? errorMessage;
         if (bodyLog is Map<String, dynamic>) {
@@ -260,6 +275,7 @@ class ApiClient {
         }
         return ApiResult.failure(
           errorMessage ?? 'Request failed with status: ${response.statusCode}',
+          statusCode: response.statusCode,
         );
       }
     } catch (e) {
@@ -297,10 +313,14 @@ class ApiClient {
 
       if (streamedResponse.statusCode >= 200 &&
           streamedResponse.statusCode < 300) {
-        return ApiResult.success(bytes);
+        return ApiResult.success(
+          bytes,
+          statusCode: streamedResponse.statusCode,
+        );
       } else {
         return ApiResult.failure(
           'Download failed with status: ${streamedResponse.statusCode}',
+          statusCode: streamedResponse.statusCode,
         );
       }
     } catch (e) {

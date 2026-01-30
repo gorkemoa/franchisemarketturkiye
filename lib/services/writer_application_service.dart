@@ -43,9 +43,12 @@ class WriterApplicationService {
     );
 
     if (result.isSuccess) {
-      return ApiResult.success(null);
+      return ApiResult.success(null, statusCode: result.statusCode);
     } else {
-      return ApiResult.failure(result.error ?? 'Application failed');
+      return ApiResult.failure(
+        result.error ?? 'Application failed',
+        statusCode: result.statusCode,
+      );
     }
   }
 }

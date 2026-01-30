@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/viewmodels/contact_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
+import 'package:franchisemarketturkiye/core/widgets/app_dialogs.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactPanel extends StatelessWidget {
   final ContactViewModel viewModel;
@@ -17,23 +19,6 @@ class ContactPanel extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             children: [
-              if (viewModel.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    viewModel.errorMessage!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              if (viewModel.successMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    viewModel.successMessage!,
-                    style: const TextStyle(color: Colors.green),
-                  ),
-                ),
-
               ProfileTextField(
                 label: 'AD SOYAD *',
                 controller: viewModel.fullNameController,
@@ -66,13 +51,38 @@ class ContactPanel extends StatelessWidget {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  onPressed: viewModel.isLoading ? null : viewModel.sendMessage,
+                  onPressed: viewModel.isLoading
+                      ? null
+                      : () async {
+                          await viewModel.sendMessage();
+                          if (context.mounted) {
+                            final bool success =
+                                viewModel.successMessage != null;
+                            AppDialogs.showStatusDialog(
+                              context,
+                              title: success ? 'Başarılı' : 'Hata',
+                              message: success
+                                  ? viewModel.successMessage!
+                                  : (viewModel.errorMessage ??
+                                        'Bir hata oluştu.'),
+                              isError: !success,
+                              isServerError: viewModel.lastStatusCode == 500,
+                              onContactPressed: () {
+                                launchUrl(
+                                  Uri.parse(
+                                    'mailto:info@franchisemarketturkiye.com',
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD50000),
                     foregroundColor: Colors.white,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
                   ),
                   child: viewModel.isLoading

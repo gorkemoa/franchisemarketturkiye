@@ -19,6 +19,9 @@ class ContactViewModel extends ChangeNotifier {
   String? _successMessage;
   String? get successMessage => _successMessage;
 
+  int? _lastStatusCode;
+  int? get lastStatusCode => _lastStatusCode;
+
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -52,6 +55,7 @@ class ContactViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     _successMessage = null;
+    _lastStatusCode = null;
     notifyListeners();
 
     final result = await _service.sendMessage(
@@ -61,6 +65,7 @@ class ContactViewModel extends ChangeNotifier {
       message: messageController.text,
     );
 
+    _lastStatusCode = result.statusCode;
     if (result.isSuccess) {
       _successMessage = 'Mesajınız başarıyla gönderildi.';
       fullNameController.clear();

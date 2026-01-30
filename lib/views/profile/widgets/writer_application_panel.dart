@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/viewmodels/writer_application_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
+import 'package:franchisemarketturkiye/core/widgets/app_dialogs.dart';
+import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 
 class WriterApplicationPanel extends StatelessWidget {
   final WriterApplicationViewModel viewModel;
@@ -17,23 +19,6 @@ class WriterApplicationPanel extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             children: [
-              if (viewModel.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    viewModel.errorMessage!,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              if (viewModel.successMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    viewModel.successMessage!,
-                    style: const TextStyle(color: Colors.green),
-                  ),
-                ),
-
               Row(
                 children: [
                   Expanded(
@@ -135,13 +120,38 @@ class WriterApplicationPanel extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: viewModel.isLoading
                       ? null
-                      : viewModel.submitApplication,
+                      : () async {
+                          final success = await viewModel.submitApplication();
+                          if (context.mounted) {
+                            AppDialogs.showStatusDialog(
+                              context,
+                              title: success ? 'Başarılı' : 'Hata',
+                              message: success
+                                  ? 'Başvurunuz başarıyla alındı.'
+                                  : (viewModel.errorMessage ??
+                                        'Bir hata oluştu.'),
+                              isError: !success,
+                              isServerError: viewModel.lastStatusCode == 500,
+                              onContactPressed: () {
+                                Navigator.pop(context); // Close dialog
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ProfileView(
+                                      initialSection: 'İletişim',
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD50000),
                     foregroundColor: Colors.white,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
                   ),
                   child: viewModel.isLoading

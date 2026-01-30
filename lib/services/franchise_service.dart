@@ -17,12 +17,18 @@ class FranchiseService {
     if (result.isSuccess && result.data != null) {
       try {
         final response = FranchiseCategoryResponse.fromJson(result.data!);
-        return ApiResult.success(response);
+        return ApiResult.success(response, statusCode: result.statusCode);
       } catch (e) {
-        return ApiResult.failure('Parsing Error: $e');
+        return ApiResult.failure(
+          'Parsing Error: $e',
+          statusCode: result.statusCode,
+        );
       }
     } else {
-      return ApiResult.failure(result.error ?? 'Unknown Error');
+      return ApiResult.failure(
+        result.error ?? 'Unknown Error',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -45,12 +51,18 @@ class FranchiseService {
     if (result.isSuccess && result.data != null) {
       try {
         final response = FranchiseListResponse.fromJson(result.data!);
-        return ApiResult.success(response);
+        return ApiResult.success(response, statusCode: result.statusCode);
       } catch (e) {
-        return ApiResult.failure('Parsing Error: $e');
+        return ApiResult.failure(
+          'Parsing Error: $e',
+          statusCode: result.statusCode,
+        );
       }
     } else {
-      return ApiResult.failure(result.error ?? 'Unknown Error');
+      return ApiResult.failure(
+        result.error ?? 'Unknown Error',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -60,12 +72,18 @@ class FranchiseService {
     if (result.isSuccess && result.data != null) {
       try {
         final response = FranchiseDetailResponse.fromJson(result.data!);
-        return ApiResult.success(response);
+        return ApiResult.success(response, statusCode: result.statusCode);
       } catch (e) {
-        return ApiResult.failure('Parsing Error: $e');
+        return ApiResult.failure(
+          'Parsing Error: $e',
+          statusCode: result.statusCode,
+        );
       }
     } else {
-      return ApiResult.failure(result.error ?? 'Unknown Error');
+      return ApiResult.failure(
+        result.error ?? 'Unknown Error',
+        statusCode: result.statusCode,
+      );
     }
   }
 
@@ -95,10 +113,11 @@ class FranchiseService {
     );
 
     if (result.isSuccess) {
-      return ApiResult.success(true);
+      return ApiResult.success(true, statusCode: result.statusCode);
     } else {
       return ApiResult.failure(
         result.error ?? 'Başvuru sırasında bir hata oluştu.',
+        statusCode: result.statusCode,
       );
     }
   }

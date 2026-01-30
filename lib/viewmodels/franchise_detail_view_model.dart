@@ -16,6 +16,7 @@ class FranchiseDetailViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _isApplying = false;
   String? _errorMessage;
+  int? _lastStatusCode;
 
   List<City> _cities = [];
   List<District> _districts = [];
@@ -26,6 +27,7 @@ class FranchiseDetailViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   List<City> get cities => _cities;
   List<District> get districts => _districts;
+  int? get lastStatusCode => _lastStatusCode;
 
   FranchiseDetailViewModel({required this.franchiseId});
 
@@ -35,6 +37,7 @@ class FranchiseDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     final result = await _franchiseService.getFranchiseDetail(franchiseId);
+    _lastStatusCode = result.statusCode;
 
     if (result.isSuccess && result.data != null) {
       _franchise = result.data!.data.item;
@@ -92,6 +95,11 @@ class FranchiseDetailViewModel extends ChangeNotifier {
       district: district,
       description: description,
     );
+
+    _lastStatusCode = result.statusCode;
+    if (!result.isSuccess) {
+      _errorMessage = result.error;
+    }
 
     _isApplying = false;
     notifyListeners();
