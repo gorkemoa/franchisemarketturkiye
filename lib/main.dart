@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -16,6 +17,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService.initialize();
+
+  // Initialize Pdfrx for Flutter
+  await pdfrxFlutterInitialize();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
