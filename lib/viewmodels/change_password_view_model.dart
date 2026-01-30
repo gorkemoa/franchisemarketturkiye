@@ -41,8 +41,8 @@ class ChangePasswordViewModel extends ChangeNotifier {
       return false;
     }
 
-    if (newPasswordController.text.length < 6) {
-      _errorMessage = 'Şifre en az 6 karakter olmalıdır.';
+    if (newPasswordController.text.length < 8) {
+      _errorMessage = 'Şifre en az 8 karakter olmalıdır.';
       _isLoading = false;
       notifyListeners();
       return false;
@@ -69,7 +69,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _errorMessage = 'Beklenmedik bir hata oluştu: $e';
+      _errorMessage = 'Beklenmedik bir hata oluştu. Lütfen tekrar deneyiniz.';
       _isLoading = false;
       notifyListeners();
       return false;

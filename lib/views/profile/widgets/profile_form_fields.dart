@@ -181,7 +181,7 @@ void showProfilePicker<T>({
   if (items.isEmpty) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Liste boş.')));
+    ).showSnackBar(const SnackBar(content: Text('Şehir Seçmelisiniz')));
     return;
   }
 

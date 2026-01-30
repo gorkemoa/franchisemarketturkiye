@@ -5,6 +5,8 @@ import 'package:franchisemarketturkiye/services/notification_service.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/core/widgets/connectivity_wrapper.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
+import 'package:franchisemarketturkiye/services/auth_service.dart';
+import 'package:franchisemarketturkiye/core/network/api_client.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +22,15 @@ void main() async {
 
   // Initialize Pdfrx for Flutter
   await pdfrxFlutterInitialize();
+
+  // Setup global unauthorized handler
+  ApiClient().onUnauthorized = () async {
+    await AuthService().logout();
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const HomeView()),
+      (route) => false,
+    );
+  };
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

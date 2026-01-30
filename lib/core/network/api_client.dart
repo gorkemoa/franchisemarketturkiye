@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:franchisemarketturkiye/core/utils/logger.dart';
 
@@ -6,7 +7,14 @@ import 'package:franchisemarketturkiye/core/network/api_result.dart';
 import 'package:franchisemarketturkiye/app/api_constants.dart';
 
 class ApiClient {
+  static final ApiClient _instance = ApiClient._internal();
+  factory ApiClient() => _instance;
+  ApiClient._internal();
+
   final http.Client _client = http.Client();
+
+  /// Callback to be called when a 403 Unauthorized (Forbidden) response is received.
+  VoidCallback? onUnauthorized;
 
   Future<ApiResult<Map<String, dynamic>>> get(
     String url, {
@@ -40,8 +48,22 @@ class ApiClient {
             : jsonDecode(response.body);
         return ApiResult.success(decodedBody as Map<String, dynamic>);
       } else {
+        String? errorMessage;
+        if (bodyLog is Map<String, dynamic>) {
+          if (bodyLog['error'] != null && bodyLog['error']['message'] != null) {
+            errorMessage = bodyLog['error']['message'];
+          } else if (bodyLog['message'] != null) {
+            errorMessage = bodyLog['message'];
+          }
+        }
+        if (response.statusCode == 403) {
+          onUnauthorized?.call();
+          errorMessage = 'Lütfen tekrar giriş yapın.';
+        } else if (response.statusCode == 401) {
+          errorMessage = 'E-posta veya şifre hatalı.';
+        }
         return ApiResult.failure(
-          'Request failed with status: ${response.statusCode}',
+          errorMessage ?? 'Request failed with status: ${response.statusCode}',
         );
       }
     } catch (e) {
@@ -88,8 +110,22 @@ class ApiClient {
             : jsonDecode(response.body);
         return ApiResult.success(decodedBody as Map<String, dynamic>);
       } else {
+        String? errorMessage;
+        if (bodyLog is Map<String, dynamic>) {
+          if (bodyLog['error'] != null && bodyLog['error']['message'] != null) {
+            errorMessage = bodyLog['error']['message'];
+          } else if (bodyLog['message'] != null) {
+            errorMessage = bodyLog['message'];
+          }
+        }
+        if (response.statusCode == 403) {
+          onUnauthorized?.call();
+          errorMessage = 'Lütfen tekrar giriş yapın.';
+        } else if (response.statusCode == 401) {
+          errorMessage = 'E-posta veya şifre hatalı.';
+        }
         return ApiResult.failure(
-          'Request failed with status: ${response.statusCode}',
+          errorMessage ?? 'Request failed with status: ${response.statusCode}',
         );
       }
     } catch (e) {
@@ -136,8 +172,22 @@ class ApiClient {
             : jsonDecode(response.body);
         return ApiResult.success(decodedBody as Map<String, dynamic>);
       } else {
+        String? errorMessage;
+        if (bodyLog is Map<String, dynamic>) {
+          if (bodyLog['error'] != null && bodyLog['error']['message'] != null) {
+            errorMessage = bodyLog['error']['message'];
+          } else if (bodyLog['message'] != null) {
+            errorMessage = bodyLog['message'];
+          }
+        }
+        if (response.statusCode == 403) {
+          onUnauthorized?.call();
+          errorMessage = 'Lütfen tekrar giriş yapın.';
+        } else if (response.statusCode == 401) {
+          errorMessage = 'E-posta veya şifre hatalı.';
+        }
         return ApiResult.failure(
-          'Request failed with status: ${response.statusCode}',
+          errorMessage ?? 'Request failed with status: ${response.statusCode}',
         );
       }
     } catch (e) {
@@ -194,8 +244,22 @@ class ApiClient {
             : jsonDecode(response.body);
         return ApiResult.success(decodedBody as Map<String, dynamic>);
       } else {
+        String? errorMessage;
+        if (bodyLog is Map<String, dynamic>) {
+          if (bodyLog['error'] != null && bodyLog['error']['message'] != null) {
+            errorMessage = bodyLog['error']['message'];
+          } else if (bodyLog['message'] != null) {
+            errorMessage = bodyLog['message'];
+          }
+        }
+        if (response.statusCode == 403) {
+          onUnauthorized?.call();
+          errorMessage = 'Lütfen tekrar giriş yapın.';
+        } else if (response.statusCode == 401) {
+          errorMessage = 'E-posta veya şifre hatalı.';
+        }
         return ApiResult.failure(
-          'Request failed with status: ${response.statusCode}',
+          errorMessage ?? 'Request failed with status: ${response.statusCode}',
         );
       }
     } catch (e) {
