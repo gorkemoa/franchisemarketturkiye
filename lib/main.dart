@@ -5,6 +5,7 @@ import 'package:franchisemarketturkiye/services/notification_service.dart';
 import 'package:franchisemarketturkiye/services/deep_link_service.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/core/widgets/connectivity_wrapper.dart';
+import 'package:franchisemarketturkiye/views/splash/splash_view.dart';
 import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/core/network/api_client.dart';
@@ -81,7 +82,7 @@ class MyApp extends StatelessWidget {
               ),
             );
           },
-          home: const HomeView(),
+          home: const SplashView(),
         );
       },
     );
