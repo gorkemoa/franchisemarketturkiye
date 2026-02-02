@@ -28,15 +28,6 @@ class _NotificationsViewState extends State<NotificationsView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: true,
-      title: const Text(
-        'BİLDİRİMLER',
-        style: TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'BioSans',
-        ),
-      ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, child) {
@@ -88,31 +79,41 @@ class _NotificationsViewState extends State<NotificationsView> {
             );
           }
 
-          if (widget.viewModel.notifications.isEmpty) {
-            return const Center(
-              child: Text(
-                'Henüz bir bildirim bulunmuyor.',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  color: AppTheme.textSecondary,
-                ),
-              ),
-            );
-          }
-
           return RefreshIndicator(
             onRefresh: () => widget.viewModel.fetchNotifications(),
             color: AppTheme.primaryColor,
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: widget.viewModel.notifications.length,
-              separatorBuilder: (context, index) =>
-                  const Divider(height: 24, color: AppTheme.borderColor),
-              itemBuilder: (context, index) {
-                final notification = widget.viewModel.notifications[index];
-                return _NotificationItem(notification: notification);
-              },
+            child: Column(
+              children: [
+                if (widget.viewModel.notifications.isEmpty)
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Henüz bir bildirim bulunmuyor.',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: widget.viewModel.notifications.length,
+                      separatorBuilder: (context, index) => const Divider(
+                        height: 24,
+                        color: AppTheme.borderColor,
+                      ),
+                      itemBuilder: (context, index) {
+                        final notification =
+                            widget.viewModel.notifications[index];
+                        return _NotificationItem(notification: notification);
+                      },
+                    ),
+                  ),
+              ],
             ),
           );
         },

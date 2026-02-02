@@ -412,7 +412,7 @@ class _HomeViewState extends State<HomeView> {
                 right: 0,
                 bottom: 20,
                 child: SizedBox(
-                  height: 250, // Container height for the row
+                  height: 250,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     physics: const ClampingScrollPhysics(),
@@ -477,7 +477,7 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildBannerItem(BuildContext context, String imageUrl) {
     return Container(
-      width: double.infinity,
+      width: 360,
       height: 180,
       decoration: BoxDecoration(color: AppTheme.sliderBackground),
       child: ClipRRect(
