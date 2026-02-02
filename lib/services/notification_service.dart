@@ -127,6 +127,18 @@ class FirebaseMessagingService {
     String? type;
     String? id;
     String? linkUrl = finalData['link_url']?.toString();
+    String? targetType = finalData['target_type']?.toString();
+    String? itemId = finalData['item_id']?.toString();
+
+    // Handle internal blog navigation
+    if (targetType == 'internal' && itemId != null) {
+      developer.log(
+        '🏠 Internal target detected, navigating to blog: $itemId',
+        name: 'FCM',
+      );
+      DeepLinkService().handleNavigation('blog', itemId);
+      return;
+    }
 
     // Support 'page' legacy format
     if (finalData.containsKey('page') && finalData['page'] != null) {

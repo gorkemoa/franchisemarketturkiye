@@ -129,13 +129,22 @@ class _NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isInternalBlog =
+        notification.targetType == 'internal' && notification.itemId != null;
     final bool hasLink =
         notification.linkUrl != null && notification.linkUrl!.trim().isNotEmpty;
 
     return InkWell(
-      onTap: hasLink
-          ? () => DeepLinkService().handleUrl(notification.linkUrl!)
-          : null,
+      onTap: () {
+        if (isInternalBlog) {
+          DeepLinkService().handleNavigation(
+            'blog',
+            notification.itemId.toString(),
+          );
+        } else if (hasLink) {
+          DeepLinkService().handleUrl(notification.linkUrl!);
+        }
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Column(
@@ -209,7 +218,7 @@ class _NotificationItem extends StatelessWidget {
                     fontFamily: 'Inter',
                   ),
                 ),
-                if (hasLink)
+                if (isInternalBlog || hasLink)
                   const Text(
                     'Detayları Gör',
                     style: TextStyle(

@@ -5,6 +5,8 @@ class AppNotification {
   final String body;
   final String? linkUrl;
   final String? imageUrl;
+  final String? targetType;
+  final int? itemId;
   final DateTime updatedAt;
 
   AppNotification({
@@ -14,6 +16,8 @@ class AppNotification {
     required this.body,
     this.linkUrl,
     this.imageUrl,
+    this.targetType,
+    this.itemId,
     required this.updatedAt,
   });
 
@@ -25,6 +29,8 @@ class AppNotification {
       body: json['body'] as String? ?? '',
       linkUrl: json['link_url'] as String?,
       imageUrl: json['image_url'] as String?,
+      targetType: json['target_type'] as String?,
+      itemId: json['item_id'] as int?,
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),

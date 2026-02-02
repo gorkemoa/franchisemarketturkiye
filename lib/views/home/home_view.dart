@@ -25,6 +25,8 @@ import 'package:franchisemarketturkiye/views/search/search_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_detail_view.dart';
 
+import 'package:upgrader/upgrader.dart';
+
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -45,9 +47,16 @@ class _HomeViewState extends State<HomeView> {
   late final SearchViewModel _searchViewModel;
   final GlobalKey<ProfileViewState> _profileKey = GlobalKey<ProfileViewState>();
 
+  late final Upgrader _upgrader;
+
   @override
   void initState() {
     super.initState();
+
+    _upgrader = Upgrader(
+      debugLogging: true,
+      messages: UpgraderMessages(code: 'tr'),
+    );
     _viewModel = HomeViewModel();
     _authorsViewModel = AuthorViewModel();
     _categoriesViewModel = CategoriesViewModel();
@@ -107,37 +116,66 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return GlobalScaffold(
-      currentIndex: _currentIndex,
-      onIndexChanged: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      showSearch: _currentIndex == 0 || _currentIndex == 3,
-      onSearchChanged: (query) {
-        if (_currentIndex == 0) {
-          _authorsViewModel.setSearchQuery(query);
-        } else if (_currentIndex == 1) {
-          _searchViewModel.onSearchChanged(query);
-        } else if (_currentIndex == 3) {
-          _categoriesViewModel.setSearchQuery(query);
-        }
-      },
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          if (_currentIndex == index) {
-            _onItemTapped(index);
-          } else {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dialogTheme: const DialogThemeData(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+          contentTextStyle: TextStyle(color: Colors.black87, fontSize: 14),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            backgroundColor: AppTheme.primaryColor,
+            foregroundColor: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      child: UpgradeAlert(
+        upgrader: _upgrader,
+        child: GlobalScaffold(
+          currentIndex: _currentIndex,
+          onIndexChanged: (index) {
             setState(() {
               _currentIndex = index;
             });
-            _onItemTapped(index);
-          }
-        },
+          },
+          showSearch: _currentIndex == 0 || _currentIndex == 3,
+          onSearchChanged: (query) {
+            if (_currentIndex == 0) {
+              _authorsViewModel.setSearchQuery(query);
+            } else if (_currentIndex == 1) {
+              _searchViewModel.onSearchChanged(query);
+            } else if (_currentIndex == 3) {
+              _categoriesViewModel.setSearchQuery(query);
+            }
+          },
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              if (_currentIndex == index) {
+                _onItemTapped(index);
+              } else {
+                setState(() {
+                  _currentIndex = index;
+                });
+                _onItemTapped(index);
+              }
+            },
+          ),
+          body: IndexedStack(index: _currentIndex, children: _pages),
+        ),
       ),
-      body: IndexedStack(index: _currentIndex, children: _pages),
     );
   }
 
