@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/marketing_talk.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:franchisemarketturkiye/views/home/video_player_view.dart';
 
 class MarketingTalksSection extends StatefulWidget {
   final List<MarketingTalk> talks;
@@ -14,31 +13,11 @@ class MarketingTalksSection extends StatefulWidget {
 }
 
 class _MarketingTalksSectionState extends State<MarketingTalksSection> {
-  int? _playingTalkId;
-  YoutubePlayerController? _controller;
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    super.dispose();
-  }
-
   void _playVideo(MarketingTalk talk) {
-    final videoId = YoutubePlayer.convertUrlToId(talk.link);
-    if (videoId == null) return;
-
-    setState(() {
-      _playingTalkId = talk.id;
-      _controller?.dispose();
-      _controller = YoutubePlayerController(
-        initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
-      );
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VideoPlayerView(talk: talk)),
+    );
   }
 
   @override
@@ -50,59 +29,14 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
         ? widget.talks.sublist(1, 3.clamp(0, widget.talks.length))
         : <MarketingTalk>[];
 
-    if (_controller != null) {
-      return YoutubePlayerBuilder(
-        onEnterFullScreen: () {
-          SystemChrome.setPreferredOrientations([
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
-          ]);
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-        },
-        onExitFullScreen: () {
-          SystemChrome.setPreferredOrientations([
-            DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown,
-          ]);
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        },
-        player: YoutubePlayer(
-          controller: _controller!,
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.red,
-          onEnded: (meta) {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
-            ]);
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-            setState(() {
-              _playingTalkId = null;
-              _controller?.dispose();
-              _controller = null;
-            });
-          },
-        ),
-        builder: (context, player) {
-          return _buildMainLayout(
-            context,
-            firstTalk,
-            remainingTalks,
-            player: player,
-          );
-        },
-      );
-    }
-
     return _buildMainLayout(context, firstTalk, remainingTalks);
   }
 
   Widget _buildMainLayout(
     BuildContext context,
     MarketingTalk firstTalk,
-    List<MarketingTalk> remainingTalks, {
-    Widget? player,
-  }) {
+    List<MarketingTalk> remainingTalks,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -131,7 +65,7 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildTalkItem(context, firstTalk, isLarge: true, player: player),
+        _buildTalkItem(context, firstTalk, isLarge: true),
         const SizedBox(height: 16),
         if (remainingTalks.isNotEmpty)
           Row(
@@ -142,7 +76,6 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
                   context,
                   remainingTalks[0],
                   isLarge: false,
-                  player: player,
                 ),
               ),
               const SizedBox(width: 16),
@@ -152,7 +85,6 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
                     context,
                     remainingTalks[1],
                     isLarge: false,
-                    player: player,
                   ),
                 ),
             ],
@@ -165,42 +97,41 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
     BuildContext context,
     MarketingTalk talk, {
     required bool isLarge,
-    Widget? player,
   }) {
-    final isPlaying = _playingTalkId == talk.id;
     final height = isLarge ? 220.0 : 110.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          child: Container(
-            width: double.infinity,
-            height: height,
-            color: Colors.black,
-            child: isPlaying && player != null
-                ? player
-                : GestureDetector(
-                    onTap: () => _playVideo(talk),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.network(
-                          talk.imageUrl,
-                          width: double.infinity,
-                          height: height,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                height: height,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.image_not_supported),
-                              ),
-                        ),
-                        _buildPlayButton(isSmall: !isLarge),
-                      ],
+        Hero(
+          tag: 'video_player_${talk.id}',
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: double.infinity,
+              height: height,
+              color: Colors.black,
+              child: GestureDetector(
+                onTap: () => _playVideo(talk),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.network(
+                      talk.imageUrl,
+                      width: double.infinity,
+                      height: height,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: height,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image_not_supported),
+                      ),
                     ),
-                  ),
+                    _buildPlayButton(isSmall: !isLarge),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 12),

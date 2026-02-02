@@ -195,6 +195,7 @@ class _HomeViewState extends State<HomeView> {
         return RefreshIndicator(
           onRefresh: _viewModel.refresh,
           child: SingleChildScrollView(
+            key: const PageStorageKey('home_scroll_key'),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -191,7 +191,24 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
+        if (_viewModel.errorMessage != null) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            color: Colors.red.shade50,
+            width: double.infinity,
+            child: Text(
+              _viewModel.errorMessage!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
 
+        const SizedBox(height: 16),
         _buildActionButton('Giriş Yap', () async {
           final success = await _viewModel.login();
           if (success && mounted) {
@@ -332,7 +349,24 @@ class _LoginViewState extends State<LoginView> {
           ],
         ),
         const SizedBox(height: 24),
+        if (_viewModel.errorMessage != null) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            color: Colors.red.shade50,
+            width: double.infinity,
+            child: Text(
+              _viewModel.errorMessage!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
 
+        const SizedBox(height: 24),
         _buildActionButton('Kayıt Ol', () async {
           final success = await _viewModel.register();
           if (success && mounted) {

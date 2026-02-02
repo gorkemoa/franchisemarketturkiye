@@ -53,6 +53,13 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<bool> login() async {
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      _errorMessage = 'E-posta ve şifre alanları boş bırakılamaz.';
+      notifyListeners();
+      return false;
+    }
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -132,7 +139,11 @@ class LoginViewModel extends ChangeNotifier {
           _errorMessage = 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.';
         }
       } else {
-        _errorMessage = result.error;
+        if (result.error?.contains('Email already exists') ?? false) {
+          _errorMessage = 'Bu e-posta adresi zaten kullanımda.';
+        } else {
+          _errorMessage = result.error;
+        }
       }
     } catch (e) {
       _isLoading = false;
