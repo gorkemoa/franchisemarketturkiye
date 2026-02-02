@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:franchisemarketturkiye/services/deep_link_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 /// Top-level function to handle background messages
 @pragma('vm:entry-point')
@@ -17,6 +19,9 @@ class FirebaseMessagingService {
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
+
+  // Mükerrer bildirimleri engellemek için cache
+  static final Set<String> _processedMessageIds = {};
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'high_importance_channel_v2',
@@ -57,6 +62,9 @@ class FirebaseMessagingService {
             requestSoundPermission: true,
             requestBadgePermission: true,
             requestAlertPermission: true,
+            defaultPresentAlert: true, // Ön planda uyarıyı göster
+            defaultPresentSound: true, // Ön planda sesi çal
+            defaultPresentBadge: true, // Ön planda rozeti güncelle
           );
 
       const InitializationSettings initializationSettings =
@@ -86,7 +94,8 @@ class FirebaseMessagingService {
       // 3. iOS Foreground Presentation Options
       if (Platform.isIOS) {
         await _firebaseMessaging.setForegroundNotificationPresentationOptions(
-          alert: true,
+          alert:
+              false, // Sistemi susturuyoruz, biz manuel (görselli) göstereceğiz
           badge: true,
           sound: true,
         );
@@ -94,6 +103,19 @@ class FirebaseMessagingService {
 
       // 4. Handle Foreground Messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        final String? msgId = message.messageId;
+        if (msgId != null) {
+          if (_processedMessageIds.contains(msgId)) {
+            developer.log('♻️ Message already processed: $msgId', name: 'FCM');
+            return;
+          }
+          _processedMessageIds.add(msgId);
+          // Cache'i temiz tut (son 100 mesaj)
+          if (_processedMessageIds.length > 100) {
+            _processedMessageIds.remove(_processedMessageIds.first);
+          }
+        }
+
         developer.log('📨 Foreground message received', name: 'FCM');
         _showNotification(message);
       });
@@ -140,37 +162,167 @@ class FirebaseMessagingService {
     }
   }
 
-  static void _showNotification(RemoteMessage message) {
+  static Future<void> _showNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     String? title =
         notification?.title ?? message.data['title'] ?? message.data['header'];
     String? body =
         notification?.body ?? message.data['body'] ?? message.data['message'];
+    String? imageUrl =
+        (message.data['image_url'] ??
+                notification?.android?.imageUrl ??
+                notification?.apple?.imageUrl)
+            ?.toString();
 
     if (title == null && body == null) return;
 
-    _localNotifications.show(
-      notification.hashCode,
-      title,
-      body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          icon: '@mipmap/launcher_icon',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
+    BigPictureStyleInformation? bigPictureStyle;
+    String? largeIconPath;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      try {
+        developer.log(
+          '🖼️ Downloading image for notification: $imageUrl',
+          name: 'FCM',
+        );
+        // Uzantıyı linkten belirle (png mi jpg mi?)
+        final String extension = imageUrl.toLowerCase().contains('.png')
+            ? 'png'
+            : 'jpg';
+        final String imagePath = await _downloadAndSaveFile(
+          imageUrl,
+          'notification_img_${DateTime.now().millisecondsSinceEpoch}.$extension',
+        );
+        largeIconPath = imagePath;
+
+        final int fileSize = await File(imagePath).length();
+        developer.log(
+          '💾 File saved: $imagePath ($fileSize bytes)',
+          name: 'FCM',
+        );
+
+        bigPictureStyle = BigPictureStyleInformation(
+          FilePathAndroidBitmap(imagePath),
+          largeIcon: FilePathAndroidBitmap(imagePath),
+          contentTitle: title,
+          summaryText: body,
+        );
+        developer.log('✅ Image downloaded successfully', name: 'FCM');
+
+        // iOS için dosyanın diskte tam olarak hazırlandığından emin olmak için kısa bir bekleme
+        if (Platform.isIOS) {
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
+      } catch (e) {
+        developer.log(
+          '❌ Error downloading notification image: $e',
+          name: 'FCM',
+        );
+      }
+    }
+
+    final int notificationId =
+        notification?.hashCode ??
+        (message.messageId != null
+            ? message.messageId.hashCode
+            : DateTime.now().millisecond);
+
+    try {
+      // iOS için dosya varlığını kontrol et
+      if (Platform.isIOS && largeIconPath != null) {
+        final file = File(largeIconPath);
+        if (!await file.exists()) {
+          developer.log(
+            '⚠️ Image file missing before display: $largeIconPath',
+            name: 'FCM',
+          );
+        } else {
+          developer.log(
+            '👍 Image file confirmed at: $largeIconPath',
+            name: 'FCM',
+          );
+        }
+      }
+
+      developer.log(
+        '🔔 Triggering local notification: ID $notificationId (Title: $title)',
+        name: 'FCM',
+      );
+      await _localNotifications.show(
+        notificationId,
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _channel.id,
+            _channel.name,
+            channelDescription: _channel.description,
+            icon: '@mipmap/launcher_icon',
+            importance: Importance.max,
+            priority: Priority.high,
+            playSound: true,
+            styleInformation: bigPictureStyle,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentSound: true,
+            presentAlert: true,
+            presentBadge: true,
+            attachments: (largeIconPath != null)
+                ? [
+                    DarwinNotificationAttachment(
+                      largeIconPath,
+                      identifier:
+                          'image_${DateTime.now().millisecondsSinceEpoch}',
+                    ),
+                  ]
+                : null,
+          ),
         ),
-        iOS: const DarwinNotificationDetails(
-          presentSound: true,
-          presentAlert: true,
-          presentBadge: true,
-        ),
-      ),
-      payload: jsonEncode(message.data),
-    );
+        payload: jsonEncode(message.data),
+      );
+      developer.log('✅ Local notification displayed', name: 'FCM');
+    } catch (e) {
+      developer.log('❌ Error showing local notification: $e', name: 'FCM');
+    }
+  }
+
+  static Future<String> _downloadAndSaveFile(
+    String url,
+    String fileName,
+  ) async {
+    try {
+      // iOS için Documents directory daha güvenlidir
+      final Directory directory = Platform.isIOS
+          ? await getApplicationDocumentsDirectory()
+          : await getTemporaryDirectory();
+
+      final String filePath = '${directory.path}/$fileName';
+      final response = await http
+          .get(
+            Uri.parse(url),
+            headers: {
+              'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+              'Accept':
+                  'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final String? contentType = response.headers['content-type'];
+        developer.log('📄 Download Content-Type: $contentType', name: 'FCM');
+
+        final File file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+        return filePath;
+      } else {
+        throw Exception('Download failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      developer.log('❌ Image download error: $e', name: 'FCM');
+      rethrow;
+    }
   }
 
   static void _handleMessageNavigation(RemoteMessage message) {
@@ -212,6 +364,7 @@ class FirebaseMessagingService {
 
     String? type;
     String? id;
+    String? linkUrl = finalData['link_url']?.toString();
 
     // Support 'page' legacy format
     if (finalData.containsKey('page') && finalData['page'] != null) {
@@ -228,6 +381,11 @@ class FirebaseMessagingService {
     if (type == 'news') type = 'kategori';
 
     if (type == null || id == null) {
+      if (linkUrl != null && linkUrl.isNotEmpty) {
+        developer.log('🔗 Navigating via link_url: $linkUrl', name: 'FCM');
+        DeepLinkService().handleUrl(linkUrl);
+        return;
+      }
       developer.log('⚠️ Missing type or ID for navigation', name: 'FCM');
       return;
     }

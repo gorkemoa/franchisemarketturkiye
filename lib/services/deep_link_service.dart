@@ -14,6 +14,7 @@ import 'package:franchisemarketturkiye/views/author/authors_view.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
 import 'package:franchisemarketturkiye/views/search/search_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazines_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
@@ -60,6 +61,16 @@ class DeepLinkService {
     );
   }
 
+  /// Handle a raw URL string
+  void handleUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      _handleUri(uri);
+    } catch (e) {
+      developer.log('❌ Error parsing URL: $url', name: 'DeepLink', error: e);
+    }
+  }
+
   void dispose() {
     _linkSubscription?.cancel();
   }
@@ -72,6 +83,15 @@ class DeepLinkService {
     );
 
     // Support both custom scheme (franchise://) and universal links (https://...)
+    final String host = uri.host.toLowerCase();
+
+    // 1. Handle External Hosts (Dış bağlantıları direkt tarayıcıda aç)
+    if (host.isNotEmpty && !host.contains('franchisemarketturkiye.com')) {
+      developer.log('🌍 External link detected: $uri', name: 'DeepLink');
+      _launchExternalUrl(uri.toString());
+      return;
+    }
+
     final pathSegments = uri.pathSegments;
     if (pathSegments.isEmpty) {
       developer.log('🏠 Root URL detected', name: 'DeepLink');
@@ -79,7 +99,35 @@ class DeepLinkService {
     }
 
     final type = pathSegments[0];
-    final String? id = pathSegments.length > 1 ? pathSegments[1] : null;
+    String? id;
+
+    // Try to find an integer ID in segments
+    for (int i = 1; i < pathSegments.length; i++) {
+      if (int.tryParse(pathSegments[i]) != null) {
+        id = pathSegments[i];
+        break;
+      }
+    }
+
+    // Fallback to second segment if no integer ID found
+    if (id == null && pathSegments.length > 1) {
+      id = pathSegments[1];
+    }
+
+    // If it's a full franchise/kategori URL without an integer ID, it might be a slug.
+    // Since we don't support slugs yet, and it's a full URL, we should probably
+    // fall back to WebView if it's an HTTP URL and we couldn't find a native ID.
+    if (uri.scheme.startsWith('http') && int.tryParse(id ?? '') == null) {
+      // Special case for types that we know need integer IDs but got slugs
+      if (['kategori', 'franchise', 'blog', 'news', 'haber'].contains(type)) {
+        developer.log(
+          'ℹ️ Slug detected for $type, falling back to WebView',
+          name: 'DeepLink',
+        );
+        handleNavigation('page', uri.toString());
+        return;
+      }
+    }
 
     handleNavigation(type, id);
   }
@@ -189,6 +237,14 @@ class DeepLinkService {
         final url = (id != null && id.startsWith('http'))
             ? id
             : 'https://franchisemarketturkiye.com/$id';
+
+        // Dış bağlantı ise tarayıcıda aç
+        if (url.startsWith('http') &&
+            !url.contains('franchisemarketturkiye.com')) {
+          _launchExternalUrl(url);
+          return;
+        }
+
         _push(
           MaterialPageRoute(
             builder: (_) => WebViewView(url: url, title: 'Sayfa'),
@@ -197,9 +253,30 @@ class DeepLinkService {
         break;
 
       default:
+        // Bilinmeyen tür ancak tam bir URL ise tarayıcıda açmayı dene
+        if (type.startsWith('http')) {
+          _launchExternalUrl(type);
+          return;
+        }
         developer.log('❓ Unknown navigation type: $type', name: 'DeepLink');
-        // Handle root or unknown by doing nothing or maybe deep scan path
         break;
+    }
+  }
+
+  Future<void> _launchExternalUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        developer.log('🌐 Launching external browser: $url', name: 'DeepLink');
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        developer.log(
+          '❌ Could not launch external URL: $url',
+          name: 'DeepLink',
+        );
+      }
+    } catch (e) {
+      developer.log('❌ Error in _launchExternalUrl: $e', name: 'DeepLink');
     }
   }
 
