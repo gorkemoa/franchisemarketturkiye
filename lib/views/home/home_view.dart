@@ -515,7 +515,6 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildBannerItem(BuildContext context, String imageUrl) {
     return Container(
-      width: 360,
       height: 180,
       decoration: BoxDecoration(color: AppTheme.sliderBackground),
       child: ClipRRect(

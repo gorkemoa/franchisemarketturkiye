@@ -314,10 +314,8 @@ class _BlogDetailViewState extends State<BlogDetailView>
           Image.network(
             blog.imageUrl,
             width: double.infinity,
-            height: 240,
             fit: BoxFit.fill,
             errorBuilder: (context, error, stackTrace) => Container(
-              height: 240,
               color: const Color(0xFFF5F5F5),
               child: const Icon(
                 Icons.image_not_supported,
@@ -359,11 +357,12 @@ class _BlogDetailViewState extends State<BlogDetailView>
                 Text(
                   blog.title,
                   style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontFamily: 'BioSans',
+                    fontWeight: FontWeight.w600,
                     height: 1.3,
                     color: Colors.black,
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.7,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -372,7 +371,7 @@ class _BlogDetailViewState extends State<BlogDetailView>
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: 14,
+                      radius: 25,
                       backgroundImage: blog.author.imageUrl != null
                           ? NetworkImage(blog.author.imageUrl!)
                           : null,
