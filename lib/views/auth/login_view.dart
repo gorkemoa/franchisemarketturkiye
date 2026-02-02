@@ -164,8 +164,8 @@ class _LoginViewState extends State<LoginView> {
 
         Align(
           alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {
+          child: GestureDetector(
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -176,11 +176,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               );
             },
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(0, 0),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
             child: Text(
               'Şifremi Unuttum?',
               style: TextStyle(
