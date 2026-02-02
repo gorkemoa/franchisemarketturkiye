@@ -8,6 +8,8 @@ import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazines_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/magazines_view_model.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
+import 'package:franchisemarketturkiye/views/notification/notifications_view.dart';
+import 'package:franchisemarketturkiye/viewmodels/notification_view_model.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -418,7 +420,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         );
                       },
                     ),
-                    _buildMenuItem('HİKAYEMİZ'),
+                    _buildMenuItem(
+                      'BİLDİRİMLER',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationsView(
+                              viewModel: NotificationViewModel(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     _buildMenuItem(
                       'YAZAR BAŞVURUSU',
                       onTap: () {

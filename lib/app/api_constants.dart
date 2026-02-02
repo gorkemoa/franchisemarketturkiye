@@ -35,4 +35,5 @@ class ApiConstants {
   static const String banners = '$baseUrl/api/v1/banners';
   static String franchiseApply(int id) =>
       '$baseUrl/api/v1/franchises/$id/apply';
+  static const String notifications = '$baseUrl/api/v1/notifications';
 }
