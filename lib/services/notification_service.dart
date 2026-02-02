@@ -95,7 +95,7 @@ class FirebaseMessagingService {
       if (Platform.isIOS) {
         await _firebaseMessaging.setForegroundNotificationPresentationOptions(
           alert:
-              false, // Sistemi susturuyoruz, biz manuel (görselli) göstereceğiz
+              true, // Uygulama açıkken uyarının sistem tarafından da gösterilmesini sağla
           badge: true,
           sound: true,
         );
@@ -145,6 +145,19 @@ class FirebaseMessagingService {
 
       // Subscribe to GorkemTest topic as requested
       await subscribeToTopic('GorkemTest');
+
+      // iOS için yerel bildirim iznini açıkça iste (Ön planda banner için kritik)
+      if (Platform.isIOS) {
+        final bool? granted = await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
+        developer.log(
+          '🍎 iOS Local Notification Permission: $granted',
+          name: 'FCM',
+        );
+      }
 
       // Background Message Handler
       FirebaseMessaging.onBackgroundMessage(
@@ -267,6 +280,9 @@ class FirebaseMessagingService {
             presentSound: true,
             presentAlert: true,
             presentBadge: true,
+            presentBanner: true, // Açıkça banner gösterilmesini iste
+            presentList: true, // Bildirim merkezinde listelenmesini iste
+            interruptionLevel: InterruptionLevel.active, // Aktif uyarı
             attachments: (largeIconPath != null)
                 ? [
                     DarwinNotificationAttachment(
@@ -386,7 +402,7 @@ class FirebaseMessagingService {
         DeepLinkService().handleUrl(linkUrl);
         return;
       }
-      developer.log('⚠️ Missing type or ID for navigation', name: 'FCM');
+      // Sadece görsel içeren test mesajları için log kirliliğini engelle
       return;
     }
 
