@@ -47,8 +47,50 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
           ),
           showBackButton: true,
           body: _buildBody(),
+          bottomNavigationBar: _buildStickyButton(),
         );
       },
+    );
+  }
+
+  Widget _buildStickyButton() {
+    if (_viewModel.isLoading || _viewModel.franchise == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, -4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: ElevatedButton(
+          onPressed: () => _showApplyForm(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.primaryColor,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: const RoundedRectangleBorder(),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Hemen Başvurun',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -82,47 +124,93 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Logo Section
-          Container(
-            color: const Color(0xFFF9F9F9),
-            height: 250,
-            child: Image.network(
-              franchise.logoUrl,
-              fit: BoxFit.fill,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.business, size: 60, color: Colors.grey),
-            ),
+          // Premium Header Section
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Banner Image
+              Container(
+                height: 180,
+                width: double.infinity,
+                decoration: const BoxDecoration(color: Color(0xFFF5F5F5)),
+                child: Image.network(
+                  franchise.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppTheme.primaryColor.withOpacity(0.1),
+                          AppTheme.primaryColor.withOpacity(0.02),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.image_outlined,
+                        size: 40,
+                        color: AppTheme.primaryColor.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Floating Logo Card
+              Positioned(
+                bottom: -40,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    height: 110,
+                    width: 110,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                      border: Border.all(color: Colors.white, width: 4),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Hero(
+                      tag: 'franchise_logo_${franchise.id}',
+                      child: Image.network(
+                        franchise.logoUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.business,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
+          const SizedBox(height: 50), // Space for floating logo
+
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Info Card
                 _buildInfoCard(franchise),
                 const SizedBox(height: 16),
-
-                // Action Button
-                ElevatedButton(
-                  onPressed: () => _showApplyForm(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: const RoundedRectangleBorder(),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Hemen Başvurun',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
 
                 // Description
                 HtmlWidget(
@@ -151,62 +239,73 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
 
     if (activeOptions.isEmpty) return const SizedBox.shrink();
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppTheme.borderColor),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 69,
       ),
-      child: Column(
-        children: activeOptions.map((opt) => _buildOptionRow(opt)).toList(),
-      ),
+      itemCount: activeOptions.length,
+      itemBuilder: (context, index) => _buildOptionRow(activeOptions[index]),
     );
   }
 
   Widget _buildOptionRow(FranchiseOption option) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+    // List of SVGs that we know exist in assets
+    const localIcons = {
+      'bayi-franchise-adedi.svg',
+      'firmaya-ait-isletme-adedi.svg',
+      'kurulus-yili.svg',
+      'lokasyon-ve-acilis-destegi.svg',
+      'merkez-ulkesi.svg',
+      'operasyon-ve-yonetim-destegi.svg',
+      'pazarlama-ve-reklam-destegi.svg',
+      'personel-ve-egitim-destegi.svg',
+      'saha-ziyareti-denetim.svg',
+      'sektor.svg',
+      'yatirim-butcesi.svg',
+    };
+
+    final bool useLocal = localIcons.contains(option.icon);
+    final String assetPath = 'assets/franchise_icon/${option.icon}';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F9F9),
+        border: Border.all(color: AppTheme.borderColor.withOpacity(0.5)),
+      ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon
-          Container(
+          SizedBox(
             width: 32,
             height: 32,
-            padding: const EdgeInsets.all(4),
-            child: SvgPicture.asset(
-              'assets/franchise_icon/${option.icon}',
-              placeholderBuilder: (context) => option.iconUrl.endsWith('.svg')
-                  ? SvgPicture.network(
-                      option.iconUrl,
-                      placeholderBuilder: (context) => const Icon(
-                        Icons.info_outline,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : Image.network(
-                      option.iconUrl,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.info_outline,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-            ),
+
+            child: useLocal
+                ? SvgPicture.asset(
+                    assetPath,
+                    placeholderBuilder: (context) =>
+                        _buildNetworkIcon(option.iconUrl),
+                  )
+                : _buildNetworkIcon(option.iconUrl),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           // Text
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   option.title,
                   style: const TextStyle(
                     fontFamily: 'Inter',
-                    fontSize: 11,
+                    fontSize: 10,
                     color: AppTheme.textTertiary,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -214,7 +313,7 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                   option.value,
                   style: const TextStyle(
                     fontFamily: 'Inter',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.textPrimary,
                   ),
@@ -225,6 +324,26 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
         ],
       ),
     );
+  }
+
+  Widget _buildNetworkIcon(String url) {
+    if (url.isEmpty) {
+      return const Icon(Icons.info_outline, size: 16, color: Colors.grey);
+    }
+
+    if (url.endsWith('.svg')) {
+      return SvgPicture.network(
+        url,
+        placeholderBuilder: (context) =>
+            const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+      );
+    } else {
+      return Image.network(
+        url,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+      );
+    }
   }
 
   void _showApplyForm() async {

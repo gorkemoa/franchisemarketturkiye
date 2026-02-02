@@ -346,7 +346,7 @@ class _FranchiseCard extends StatelessWidget {
                   child: ClipRRect(
                     child: Image.network(
                       franchise.logoUrl,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => const Icon(
                         Icons.business,
                         color: Colors.grey,
