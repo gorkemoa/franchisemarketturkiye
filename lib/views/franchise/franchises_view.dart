@@ -340,7 +340,7 @@ class _FranchiseCard extends StatelessWidget {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9F9F9),
+                    color: const Color.fromARGB(255, 246, 243, 243),
                     border: Border.all(color: AppTheme.borderColor),
                   ),
                   child: ClipRRect(
