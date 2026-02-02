@@ -130,14 +130,23 @@ class FirebaseMessagingService {
     String? targetType = finalData['target_type']?.toString();
     String? itemId = finalData['item_id']?.toString();
 
-    // Handle internal blog navigation
-    if (targetType == 'internal' && itemId != null) {
-      developer.log(
-        '🏠 Internal target detected, navigating to blog: $itemId',
-        name: 'FCM',
-      );
-      DeepLinkService().handleNavigation('blog', itemId);
-      return;
+    // Handle internal navigation for blog and magazine
+    if (itemId != null) {
+      if (targetType == 'internal') {
+        developer.log(
+          '🏠 Internal target detected, navigating to blog: $itemId',
+          name: 'FCM',
+        );
+        DeepLinkService().handleNavigation('blog', itemId);
+        return;
+      } else if (targetType == 'magazine') {
+        developer.log(
+          '📖 Magazine target detected, navigating to magazine: $itemId',
+          name: 'FCM',
+        );
+        DeepLinkService().handleNavigation('magazine', itemId);
+        return;
+      }
     }
 
     // Support 'page' legacy format

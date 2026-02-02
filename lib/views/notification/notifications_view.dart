@@ -131,6 +131,8 @@ class _NotificationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isInternalBlog =
         notification.targetType == 'internal' && notification.itemId != null;
+    final bool isMagazine =
+        notification.targetType == 'magazine' && notification.itemId != null;
     final bool hasLink =
         notification.linkUrl != null && notification.linkUrl!.trim().isNotEmpty;
 
@@ -139,6 +141,11 @@ class _NotificationItem extends StatelessWidget {
         if (isInternalBlog) {
           DeepLinkService().handleNavigation(
             'blog',
+            notification.itemId.toString(),
+          );
+        } else if (isMagazine) {
+          DeepLinkService().handleNavigation(
+            'magazine',
             notification.itemId.toString(),
           );
         } else if (hasLink) {
@@ -218,7 +225,7 @@ class _NotificationItem extends StatelessWidget {
                     fontFamily: 'Inter',
                   ),
                 ),
-                if (isInternalBlog || hasLink)
+                if (isInternalBlog || isMagazine || hasLink)
                   const Text(
                     'Detayları Gör',
                     style: TextStyle(

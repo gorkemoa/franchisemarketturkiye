@@ -23,14 +23,14 @@ class AppNotification {
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
     return AppNotification(
-      id: json['id'] as int? ?? 0,
+      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
       topic: json['topic'] as String? ?? '',
       title: json['title'] as String? ?? '',
       body: json['body'] as String? ?? '',
       linkUrl: json['link_url'] as String?,
       imageUrl: json['image_url'] as String?,
       targetType: json['target_type'] as String?,
-      itemId: json['item_id'] as int?,
+      itemId: int.tryParse(json['item_id']?.toString() ?? ''),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
@@ -71,7 +71,7 @@ class NotificationData {
               ?.map((item) => AppNotification.fromJson(item))
               .toList() ??
           [],
-      count: json['count'] as int? ?? 0,
+      count: int.tryParse(json['count']?.toString() ?? '') ?? 0,
     );
   }
 }
@@ -82,6 +82,8 @@ class NotificationMeta {
   NotificationMeta({required this.limit});
 
   factory NotificationMeta.fromJson(Map<String, dynamic> json) {
-    return NotificationMeta(limit: json['limit'] as int? ?? 20);
+    return NotificationMeta(
+      limit: int.tryParse(json['limit']?.toString() ?? '') ?? 20,
+    );
   }
 }
