@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/viewmodels/login_view_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,12 +20,26 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late final LoginViewModel _viewModel;
+  late final TapGestureRecognizer _termsRecognizer;
 
   @override
   void initState() {
     super.initState();
     _viewModel = LoginViewModel(initialIsLogin: widget.initialIsLogin);
     _viewModel.addListener(_onViewModelUpdate);
+    _termsRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const WebViewView(
+              url:
+                  'https://franchisemarketturkiye.com/sozlesmeler/gizlilik-sozlesmesi',
+              title: 'Üyelik Sözleşmesi',
+            ),
+          ),
+        );
+      };
   }
 
   void _onViewModelUpdate() {
@@ -33,6 +48,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void dispose() {
+    _termsRecognizer.dispose();
     _viewModel.removeListener(_onViewModelUpdate);
     _viewModel.dispose();
     super.dispose();
@@ -307,18 +323,33 @@ class _LoginViewState extends State<LoginView> {
             const SizedBox(width: 8),
             Expanded(
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   text: 'Üyelik Sözleşmesi’ni ',
-                  style: TextStyle(color: Colors.black54, fontSize: 11),
-                  children: [
+                  style: const TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: _termsRecognizer,
+                  children: const [
                     TextSpan(
                       text: 'okuduğumu ve kabul ettiğimi ',
                       style: TextStyle(
-                        color: AppTheme.primaryColor,
+                        color: Colors.black54,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.none,
                       ),
                     ),
-                    TextSpan(text: 'beyan ederim.'),
+                    TextSpan(
+                      text: 'beyan ederim.',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 11,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -110,7 +110,7 @@ class WriterApplicationViewModel extends ChangeNotifier {
 
   Future<void> pickCv() async {
     try {
-      FilePickerResult? result = await FilePicker.pickFiles(
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx'],
       );

@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: true,
+          debugShowCheckedModeBanner: false,
           title: 'Franchise Market Türkiye',
           theme: AppTheme.lightTheme,
           locale: const Locale('tr', 'TR'),

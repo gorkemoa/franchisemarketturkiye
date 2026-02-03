@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:franchisemarketturkiye/services/deep_link_service.dart';
 
 /// Top-level function to handle background messages
@@ -13,11 +14,35 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class FirebaseMessagingService {
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
+  static const MethodChannel _platform = MethodChannel(
+    'com.smartmetrics.franchise/notification',
+  );
+
+  static Future<void> _showAndroidNotification(
+    String? title,
+    String? body,
+    String? image,
+  ) async {
+    try {
+      await _platform.invokeMethod('showNotification', {
+        'title': title,
+        'body': body,
+        'image': image,
+      });
+    } catch (e) {
+      developer.log(
+        '❌ Error showing native notification',
+        name: 'FCM',
+        error: e,
+      );
+    }
+  }
 
   /// Initialize Firebase Messaging
   static Future<void> initialize() async {
     try {
       developer.log('🚀 Initializing Notification Service', name: 'FCM');
+      await _firebaseMessaging.setAutoInitEnabled(true);
 
       // 1. Request notification permissions (iOS & Android 13+)
       final settings = await _firebaseMessaging.requestPermission(
@@ -52,6 +77,14 @@ class FirebaseMessagingService {
               message.notification?.android?.imageUrl ??
               message.notification?.apple?.imageUrl;
           developer.log('🖼️ System Image URL: $imageUrl', name: 'FCM');
+
+          if (Platform.isAndroid) {
+            _showAndroidNotification(
+              message.notification?.title,
+              message.notification?.body,
+              imageUrl,
+            );
+          }
         }
       });
 
@@ -72,14 +105,24 @@ class FirebaseMessagingService {
 
       // 5. Token Handling & Topic Subscription
       final token = await _firebaseMessaging.getToken();
-      developer.log('🔑 FCM Token: $token', name: 'FCM');
+      if (token != null) {
+        developer.log('🔑 FCM Token obtained: $token', name: 'FCM');
+
+        // Subscribe to GorkemTest topic
+        developer.log(
+          '📌 Attempting to subscribe to GorkemTest...',
+          name: 'FCM',
+        );
+        await subscribeToTopic('GorkemTest');
+        developer.log('✅ GorkemTest subscription call finished', name: 'FCM');
+      } else {
+        developer.log('⚠️ Could not obtain FCM token', name: 'FCM');
+      }
 
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
         developer.log('🔄 FCM Token refreshed: $newToken', name: 'FCM');
+        subscribeToTopic('GorkemTest');
       });
-
-      // Subscribe to GorkemTest topic as requested
-      await subscribeToTopic('GorkemTest');
 
       // 6. Background Message Handler
       FirebaseMessaging.onBackgroundMessage(
