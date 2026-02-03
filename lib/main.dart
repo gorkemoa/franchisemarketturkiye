@@ -26,7 +26,6 @@ void main() async {
 
   // Initialize Services
   await FirebaseMessagingService.initialize();
-  await DeepLinkService().initialize();
 
   // Setup global unauthorized handler
   ApiClient().onUnauthorized = () async {
@@ -36,6 +35,7 @@ void main() async {
       (route) => false,
     );
   };
+  await DeepLinkService().initialize();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

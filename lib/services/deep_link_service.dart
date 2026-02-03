@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/main.dart';
+import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:franchisemarketturkiye/views/blog/blog_detail_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchise_detail_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
@@ -106,18 +107,27 @@ class DeepLinkService {
 
     // 1. Handle External Hosts (Dış bağlantıları direkt tarayıcıda aç)
     // Sadece http/https protokolü ve bizim domainimiz olmayan adresleri dışarıda açıyoruz
-    if (scheme.startsWith('http') &&
-        host.isNotEmpty &&
-        !host.contains('franchisemarketturkiye.com')) {
+    bool isOurDomain =
+        host == 'franchisemarketturkiye.com' ||
+        host == 'www.franchisemarketturkiye.com' ||
+        host.endsWith('.franchisemarketturkiye.com');
+
+    if (scheme.startsWith('http') && host.isNotEmpty && !isOurDomain) {
       developer.log('🌍 External link detected: $uri', name: 'DeepLink');
       _launchExternalUrl(uri.toString());
       return;
     }
 
     final pathSegments = uri.pathSegments;
-    // Base URL or root
-    if (pathSegments.isEmpty ||
-        (pathSegments.length == 1 && pathSegments[0].isEmpty)) {
+    // Base URL or root (/, /home, /index vb.)
+    bool isRoot =
+        pathSegments.isEmpty ||
+        (pathSegments.length == 1 &&
+            (pathSegments[0].isEmpty ||
+                pathSegments[0] == 'home' ||
+                pathSegments[0] == 'index'));
+
+    if (isRoot) {
       developer.log('🏠 Root URL detected', name: 'DeepLink');
       handleNavigation('home', null);
       return;
@@ -207,7 +217,16 @@ class DeepLinkService {
     switch (type) {
       case 'home':
         // Ana sayfaya gitmek için navigator'ı en başa çekiyoruz
-        navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        if (navigatorKey.currentState?.canPop() ?? false) {
+          navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        } else {
+          // Eğer zaten en baştaysak ve home istendiyse, sayfayı yenileyebiliriz
+          // veya mevcut stack'i temizleyip anasayfayı en alta koyabiliriz.
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomeView()),
+            (route) => false,
+          );
+        }
         break;
 
       case 'news':
