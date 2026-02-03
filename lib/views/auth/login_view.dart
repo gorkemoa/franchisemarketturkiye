@@ -9,8 +9,9 @@ import 'package:franchisemarketturkiye/core/widgets/app_dialogs.dart';
 
 class LoginView extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
+  final bool initialIsLogin;
 
-  const LoginView({super.key, this.onLoginSuccess});
+  const LoginView({super.key, this.onLoginSuccess, this.initialIsLogin = true});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -22,7 +23,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    _viewModel = LoginViewModel();
+    _viewModel = LoginViewModel(initialIsLogin: widget.initialIsLogin);
     _viewModel.addListener(_onViewModelUpdate);
   }
 

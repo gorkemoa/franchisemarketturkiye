@@ -19,6 +19,10 @@ import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/categories_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
 import 'package:franchisemarketturkiye/viewmodels/magazines_view_model.dart';
+import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
+import 'package:franchisemarketturkiye/views/auth/login_view.dart';
+import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
+import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -27,6 +31,8 @@ class DeepLinkService {
 
   final _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
+  Uri? _lastProcessedUri;
+  DateTime? _lastProcessTime;
 
   /// Initialize deep link handling
   Future<void> initialize() async {
@@ -77,6 +83,17 @@ class DeepLinkService {
 
   /// Centralized URI handler
   void _handleUri(Uri uri) {
+    // Prevent double processing (common issue with some plugins)
+    final now = DateTime.now();
+    if (_lastProcessedUri == uri &&
+        _lastProcessTime != null &&
+        now.difference(_lastProcessTime!).inMilliseconds < 1000) {
+      developer.log('⏭️ Skipping duplicate URI: $uri', name: 'DeepLink');
+      return;
+    }
+    _lastProcessedUri = uri;
+    _lastProcessTime = now;
+
     developer.log(
       '🎯 Processing URI: ${uri.path} (Host: ${uri.host})',
       name: 'DeepLink',
@@ -84,17 +101,24 @@ class DeepLinkService {
 
     // Support both custom scheme (franchise://) and universal links (https://...)
     final String host = uri.host.toLowerCase();
+    final String scheme = uri.scheme.toLowerCase();
 
     // 1. Handle External Hosts (Dış bağlantıları direkt tarayıcıda aç)
-    if (host.isNotEmpty && !host.contains('franchisemarketturkiye.com')) {
+    // Sadece http/https protokolü ve bizim domainimiz olmayan adresleri dışarıda açıyoruz
+    if (scheme.startsWith('http') &&
+        host.isNotEmpty &&
+        !host.contains('franchisemarketturkiye.com')) {
       developer.log('🌍 External link detected: $uri', name: 'DeepLink');
       _launchExternalUrl(uri.toString());
       return;
     }
 
     final pathSegments = uri.pathSegments;
-    if (pathSegments.isEmpty) {
+    // Base URL or root
+    if (pathSegments.isEmpty ||
+        (pathSegments.length == 1 && pathSegments[0].isEmpty)) {
       developer.log('🏠 Root URL detected', name: 'DeepLink');
+      handleNavigation('home', null);
       return;
     }
 
@@ -137,6 +161,11 @@ class DeepLinkService {
     developer.log('🚀 Navigating to: $type (ID: $id)', name: 'DeepLink');
 
     switch (type) {
+      case 'home':
+        // Ana sayfaya gitmek için navigator'ı en başa çekiyoruz
+        navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        break;
+
       case 'news':
       case 'haber':
       case 'haberler':
@@ -163,6 +192,17 @@ class DeepLinkService {
         }
         break;
 
+      case 'franchise-dosyasi':
+      case 'markalar':
+        _push(
+          MaterialPageRoute(
+            builder: (_) => FranchisesView(
+              viewModel: FranchisesViewModel()..fetchFranchises(),
+            ),
+          ),
+        );
+        break;
+
       case 'dergi':
       case 'dergiler':
       case 'magazine':
@@ -183,7 +223,9 @@ class DeepLinkService {
         break;
 
       case 'yazar':
+      case 'yazarlar':
       case 'author':
+      case 'authors':
         final int? authorId = int.tryParse(id ?? '');
         if (authorId != null) {
           _push(
@@ -248,6 +290,72 @@ class DeepLinkService {
         _push(
           MaterialPageRoute(
             builder: (_) => WebViewView(url: url, title: 'Sayfa'),
+          ),
+        );
+        break;
+
+      case 'hesabim':
+      case 'profil':
+      case 'profile':
+        _push(MaterialPageRoute(builder: (_) => const ProfileView()));
+        break;
+
+      case 'giris-yap':
+      case 'login':
+        _push(MaterialPageRoute(builder: (_) => const LoginView()));
+        break;
+
+      case 'kayit-ol':
+      case 'register':
+        _push(
+          MaterialPageRoute(
+            builder: (_) => const LoginView(initialIsLogin: false),
+          ),
+        );
+        break;
+
+      case 'sifremi-unuttum':
+        _push(
+          MaterialPageRoute(
+            builder: (context) => const WebViewView(
+              url: 'https://franchisemarketturkiye.com/sifremi-unuttum',
+              title: 'Şifremi Unuttum',
+            ),
+          ),
+        );
+        break;
+
+      case 'iletisim':
+      case 'contact':
+        _push(
+          MaterialPageRoute(
+            builder: (context) => const WebViewView(
+              url: 'https://franchisemarketturkiye.com/iletisim',
+              title: 'İletişim',
+            ),
+          ),
+        );
+        break;
+
+      case 'hikayemiz':
+      case 'about':
+        _push(
+          MaterialPageRoute(
+            builder: (context) => const WebViewView(
+              url: 'https://franchisemarketturkiye.com/hikayemiz',
+              title: 'Hikayemiz',
+            ),
+          ),
+        );
+        break;
+
+      case 'satin-al':
+        _push(
+          MaterialPageRoute(
+            builder: (context) => const WebViewView(
+              url: 'https://franchisemarketturkiye.com/satin-al',
+              title: 'Satın Al',
+            ),
           ),
         );
         break;

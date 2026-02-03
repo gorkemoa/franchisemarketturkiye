@@ -32,6 +32,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="franchisemarketturkiye.com" />
                 <data android:scheme="http" android:host="franchisemarketturkiye.com" />
+                <data android:scheme="https" android:host="www.franchisemarketturkiye.com" />
+                <data android:scheme="http" android:host="www.franchisemarketturkiye.com" />
             </intent-filter>
 
             <intent-filter>

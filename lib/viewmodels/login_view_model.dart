@@ -13,7 +13,7 @@ class LoginViewModel extends ChangeNotifier {
   int? _lastStatusCode;
   int? get lastStatusCode => _lastStatusCode;
 
-  bool _isLogin = true;
+  bool _isLogin;
   bool get isLogin => _isLogin;
 
   final TextEditingController emailController = TextEditingController();
@@ -26,7 +26,7 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController passwordConfirmController =
       TextEditingController();
 
-  LoginViewModel() {
+  LoginViewModel({bool initialIsLogin = true}) : _isLogin = initialIsLogin {
     phoneController.text = '0';
   }
 
