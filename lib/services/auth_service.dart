@@ -186,6 +186,30 @@ class AuthService {
     await prefs.remove(_tokenKey);
   }
 
+  Future<ApiResult<void>> deleteAccount() async {
+    final token = await getToken();
+    if (token == null) {
+      return ApiResult.failure('Not authenticated');
+    }
+
+    final result = await _apiClient.delete(
+      ApiConstants.deleteAccount,
+      token: token,
+    );
+
+    if (result.isSuccess) {
+      // Clear local storage after successful deletion
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_tokenKey);
+      return ApiResult.success(null, statusCode: result.statusCode);
+    } else {
+      return ApiResult.failure(
+        result.error ?? 'Hesap silme işlemi başarısız',
+        statusCode: result.statusCode,
+      );
+    }
+  }
+
   Future<bool> isLoggedIn() async {
     final token = await getToken();
     return token != null;

@@ -208,6 +208,66 @@ class ApiClient {
     }
   }
 
+  Future<ApiResult<Map<String, dynamic>>> delete(
+    String url, {
+    String? token,
+  }) async {
+    Logger.logRequest('DELETE', url);
+    try {
+      final headers = {
+        'Accept': 'application/json',
+        'X-API-KEY': ApiConstants.apiKey,
+      };
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      final response = await _client.delete(Uri.parse(url), headers: headers);
+
+      // Basic body decoding for logging purpose (if json)
+      dynamic bodyLog;
+      try {
+        bodyLog = jsonDecode(response.body);
+      } catch (_) {
+        bodyLog = response.body;
+      }
+
+      Logger.logResponse(url, response.statusCode, bodyLog);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final decodedBody = bodyLog is Map<String, dynamic>
+            ? bodyLog
+            : jsonDecode(response.body);
+        return ApiResult.success(
+          decodedBody as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        );
+      } else {
+        String? errorMessage;
+        if (bodyLog is Map<String, dynamic>) {
+          if (bodyLog['error'] != null && bodyLog['error']['message'] != null) {
+            errorMessage = bodyLog['error']['message'];
+          } else if (bodyLog['message'] != null) {
+            errorMessage = bodyLog['message'];
+          }
+        }
+        if (response.statusCode == 403) {
+          onUnauthorized?.call();
+          errorMessage = 'Lütfen tekrar giriş yapın.';
+        } else if (response.statusCode == 401) {
+          errorMessage = 'E-posta veya şifre hatalı.';
+        }
+        return ApiResult.failure(
+          errorMessage ?? 'Request failed with status: ${response.statusCode}',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      Logger.logError(url, e.toString());
+      return ApiResult.failure('Network Error: $e');
+    }
+  }
+
   Future<ApiResult<Map<String, dynamic>>> postMultipart(
     String url, {
     Map<String, String>? fields,

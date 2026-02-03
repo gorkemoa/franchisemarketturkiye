@@ -36,4 +36,6 @@ class ApiConstants {
   static String franchiseApply(int id) =>
       '$baseUrl/api/v1/franchises/$id/apply';
   static const String notifications = '$baseUrl/api/v1/notifications';
+  static const String deleteAccount =
+      '$baseUrl/api/v1/customers/delete-account';
 }

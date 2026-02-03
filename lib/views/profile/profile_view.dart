@@ -173,7 +173,11 @@ class ProfileViewState extends State<ProfileView> {
       case 'Hesap Bilgilerim':
         return AccountInfoPanel(viewModel: _profileViewModel);
       case 'Güvenlik İşlemleri':
-        return SecuritySettingsPanel(viewModel: _passwordViewModel);
+        return SecuritySettingsPanel(
+          viewModel: _passwordViewModel,
+          profileViewModel: _profileViewModel,
+          onLogout: widget.onLogout,
+        );
       case 'Adres İşlemleri':
         return AddressSettingsPanel(viewModel: _addressViewModel);
       case 'Yazar Başvurusu':

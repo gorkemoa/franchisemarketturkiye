@@ -98,4 +98,28 @@ class ProfileViewModel extends ChangeNotifier {
     _customer = null;
     notifyListeners();
   }
+
+  Future<bool> deleteAccount() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await _authService.deleteAccount();
+
+      if (result.isSuccess) {
+        _customer = null;
+        return true;
+      } else {
+        _errorMessage = result.error;
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = 'Beklenmedik bir hata oluştu: $e';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
