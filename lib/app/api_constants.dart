@@ -38,4 +38,5 @@ class ApiConstants {
   static const String notifications = '$baseUrl/api/v1/notifications';
   static const String deleteAccount =
       '$baseUrl/api/v1/customers/delete-account';
+  static const String resolveLink = '$baseUrl/api/v1/links';
 }

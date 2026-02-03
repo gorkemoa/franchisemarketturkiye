@@ -23,6 +23,7 @@ import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
+import 'package:franchisemarketturkiye/services/link_service.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -138,22 +139,65 @@ class DeepLinkService {
       id = pathSegments[1];
     }
 
-    // If it's a full franchise/kategori URL without an integer ID, it might be a slug.
-    // Since we don't support slugs yet, and it's a full URL, we should probably
-    // fall back to WebView if it's an HTTP URL and we couldn't find a native ID.
-    if (uri.scheme.startsWith('http') && int.tryParse(id ?? '') == null) {
-      // Special case for types that we know need integer IDs but got slugs
-      if (['kategori', 'franchise', 'blog', 'news', 'haber'].contains(type)) {
+    // Resolve slug if needed
+    if (int.tryParse(id ?? '') == null && id != null) {
+      final String? mappedType = _getMappedType(type);
+      if (mappedType != null) {
         developer.log(
-          'ℹ️ Slug detected for $type, falling back to WebView',
+          '🔍 Slug detected for $type: $id, resolving...',
           name: 'DeepLink',
         );
-        handleNavigation('page', uri.toString());
+        _resolveAndNavigate(mappedType, id, uri.toString());
         return;
       }
     }
 
     handleNavigation(type, id);
+  }
+
+  /// Maps URL types to API-supported types (blog, magazine, franchise)
+  String? _getMappedType(String type) {
+    type = type.toLowerCase();
+    if (['blog', 'news', 'haber', 'haberler'].contains(type)) return 'blog';
+    if (['dergi', 'dergiler', 'magazine', 'magazines'].contains(type)) {
+      return 'magazine';
+    }
+    if (['franchise', 'marka', 'markalar', 'markalarımız'].contains(type)) {
+      return 'franchise';
+    }
+    return null;
+  }
+
+  /// Resolves a slug via API and navigates to the result
+  Future<void> _resolveAndNavigate(
+    String type,
+    String slug,
+    String originalUrl,
+  ) async {
+    try {
+      final result = await LinkService().resolveLink(link: slug, type: type);
+
+      if (result.isSuccess &&
+          result.data?.success == true &&
+          result.data?.data != null) {
+        final data = result.data!.data!;
+        developer.log(
+          '✅ Resolved: ${data.type} ID: ${data.item.id} for slug: $slug',
+          name: 'DeepLink',
+        );
+        handleNavigation(data.type, data.item.id.toString());
+      } else {
+        developer.log(
+          '❌ Resolve failed for $slug: ${result.error}',
+          name: 'DeepLink',
+        );
+        // Fallback to WebView if resolve fails
+        handleNavigation('page', originalUrl);
+      }
+    } catch (e) {
+      developer.log('❌ Error in _resolveAndNavigate: $e', name: 'DeepLink');
+      handleNavigation('page', originalUrl);
+    }
   }
 
   /// Centralized navigation logic for Deep Links and Push Notifications
