@@ -394,7 +394,7 @@ class _HomeViewState extends State<HomeView> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
         child: Container(
-          height: 612, // Taller height to accommodate overlay
+          height: 550, // Taller height to accommodate overlay
           decoration: BoxDecoration(color: AppTheme.sliderBackground),
           child: Stack(
             children: [
@@ -435,8 +435,8 @@ class _HomeViewState extends State<HomeView> {
                             );
                           },
                           child: Container(
-                            width: isFirst ? 90 : 80,
-                            height: isFirst ? 110 : 100,
+                            width: isFirst ? 100 : 90,
+                            height: isFirst ? 150 : 120,
                             margin: EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -448,7 +448,6 @@ class _HomeViewState extends State<HomeView> {
                               ],
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
                               child: Image.network(
                                 magazine.imageUrl,
                                 fit: BoxFit.cover,
