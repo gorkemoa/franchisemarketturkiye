@@ -338,37 +338,12 @@ class _HomeViewState extends State<HomeView> {
                       }
                       return [section, SizedBox(height: 16)];
                     }),
-                // New Marketing Image
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: ClipRRect(
-                    child: Image.asset(
-                      'assets/panino-1.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
 
                 // Marketing Talks Moved to Bottom
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: MarketingTalksSection(
                     talks: _viewModel.marketingTalks,
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Bottom Analysis Image
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: ClipRRect(
-                    child: Image.asset(
-                      'assets/analiz.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -391,19 +366,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
 
-                // Gymboree Image
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: ClipRRect(
-                    child: Image.asset(
-                      'assets/gymboree.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
                 SizedBox(height: 32),
 
                 // Footer Section

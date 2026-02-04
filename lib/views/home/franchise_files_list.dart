@@ -86,8 +86,8 @@ class FranchiseFilesList extends StatelessWidget {
         children: [
           // Logo
           Container(
-            width: 30,
-            height: 30,
+            width: 35,
+            height: 35,
             decoration: BoxDecoration(
               color: const Color(0xFFF9F9F9),
               border: Border.all(color: AppTheme.borderColor),
@@ -95,7 +95,7 @@ class FranchiseFilesList extends StatelessWidget {
             child: ClipRRect(
               child: Image.network(
                 franchise.logoUrl,
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.business, size: 16, color: Colors.grey),
               ),
