@@ -28,6 +28,7 @@ class _NotificationsViewState extends State<NotificationsView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: true,
+      selectedDrawerItem: 'notifications',
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, child) {

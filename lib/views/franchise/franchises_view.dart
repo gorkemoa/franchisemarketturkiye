@@ -173,6 +173,7 @@ class _FranchisesViewState extends State<FranchisesView> {
         body: content,
         showBackButton: true,
         currentIndex: null,
+        selectedDrawerItem: 'franchise_files',
         endDrawer: _FranchiseFilterDrawer(viewModel: widget.viewModel),
       );
     }

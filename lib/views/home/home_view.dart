@@ -28,7 +28,14 @@ import 'package:franchisemarketturkiye/views/magazine/magazine_detail_view.dart'
 import 'package:upgrader/upgrader.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  final int initialIndex;
+  final String? initialProfileSection;
+
+  const HomeView({
+    super.key,
+    this.initialIndex = 2,
+    this.initialProfileSection,
+  });
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -36,7 +43,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final HomeViewModel _viewModel;
-  int _currentIndex = 2; // Home is index 2
+  late int _currentIndex;
   List<Widget> _pages = [];
   final AuthService _authService = AuthService();
   bool _isLoggedIn = false;
@@ -52,6 +59,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
 
     _upgrader = Upgrader(
       debugLogging: true,
@@ -104,7 +112,16 @@ class _HomeViewState extends State<HomeView> {
       _buildHomeContent(),
       CategoriesView(viewModel: _categoriesViewModel),
       _isLoggedIn
-          ? ProfileView(key: _profileKey, onLogout: _checkLoginStatus)
+          ? ProfileView(
+              key: _profileKey,
+              onLogout: _checkLoginStatus,
+              initialSection: widget.initialProfileSection,
+              onIndexChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+            )
           : LoginView(
               onLoginSuccess: () {
                 _checkLoginStatus();
@@ -158,6 +175,16 @@ class _HomeViewState extends State<HomeView> {
               _searchViewModel.onSearchChanged(query);
             } else if (_currentIndex == 3) {
               _categoriesViewModel.setSearchQuery(query);
+            }
+          },
+          onProfileSectionSelected: (section) {
+            setState(() {
+              _currentIndex = 4;
+            });
+            if (_isLoggedIn) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _profileKey.currentState?.selectSection(section);
+              });
             }
           },
           bottomNavigationBar: CustomBottomNavBar(

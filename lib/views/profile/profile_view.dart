@@ -15,8 +15,14 @@ import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 class ProfileView extends StatefulWidget {
   final VoidCallback? onLogout;
   final String? initialSection;
+  final ValueChanged<int>? onIndexChanged;
 
-  const ProfileView({super.key, this.onLogout, this.initialSection});
+  const ProfileView({
+    super.key,
+    this.onLogout,
+    this.initialSection,
+    this.onIndexChanged,
+  });
 
   @override
   State<ProfileView> createState() => ProfileViewState();
@@ -67,6 +73,9 @@ class ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: false,
+      onIndexChanged: widget.onIndexChanged,
+      onProfileSectionSelected: selectSection,
+      selectedDrawerItem: _selectedSection,
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
@@ -200,5 +209,13 @@ class ProfileViewState extends State<ProfileView> {
 
   void refresh() {
     _profileViewModel.loadProfile();
+  }
+
+  void selectSection(String section) {
+    if (_sections.contains(section)) {
+      setState(() {
+        _selectedSection = section;
+      });
+    }
   }
 }

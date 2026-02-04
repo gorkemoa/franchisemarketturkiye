@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:franchisemarketturkiye/views/home/home_view.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
-import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazines_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/magazines_view_model.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
@@ -22,7 +22,9 @@ class GlobalScaffold extends StatefulWidget {
   final bool showSearch;
   final ValueChanged<String>? onSearchChanged;
   final ValueChanged<int>? onIndexChanged;
+  final ValueChanged<String>? onProfileSectionSelected;
   final Widget? endDrawer;
+  final String? selectedDrawerItem;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
 
@@ -38,7 +40,9 @@ class GlobalScaffold extends StatefulWidget {
     this.showSearch = false,
     this.onSearchChanged,
     this.onIndexChanged,
+    this.onProfileSectionSelected,
     this.endDrawer,
+    this.selectedDrawerItem,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
   });
@@ -266,11 +270,21 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
                         onTap:
                             () {}, // Prevent closing when tapping inside the drawer
                         child: CustomDrawer(
-                          onIndexChanged: (index) {
-                            _toggleMenu();
-                            widget.onIndexChanged?.call(index);
-                          },
+                          onIndexChanged: widget.onIndexChanged != null
+                              ? (index) {
+                                  _toggleMenu();
+                                  widget.onIndexChanged!(index);
+                                }
+                              : null,
+                          onProfileSectionSelected:
+                              widget.onProfileSectionSelected != null
+                              ? (section) {
+                                  _toggleMenu();
+                                  widget.onProfileSectionSelected!(section);
+                                }
+                              : null,
                           currentIndex: widget.currentIndex,
+                          selectedItem: widget.selectedDrawerItem,
                         ),
                       ),
                     ),
@@ -342,9 +356,17 @@ class _GlobalScaffoldState extends State<GlobalScaffold>
 
 class CustomDrawer extends StatefulWidget {
   final ValueChanged<int>? onIndexChanged;
+  final ValueChanged<String>? onProfileSectionSelected;
   final int? currentIndex;
+  final String? selectedItem;
 
-  const CustomDrawer({super.key, this.onIndexChanged, this.currentIndex});
+  const CustomDrawer({
+    super.key,
+    this.onIndexChanged,
+    this.onProfileSectionSelected,
+    this.currentIndex,
+    this.selectedItem,
+  });
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -390,6 +412,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     _buildSectionTitle('MENÜ'),
                     _buildMenuItem(
                       'FRANCHISE DOSYASI',
+                      isSelected: widget.selectedItem == 'franchise_files',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -403,13 +426,27 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     _buildMenuItem(
                       'YAZARLAR',
-                      isSelected: widget.currentIndex == 0,
+                      isSelected:
+                          widget.currentIndex == 0 ||
+                          widget.selectedItem == 'authors',
                       onTap: () {
-                        widget.onIndexChanged?.call(0);
+                        if (widget.onIndexChanged != null) {
+                          widget.onIndexChanged!(0);
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const HomeView(initialIndex: 0),
+                            ),
+                            (route) => false,
+                          );
+                        }
                       },
                     ),
                     _buildMenuItem(
                       'DERGİLER',
+                      isSelected: widget.selectedItem == 'magazines',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -422,6 +459,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     _buildMenuItem(
                       'BİLDİRİMLER',
+                      isSelected: widget.selectedItem == 'notifications',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -435,27 +473,45 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     _buildMenuItem(
                       'YAZAR BAŞVURUSU',
+                      isSelected:
+                          widget.selectedItem ==
+                          'Yazar Başvurusu', // Direct match
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfileView(
-                              initialSection: 'Yazar Başvurusu',
+                        if (widget.onProfileSectionSelected != null) {
+                          widget.onProfileSectionSelected!('Yazar Başvurusu');
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomeView(
+                                initialIndex: 4,
+                                initialProfileSection: 'Yazar Başvurusu',
+                              ),
                             ),
-                          ),
-                        );
+                            (route) => false,
+                          );
+                        }
                       },
                     ),
                     _buildMenuItem(
                       'İLETİŞİM',
+                      isSelected:
+                          widget.selectedItem == 'İletişim', // Direct match
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const ProfileView(initialSection: 'İletişim'),
-                          ),
-                        );
+                        if (widget.onProfileSectionSelected != null) {
+                          widget.onProfileSectionSelected!('İletişim');
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomeView(
+                                initialIndex: 4,
+                                initialProfileSection: 'İletişim',
+                              ),
+                            ),
+                            (route) => false,
+                          );
+                        }
                       },
                     ),
 

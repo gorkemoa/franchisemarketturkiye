@@ -46,6 +46,7 @@ class _MagazinesViewState extends State<MagazinesView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: true,
+      selectedDrawerItem: 'magazines',
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, child) {
