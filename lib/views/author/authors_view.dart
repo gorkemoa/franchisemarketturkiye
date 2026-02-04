@@ -120,13 +120,16 @@ class _AuthorsViewState extends State<AuthorsView> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.686,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width >= 600
+                          ? 4
+                          : 2,
+                      childAspectRatio: MediaQuery.of(context).size.width >= 600
+                          ? 0.72
+                          : 0.686,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return AuthorCard(author: _viewModel.authors[index]);
                     }, childCount: _viewModel.authors.length),

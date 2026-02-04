@@ -148,77 +148,87 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
           final magazine = _viewModel.magazine;
           if (magazine == null) return const SizedBox.shrink();
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Cover Image
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Hero(
-                    tag: 'magazine_${magazine.id}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Cover Image
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width >= 600
+                            ? 0
+                            : 16,
                       ),
-                      child: ClipRRect(
-                        child: Image.network(
-                          magazine.imageUrl,
-                          fit: BoxFit.fill,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                height: 300,
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                      child: Hero(
+                        tag: 'magazine_${magazine.id}',
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            child: Image.network(
+                              magazine.imageUrl,
+                              fit: BoxFit.fill,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    height: 300,
+                                    color: Colors.grey[200],
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Title and Description
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        magazine.title,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontFamily: 'BioSans',
-                        ),
+                    const SizedBox(height: 24),
+                    // Title and Description
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            magazine.title,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontFamily: 'BioSans',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          HtmlWidget(
+                            magazine.description,
+                            textStyle: const TextStyle(
+                              fontSize: 15,
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                          const SizedBox(height: 32), // Spacing for better look
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      HtmlWidget(
-                        magazine.description,
-                        textStyle: const TextStyle(
-                          fontSize: 15,
-                          color: AppTheme.textPrimary,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Inter',
-                        ),
-                      ),
-                      const SizedBox(height: 32), // Spacing for better look
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         },

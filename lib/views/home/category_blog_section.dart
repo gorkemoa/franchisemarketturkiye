@@ -36,18 +36,33 @@ class CategoryBlogSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: categoryBlog.blogs.length > 2
-              ? 2
-              : categoryBlog.blogs.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 24),
-          itemBuilder: (context, index) {
-            final blog = categoryBlog.blogs[index];
-            return _CategoryBlogItem(blog: blog);
-          },
-        ),
+        if (MediaQuery.of(context).size.width >= 600)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: categoryBlog.blogs.take(2).map((blog) {
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: categoryBlog.blogs.indexOf(blog) == 0 ? 0 : 8,
+                  ),
+                  child: _CategoryBlogItem(blog: blog),
+                ),
+              );
+            }).toList(),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: categoryBlog.blogs.length > 2
+                ? 2
+                : categoryBlog.blogs.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 24),
+            itemBuilder: (context, index) {
+              final blog = categoryBlog.blogs[index];
+              return _CategoryBlogItem(blog: blog);
+            },
+          ),
         if (categoryBlog.blogs.isNotEmpty) ...[
           const SizedBox(height: 16),
           Center(
@@ -119,18 +134,20 @@ class _CategoryBlogItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image
-            ClipRRect(
-              child: Image.network(
-                blog.imageUrl,
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.fill,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 250,
+            AspectRatio(
+              aspectRatio: 16 / 10,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  blog.imageUrl,
                   width: double.infinity,
-                  color: Colors.grey[100],
-                  child: const Center(
-                    child: Icon(Icons.broken_image, color: Colors.grey),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: double.infinity,
+                    color: Colors.grey[100],
+                    child: const Center(
+                      child: Icon(Icons.broken_image, color: Colors.grey),
+                    ),
                   ),
                 ),
               ),

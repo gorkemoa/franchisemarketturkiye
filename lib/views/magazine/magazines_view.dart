@@ -109,14 +109,16 @@ class _MagazinesViewState extends State<MagazinesView> {
                   child: GridView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio:
-                              0.6, // Adjusted for magazine cover + details
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width >= 600
+                          ? 4
+                          : 2,
+                      childAspectRatio: MediaQuery.of(context).size.width >= 600
+                          ? 0.65
+                          : 0.6,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
                     itemCount:
                         widget.viewModel.magazines.length +
                         (widget.viewModel.hasMore ? 1 : 0),

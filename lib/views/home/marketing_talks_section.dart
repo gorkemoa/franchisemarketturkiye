@@ -65,27 +65,55 @@ class _MarketingTalksSectionState extends State<MarketingTalksSection> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildTalkItem(context, firstTalk, isLarge: true),
         const SizedBox(height: 16),
-        if (remainingTalks.isNotEmpty)
+        if (MediaQuery.of(context).size.width >= 600)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: _buildTalkItem(
-                  context,
-                  remainingTalks[0],
-                  isLarge: false,
+                flex: 2,
+                child: _buildTalkItem(context, firstTalk, isLarge: true),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: remainingTalks.map((talk) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _buildTalkItem(context, talk, isLarge: false),
+                    );
+                  }).toList(),
                 ),
               ),
-              const SizedBox(width: 16),
-              if (remainingTalks.length > 1)
-                Expanded(
-                  child: _buildTalkItem(
-                    context,
-                    remainingTalks[1],
-                    isLarge: false,
-                  ),
+            ],
+          )
+        else
+          Column(
+            children: [
+              _buildTalkItem(context, firstTalk, isLarge: true),
+              const SizedBox(height: 16),
+              if (remainingTalks.isNotEmpty)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildTalkItem(
+                        context,
+                        remainingTalks[0],
+                        isLarge: false,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    if (remainingTalks.length > 1)
+                      Expanded(
+                        child: _buildTalkItem(
+                          context,
+                          remainingTalks[1],
+                          isLarge: false,
+                        ),
+                      ),
+                  ],
                 ),
             ],
           ),

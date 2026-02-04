@@ -63,92 +63,101 @@ class _LoginViewState extends State<LoginView> {
         title: Text(_viewModel.isLogin ? 'Giriş Yap' : 'Kayıt Ol'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 24.0,
-          right: 24.0,
-          top: 24.0,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Logo
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 32.0),
-                child: SvgPicture.asset('assets/logo.svg', height: 48),
-              ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              left: 24.0,
+              right: 24.0,
+              top: 24.0,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
             ),
-            // Tabs
-            Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      if (!_viewModel.isLogin) _viewModel.toggleAuthMode();
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: _viewModel.isLogin
-                            ? AppTheme.primaryColor
-                            : Colors.white,
-                        border: _viewModel.isLogin
-                            ? null
-                            : Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'GİRİŞ',
-                          style: TextStyle(
+                // Logo
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: SvgPicture.asset('assets/logo.svg', height: 48),
+                  ),
+                ),
+                // Tabs
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!_viewModel.isLogin) _viewModel.toggleAuthMode();
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
                             color: _viewModel.isLogin
-                                ? Colors.white
-                                : Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                                ? AppTheme.primaryColor
+                                : Colors.white,
+                            border: _viewModel.isLogin
+                                ? null
+                                : Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'GİRİŞ',
+                              style: TextStyle(
+                                color: _viewModel.isLogin
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_viewModel.isLogin) _viewModel.toggleAuthMode();
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: !_viewModel.isLogin
-                            ? AppTheme.primaryColor
-                            : Colors.white,
-                        border: !_viewModel.isLogin
-                            ? null
-                            : Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'KAYIT',
-                          style: TextStyle(
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (_viewModel.isLogin) _viewModel.toggleAuthMode();
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
                             color: !_viewModel.isLogin
-                                ? Colors.white
-                                : Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                                ? AppTheme.primaryColor
+                                : Colors.white,
+                            border: !_viewModel.isLogin
+                                ? null
+                                : Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'KAYIT',
+                              style: TextStyle(
+                                color: !_viewModel.isLogin
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
+                const SizedBox(height: 32),
+
+                if (_viewModel.isLogin)
+                  _buildLoginForm()
+                else
+                  _buildRegisterForm(),
               ],
             ),
-            const SizedBox(height: 32),
-
-            if (_viewModel.isLogin) _buildLoginForm() else _buildRegisterForm(),
-          ],
+          ),
         ),
       ),
     );

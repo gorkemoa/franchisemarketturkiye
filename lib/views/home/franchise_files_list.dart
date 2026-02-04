@@ -59,14 +59,26 @@ class FranchiseFilesList extends StatelessWidget {
         const Divider(height: 1, color: AppTheme.borderColor),
         const SizedBox(height: 16),
         // List
-        Column(
-          children: franchises.take(5).map((franchise) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: _buildItem(context, franchise),
-            );
-          }).toList(),
-        ),
+        if (MediaQuery.of(context).size.width >= 600)
+          Wrap(
+            spacing: 16,
+            runSpacing: 24,
+            children: franchises.take(6).map((franchise) {
+              return SizedBox(
+                width: (MediaQuery.of(context).size.width - 48) / 2,
+                child: _buildItem(context, franchise),
+              );
+            }).toList(),
+          )
+        else
+          Column(
+            children: franchises.take(5).map((franchise) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: _buildItem(context, franchise),
+              );
+            }).toList(),
+          ),
       ],
     );
   }

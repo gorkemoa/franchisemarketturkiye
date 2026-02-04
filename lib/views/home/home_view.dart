@@ -238,21 +238,7 @@ class _HomeViewState extends State<HomeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Dynamic Banners
-                ..._viewModel.banners.expand((banner) {
-                  if (banner.id == 1 && _viewModel.magazines.isNotEmpty) {
-                    return [
-                      _buildMagazineHero(context, banner, _viewModel.magazines),
-                      SizedBox(height: 16),
-                    ];
-                  }
-                  return [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: _buildBannerItem(context, banner.imageUrl),
-                    ),
-                    SizedBox(height: 16),
-                  ];
-                }).toList(),
+                ..._buildResponsiveBanners(context),
 
                 // Blog Horizontal Slider (Featured Blogs)
                 Padding(
@@ -385,90 +371,180 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  List<Widget> _buildResponsiveBanners(BuildContext context) {
+    if (_viewModel.banners.isEmpty) return [];
+
+    final bool isTablet = MediaQuery.of(context).size.width >= 600;
+    List<Widget> children = [];
+
+    final bannerList = _viewModel.banners;
+    final magazines = _viewModel.magazines;
+
+    // Separate hero from others
+    HomeBanner? hero;
+    final List<HomeBanner> others = [];
+
+    for (var b in bannerList) {
+      if (b.id == 1 && magazines.isNotEmpty) {
+        hero = b;
+      } else {
+        others.add(b);
+      }
+    }
+
+    if (hero != null) {
+      children.add(_buildMagazineHero(context, hero, magazines));
+      children.add(const SizedBox(height: 16));
+    }
+
+    if (others.isNotEmpty) {
+      if (isTablet) {
+        // Pairs for tablets (side-by-side)
+        for (int i = 0; i < others.length; i += 2) {
+          if (i + 1 < others.length) {
+            children.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildBannerItem(context, others[i].imageUrl),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildBannerItem(context, others[i + 1].imageUrl),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            children.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _buildBannerItem(context, others[i].imageUrl),
+              ),
+            );
+          }
+          children.add(const SizedBox(height: 16));
+        }
+      } else {
+        // Single for phones
+        for (final banner in others) {
+          children.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildBannerItem(context, banner.imageUrl),
+            ),
+          );
+          children.add(const SizedBox(height: 16));
+        }
+      }
+    }
+
+    return children;
+  }
+
   Widget _buildMagazineHero(
     BuildContext context,
     HomeBanner banner,
     List<Magazine> magazines,
   ) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double scaleFactor = (screenWidth / 375).clamp(0.8, 2.5);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
-        child: Container(
-          height: 550, // Taller height to accommodate overlay
-          decoration: BoxDecoration(color: AppTheme.sliderBackground),
-          child: Stack(
-            children: [
-              // 1. Background Banner Image (The image with logo/text)
-              Positioned.fill(
-                child: Image.network(
-                  banner.imageUrl,
-                  fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(color: AppTheme.sliderBackground),
+        child: AspectRatio(
+          aspectRatio: 375 / 550,
+          child: Container(
+            decoration: BoxDecoration(color: AppTheme.sliderBackground),
+            child: Stack(
+              children: [
+                // 1. Background Banner Image
+                Positioned.fill(
+                  child: Image.network(
+                    banner.imageUrl,
+                    fit: BoxFit.fill,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Container(color: AppTheme.sliderBackground),
+                  ),
                 ),
-              ),
-              // 2. Magazines Overlayed on top of the image
-              Positioned(
-                left: 12,
-                right: 0,
-                bottom: 20,
-                child: SizedBox(
-                  height: 250,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: magazines.take(4).length,
-                    itemBuilder: (context, index) {
-                      final magazine = magazines[index];
-                      final bool isFirst = index == 0;
+                // 2. Magazines Overlayed
+                Positioned(
+                  left: 12 * scaleFactor,
+                  right: 0,
+                  bottom: 20 * scaleFactor,
+                  child: SizedBox(
+                    height: 250 * scaleFactor,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: magazines.take(4).length,
+                      itemBuilder: (context, index) {
+                        final magazine = magazines[index];
+                        final bool isFirst = index == 0;
 
-                      return Align(
-                        alignment: Alignment.bottomLeft,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    MagazineDetailView(magazineId: magazine.id),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: isFirst ? 100 : 90,
-                            height: isFirst ? 150 : 120,
-                            margin: EdgeInsets.only(right: 12),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.6),
-                                  blurRadius: 15,
-                                  offset: Offset(4, 4),
+                        return Align(
+                          alignment: Alignment.bottomLeft,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MagazineDetailView(
+                                    magazineId: magazine.id,
+                                  ),
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              child: Image.network(
-                                magazine.imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      color: Colors.white10,
-                                      child: const Icon(
-                                        Icons.book,
-                                        color: Colors.white24,
-                                      ),
+                              );
+                            },
+                            child: Container(
+                              width: (isFirst ? 100 : 90) * scaleFactor,
+                              height: (isFirst ? 150 : 120) * scaleFactor,
+                              margin: EdgeInsets.only(right: 12 * scaleFactor),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  4 * scaleFactor,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.6),
+                                    blurRadius: 15 * scaleFactor,
+                                    offset: Offset(
+                                      4 * scaleFactor,
+                                      4 * scaleFactor,
                                     ),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  4 * scaleFactor,
+                                ),
+                                child: Image.network(
+                                  magazine.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                        color: Colors.white10,
+                                        child: Icon(
+                                          Icons.book,
+                                          color: Colors.white24,
+                                          size: 32 * scaleFactor,
+                                        ),
+                                      ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -476,29 +552,25 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildBannerItem(BuildContext context, String imageUrl) {
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(color: AppTheme.sliderBackground),
-      child: ClipRRect(
-        child: Stack(
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: imageUrl.startsWith('http')
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.fill,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(color: AppTheme.sliderBackground),
-                    )
-                  : Image.asset(
-                      imageUrl,
-                      fit: BoxFit.fill,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(color: AppTheme.sliderBackground),
-                    ),
-            ),
-          ],
+    return AspectRatio(
+      aspectRatio: 375 / 180,
+      child: Container(
+        decoration: BoxDecoration(color: AppTheme.sliderBackground),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: imageUrl.startsWith('http')
+              ? Image.network(
+                  imageUrl,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(color: AppTheme.sliderBackground),
+                )
+              : Image.asset(
+                  imageUrl,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(color: AppTheme.sliderBackground),
+                ),
         ),
       ),
     );

@@ -67,102 +67,111 @@ class ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return GlobalScaffold(
       showBackButton: false,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
                   ),
-                ],
-                border: Border.all(color: Colors.grey.shade100),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _selectedSection,
-                  isExpanded: true,
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppTheme.primaryColor,
-                  ),
-                  iconSize: 28,
-                  borderRadius: BorderRadius.circular(12),
-                  dropdownColor: Colors.white,
-                  elevation: 4,
-                  items: _sections.map((String section) {
-                    final isSelected = section == _selectedSection;
-                    return DropdownMenuItem<String>(
-                      value: section,
-                      child: Text(
-                        section,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                          color: isSelected
-                              ? AppTheme.primaryColor
-                              : Colors.black87,
-                          fontFamily: 'BioSans',
-                        ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedSection = newValue;
-                      });
-                    }
-                  },
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Dynamic Content Body
-            _buildSelectedSection(),
-
-            const SizedBox(height: 40),
-
-            // Logout Button (Always visible at bottom)
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  await _profileViewModel.logout();
-                  widget.onLogout?.call();
-                },
-                icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text(
-                  'Çıkış Yap',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
+                    ],
+                    border: Border.all(color: Colors.grey.shade100),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedSection,
+                      isExpanded: true,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: AppTheme.primaryColor,
+                      ),
+                      iconSize: 28,
+                      borderRadius: BorderRadius.circular(12),
+                      dropdownColor: Colors.white,
+                      elevation: 4,
+                      items: _sections.map((String section) {
+                        final isSelected = section == _selectedSection;
+                        return DropdownMenuItem<String>(
+                          value: section,
+                          child: Text(
+                            section,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? AppTheme.primaryColor
+                                  : Colors.black87,
+                              fontFamily: 'BioSans',
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedSection = newValue;
+                          });
+                        }
+                      },
+                    ),
                   ),
                 ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+
+                const SizedBox(height: 24),
+
+                // Dynamic Content Body
+                _buildSelectedSection(),
+
+                const SizedBox(height: 40),
+
+                // Logout Button (Always visible at bottom)
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await _profileViewModel.logout();
+                      widget.onLogout?.call();
+                    },
+                    icon: const Icon(Icons.logout, color: Colors.red),
+                    label: const Text(
+                      'Çıkış Yap',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 20),
-          ],
+          ),
         ),
       ),
     );
