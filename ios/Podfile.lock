@@ -176,6 +176,8 @@ PODS:
   - SDWebImage (5.21.5):
     - SDWebImage/Core (= 5.21.5)
   - SDWebImage/Core (5.21.5)
+  - share_plus (0.0.1):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -207,6 +209,7 @@ DEPENDENCIES:
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - pdfium_flutter (from `.symlinks/plugins/pdfium_flutter/darwin`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -259,6 +262,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   pdfium_flutter:
     :path: ".symlinks/plugins/pdfium_flutter/darwin"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite_darwin:
@@ -301,6 +306,7 @@ SPEC CHECKSUMS:
   pdfium_flutter: 1cfb4ed2070a5f7df49eb9481210c92fe8b9c5b1
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   SDWebImage: e9c98383c7572d713c1a0d7dd2783b10599b9838
+  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4

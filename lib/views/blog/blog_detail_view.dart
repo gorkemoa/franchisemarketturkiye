@@ -6,6 +6,7 @@ import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/models/blog.dart';
 import 'package:franchisemarketturkiye/viewmodels/blog_detail_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BlogDetailView extends StatefulWidget {
   final int blogId;
@@ -174,6 +175,21 @@ class _BlogDetailViewState extends State<BlogDetailView>
                 color: Colors.black,
               ),
             ),
+            if (_viewModel.blog != null)
+              IconButton(
+                onPressed: () {
+                  final shareLink = _viewModel.blog!.fullLink;
+
+                  final box = context.findRenderObject() as RenderBox?;
+                  Share.share(
+                    shareLink,
+                    sharePositionOrigin: box != null
+                        ? box.localToGlobal(Offset.zero) & box.size
+                        : null,
+                  );
+                },
+                icon: const Icon(Icons.share, color: Colors.black),
+              ),
           ],
           body: Column(
             children: [
@@ -356,6 +372,8 @@ class _BlogDetailViewState extends State<BlogDetailView>
                 // Main Title
                 Text(
                   blog.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 20,
                     fontFamily: 'BioSans',

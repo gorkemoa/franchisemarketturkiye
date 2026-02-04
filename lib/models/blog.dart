@@ -10,6 +10,7 @@ class Blog {
   final String tags;
   final DateTime dateAdded;
   final DateTime dateUpdate;
+  final String fullLink;
   final BlogCategory? category;
   final BlogType type;
   final BlogAuthor author;
@@ -26,6 +27,7 @@ class Blog {
     required this.tags,
     required this.dateAdded,
     required this.dateUpdate,
+    required this.fullLink,
     this.category,
     required this.type,
     required this.author,
@@ -48,6 +50,7 @@ class Blog {
       dateUpdate: json['date_update'] != null
           ? DateTime.parse(json['date_update'])
           : DateTime.now(),
+      fullLink: json['full_link'] as String? ?? '',
       category: json['category'] != null
           ? BlogCategory.fromJson(json['category'])
           : null,
@@ -68,6 +71,7 @@ class Blog {
     String? tags,
     DateTime? dateAdded,
     DateTime? dateUpdate,
+    String? fullLink,
     BlogCategory? category,
     BlogType? type,
     BlogAuthor? author,
@@ -84,6 +88,7 @@ class Blog {
       tags: tags ?? this.tags,
       dateAdded: dateAdded ?? this.dateAdded,
       dateUpdate: dateUpdate ?? this.dateUpdate,
+      fullLink: fullLink ?? this.fullLink,
       category: category ?? this.category,
       type: type ?? this.type,
       author: author ?? this.author,

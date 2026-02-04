@@ -302,6 +302,7 @@ class _SearchViewState extends State<SearchView> {
                   onPressed: () => widget.viewModel.clearRecentlyViewed(),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
+                    backgroundColor: Colors.white,
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
