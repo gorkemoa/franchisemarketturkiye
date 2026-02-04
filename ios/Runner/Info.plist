@@ -42,7 +42,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Franchise Market Türkiye uygulaması, profil fotoğrafı yükleyebilmeniz veya yazı başvurularınızda görsel paylaşabilmeniz için galerinize erişim izni gerektirir.</string>
+	<string>Franchise Market Türkiye uygulaması, başvuru sırasında fotoğraf seçip yükleyebilmeniz için galerinize erişim izni gerekmektedir.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

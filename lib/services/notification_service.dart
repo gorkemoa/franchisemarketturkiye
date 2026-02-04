@@ -108,20 +108,17 @@ class FirebaseMessagingService {
       if (token != null) {
         developer.log('🔑 FCM Token obtained: $token', name: 'FCM');
 
-        // Subscribe to GorkemTest topic
-        developer.log(
-          '📌 Attempting to subscribe to GorkemTest...',
-          name: 'FCM',
-        );
-        await subscribeToTopic('GorkemTest');
-        developer.log('✅ GorkemTest subscription call finished', name: 'FCM');
+        // Subscribe to General topic
+        developer.log('📌 Attempting to subscribe to General...', name: 'FCM');
+        await subscribeToTopic('General');
+        developer.log('✅ General subscription call finished', name: 'FCM');
       } else {
         developer.log('⚠️ Could not obtain FCM token', name: 'FCM');
       }
 
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
         developer.log('🔄 FCM Token refreshed: $newToken', name: 'FCM');
-        subscribeToTopic('GorkemTest');
+        subscribeToTopic('General');
       });
 
       // 6. Background Message Handler
