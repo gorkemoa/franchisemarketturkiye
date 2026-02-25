@@ -5,6 +5,7 @@ import 'package:franchisemarketturkiye/viewmodels/magazines_view_model.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_detail_view.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MagazinesView extends StatefulWidget {
   final MagazinesViewModel viewModel;
@@ -168,12 +169,21 @@ class _MagazinesViewState extends State<MagazinesView> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black, // Assuming black based on other views
+                    color: Colors.black,
                     fontFamily: 'BioSans',
                   ),
                 ),
               ],
             ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+              Share.share('https://franchisemarketturkiye.com/dergiler');
+            },
+            icon: const Icon(Icons.share, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
