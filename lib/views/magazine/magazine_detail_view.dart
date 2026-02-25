@@ -4,6 +4,7 @@ import 'package:franchisemarketturkiye/viewmodels/magazine_detail_view_model.dar
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MagazineDetailView extends StatefulWidget {
   final int magazineId;
@@ -203,14 +204,32 @@ class _MagazineDetailViewState extends State<MagazineDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            magazine.title,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                              fontFamily: 'BioSans',
-                            ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  magazine.title,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                    fontFamily: 'BioSans',
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: () {
+                                  Share.share(
+                                    'https://franchisemarketturkiye.com/dergiler/${magazine.link}',
+                                  );
+                                },
+                                icon: const Icon(Icons.share, size: 20),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 16),
                           HtmlWidget(
