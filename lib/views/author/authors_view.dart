@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/author.dart';
 import 'package:franchisemarketturkiye/viewmodels/author_view_model.dart';
-
 import 'package:franchisemarketturkiye/views/author/author_detail_view.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AuthorsView extends StatefulWidget {
   final AuthorViewModel? viewModel;
@@ -56,24 +56,38 @@ class _AuthorsViewState extends State<AuthorsView> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        'YAZARLAR',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                          letterSpacing: 0.5,
-                          fontFamily: 'BioSans',
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'YAZARLAR',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                              letterSpacing: 0.5,
+                              fontFamily: 'BioSans',
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 40,
+                            height: 2,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 40,
-                        height: 2,
-                        color: AppTheme.primaryColor,
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          Share.share('https://franchisemarketturkiye.com/yazarlar');
+                        },
+                        icon: const Icon(Icons.share, size: 20),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
                     ],
                   ),

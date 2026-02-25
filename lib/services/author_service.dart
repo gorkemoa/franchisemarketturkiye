@@ -52,6 +52,26 @@ class AuthorService {
     }
   }
 
+  Future<ApiResult<Author>> getAuthorDetailBySlug(String slug) async {
+    final result = await _apiClient.get(ApiConstants.authorDetailBySlug(slug));
+
+    if (result.isSuccess && result.data != null) {
+      try {
+        final data = result.data!['data'];
+        if (data != null && data['item'] != null) {
+          final author = Author.fromJson(data['item']);
+          return ApiResult.success(author);
+        } else {
+          return ApiResult.failure('Author not found');
+        }
+      } catch (e) {
+        return ApiResult.failure('Parsing Error: $e');
+      }
+    } else {
+      return ApiResult.failure(result.error ?? 'Unknown Error');
+    }
+  }
+
   Future<ApiResult<AuthorBlogsResponse>> getAuthorBlogs(
     int authorId, {
     int limit = AppConstants.defaultLimit,

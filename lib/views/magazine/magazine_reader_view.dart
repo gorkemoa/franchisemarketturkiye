@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 import 'package:pdfrx/pdfrx.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:franchisemarketturkiye/viewmodels/magazine_reader_view_model.dart';
 import 'package:franchisemarketturkiye/views/profile/widgets/profile_form_fields.dart';
@@ -234,6 +235,10 @@ class _MagazineReaderViewState extends State<MagazineReaderView> {
                                 _buildCircleButton(
                                   icon: Icons.close,
                                   onPressed: () => Navigator.pop(context),
+                                ),
+                                _buildCircleButton(
+                                  icon: Icons.share,
+                                  onPressed: () => Share.share(widget.pdfUrl),
                                 ),
                               ],
                             ),

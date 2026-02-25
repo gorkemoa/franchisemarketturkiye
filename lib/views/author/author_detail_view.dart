@@ -4,6 +4,7 @@ import 'package:franchisemarketturkiye/models/author.dart';
 import 'package:franchisemarketturkiye/viewmodels/author_detail_view_model.dart';
 import 'package:franchisemarketturkiye/views/home/blog_list_item.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AuthorDetailView extends StatefulWidget {
   final int authorId;
@@ -188,35 +189,49 @@ class _AuthorDetailViewState extends State<AuthorDetailView> {
           ],
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                author.fullname.replaceAll('i', 'İ').toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textPrimary,
-                  letterSpacing: 0.5,
-                  fontFamily: 'BioSans',
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        author.fullname.replaceAll('i', 'İ').toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.textPrimary,
+                          letterSpacing: 0.5,
+                          fontFamily: 'BioSans',
+                        ),
+                      ),
+                      Text(
+                        ' YAZILARI'.replaceAll('i', 'İ').toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primaryColor,
+                          letterSpacing: 0.5,
+                          fontFamily: 'BioSans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(width: 40, height: 2, color: AppTheme.primaryColor),
+                ],
               ),
-              Text(
-                ' YAZILARI'.replaceAll('i', 'İ').toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.primaryColor,
-                  letterSpacing: 0.5,
-                  fontFamily: 'BioSans',
-                ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {
+                  Share.share('https://franchisemarketturkiye.com/yazarlar/${author.link}');
+                },
+                icon: const Icon(Icons.share, size: 20),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(width: 40, height: 2, color: AppTheme.primaryColor),
             ],
           ),
         ],

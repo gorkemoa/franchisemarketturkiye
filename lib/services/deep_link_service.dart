@@ -26,6 +26,7 @@ import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/services/link_service.dart';
+import 'package:franchisemarketturkiye/services/author_service.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -120,6 +121,25 @@ class DeepLinkService {
     }
 
     final pathSegments = uri.pathSegments;
+
+    // PDF link → direkt MagazineReaderView ile aç
+    if (uri.path.endsWith('.pdf')) {
+      developer.log('📄 PDF link detected: $uri', name: 'DeepLink');
+      final pdfUrl = uri.toString();
+      final title = pathSegments.isNotEmpty
+          ? pathSegments.last
+              .replaceAll('-', ' ')
+              .replaceAll('.pdf', '')
+              .toUpperCase()
+          : 'DÖKÜMAN';
+      _push(
+        MaterialPageRoute(
+          builder: (_) => MagazineReaderView(pdfUrl: pdfUrl, title: title),
+        ),
+      );
+      return;
+    }
+
     // Base URL or root (/, /home, /index vb.)
     bool isRoot =
         pathSegments.isEmpty ||
@@ -161,6 +181,17 @@ class DeepLinkService {
 
     // Resolve slug if needed
     if (int.tryParse(id ?? '') == null && id != null) {
+      // Author slug: direkt AuthorService ile çöz
+      final normalizedType = type.toLowerCase();
+      if (['yazar', 'yazarlar', 'author', 'authors'].contains(normalizedType)) {
+        developer.log(
+          '🔍 Author slug detected: $id, resolving via AuthorService...',
+          name: 'DeepLink',
+        );
+        _resolveAuthorBySlug(id);
+        return;
+      }
+
       final String? mappedType = _getMappedType(type);
       if (mappedType != null) {
         developer.log(
@@ -175,7 +206,7 @@ class DeepLinkService {
     handleNavigation(type, id);
   }
 
-  /// Maps URL types to API-supported types (blog, magazine, franchise)
+  /// Maps URL types to API-supported types (blog, magazine, franchise, yazar)
   String? _getMappedType(String type) {
     type = type.toLowerCase();
     if (['blog', 'news', 'haber', 'haberler'].contains(type)) return 'blog';
@@ -186,6 +217,34 @@ class DeepLinkService {
       return 'franchise';
     }
     return null;
+  }
+
+  /// Resolves an author slug via AuthorService and navigates to detail
+  Future<void> _resolveAuthorBySlug(String slug) async {
+    try {
+      final result = await AuthorService().getAuthorDetailBySlug(slug);
+      if (result.isSuccess && result.data != null) {
+        final author = result.data!;
+        developer.log(
+          '✅ Author resolved: ID ${author.id} for slug: $slug',
+          name: 'DeepLink',
+        );
+        _push(
+          MaterialPageRoute(
+            builder: (_) => AuthorDetailView(authorId: author.id, author: author),
+          ),
+        );
+      } else {
+        developer.log(
+          '❌ Author slug resolve failed: $slug → ${result.error}',
+          name: 'DeepLink',
+        );
+        handleNavigation('yazarlar', null);
+      }
+    } catch (e) {
+      developer.log('❌ Error in _resolveAuthorBySlug: $e', name: 'DeepLink');
+      handleNavigation('yazarlar', null);
+    }
   }
 
   /// Resolves a slug via API and navigates to the result

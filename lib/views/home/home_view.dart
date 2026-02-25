@@ -13,6 +13,7 @@ import 'package:franchisemarketturkiye/views/home/app_footer.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_bottom_nav_bar.dart';
 import 'package:franchisemarketturkiye/views/auth/login_view.dart';
 import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:franchisemarketturkiye/services/auth_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/category/categories_view.dart';
@@ -168,6 +169,18 @@ class _HomeViewState extends State<HomeView> {
               _currentIndex = index;
             });
           },
+          actions: _currentIndex == 2
+              ? [
+                  IconButton(
+                    onPressed: () {
+                      Share.share('https://franchisemarketturkiye.com');
+                    },
+                    icon: const Icon(Icons.share, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ]
+              : null,
           showSearch: _currentIndex == 0 || _currentIndex == 3,
           onSearchChanged: (query) {
             if (_currentIndex == 0) {
