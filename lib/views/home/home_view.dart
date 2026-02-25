@@ -24,6 +24,7 @@ import 'package:franchisemarketturkiye/viewmodels/search_view_model.dart';
 import 'package:franchisemarketturkiye/views/search/search_view.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchises_view.dart';
 import 'package:franchisemarketturkiye/views/magazine/magazine_detail_view.dart';
+import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
 
 import 'package:upgrader/upgrader.dart';
 
@@ -364,7 +365,16 @@ class _HomeViewState extends State<HomeView> {
                 // Contact Us Section
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: ContactSection(),
+                  child: ContactSection(
+                    onContactPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ContactView(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(height: 16),
 

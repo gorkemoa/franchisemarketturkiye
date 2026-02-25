@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 
 class ContactSection extends StatelessWidget {
-  const ContactSection({super.key});
+  final VoidCallback? onContactPressed;
+  const ContactSection({super.key, this.onContactPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -16,37 +17,52 @@ class ContactSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Bize Ulaşın',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600, // Inter 600
-              color: Colors.black,
-              height: 1.55, // 28px line-height / 18px font-size
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'BİZE ',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+                TextSpan(
+                  text: 'ULAŞIN',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             'Sorularınız, önerileriniz ve franchise ile yatırım fırsatlarına dair talepleriniz için bizimle iletişime geçin; birlikte işinizi bir sonraki seviyeye taşıyalım.',
-            style: TextStyle(
-              fontSize: 14,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppTheme.textSecondary,
               height: 1.6,
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-              shape: RoundedRectangleBorder(),
-              elevation: 0,
-            ),
-            child: const Text(
-              'İletişime Geçin',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onContactPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'İletişime Geçin',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ),
         ],

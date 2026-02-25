@@ -21,7 +21,7 @@ class _AuthorsViewState extends State<AuthorsView> {
   void initState() {
     super.initState();
     _viewModel = widget.viewModel ?? AuthorViewModel();
-    if (widget.viewModel == null) {
+    if (_viewModel.authors.isEmpty && !_viewModel.isLoading) {
       _viewModel.fetchAuthors();
     }
     _scrollController.addListener(_onScroll);

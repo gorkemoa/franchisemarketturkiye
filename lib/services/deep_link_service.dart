@@ -9,6 +9,7 @@ import 'package:franchisemarketturkiye/views/franchise/franchise_detail_view.dar
 import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart';
 import 'package:franchisemarketturkiye/services/magazine_service.dart';
 import 'package:franchisemarketturkiye/views/widgets/webview_view.dart';
+import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
 import 'package:franchisemarketturkiye/views/author/author_detail_view.dart';
 import 'package:franchisemarketturkiye/views/category/category_detail_view.dart';
 import 'package:franchisemarketturkiye/views/author/authors_view.dart';
@@ -147,6 +148,15 @@ class DeepLinkService {
     // Fallback to second segment if no integer ID found
     if (id == null && pathSegments.length > 1) {
       id = pathSegments[1];
+    }
+
+    // If id is not a pure integer, try to extract a numeric prefix from the slug
+    // e.g., "123-john-doe" -> "123"  (common Turkish site URL pattern)
+    if (id != null && int.tryParse(id) == null) {
+      final firstPart = id.split('-').first;
+      if (int.tryParse(firstPart) != null) {
+        id = firstPart;
+      }
     }
 
     // Resolve slug if needed
@@ -299,8 +309,10 @@ class DeepLinkService {
         } else {
           _push(
             MaterialPageRoute(
-              builder: (_) =>
-                  AuthorsView(viewModel: AuthorViewModel()..fetchAuthors()),
+              builder: (_) => GlobalScaffold(
+                showBackButton: true,
+                body: AuthorsView(viewModel: AuthorViewModel()),
+              ),
             ),
           );
         }
