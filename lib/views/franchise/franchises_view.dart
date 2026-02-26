@@ -5,6 +5,7 @@ import 'package:franchisemarketturkiye/models/franchise.dart';
 import 'package:franchisemarketturkiye/views/franchise/franchise_detail_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/views/widgets/custom_drawer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FranchisesView extends StatefulWidget {
   final FranchisesViewModel viewModel;
@@ -208,6 +209,15 @@ class _FranchisesViewState extends State<FranchisesView> {
                 ),
               ],
             ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+              Share.share('https://franchisemarketturkiye.com/franchise-dosyasi');
+            },
+            icon: const Icon(Icons.share, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

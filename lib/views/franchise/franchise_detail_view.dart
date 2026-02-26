@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:franchisemarketturkiye/app/app_theme.dart';
 import 'package:franchisemarketturkiye/models/franchise.dart';
 import 'package:franchisemarketturkiye/models/lookup_models.dart';
@@ -46,6 +47,20 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
             ),
           ),
           showBackButton: true,
+          actions: _viewModel.franchise != null
+              ? [
+                  IconButton(
+                    onPressed: () {
+                      Share.share(
+                        'https://franchisemarketturkiye.com/franchise-dosyasi/${_viewModel.franchise!.link}',
+                      );
+                    },
+                    icon: const Icon(Icons.share, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ]
+              : null,
           body: _buildBody(),
           bottomNavigationBar: _buildStickyButton(),
         );

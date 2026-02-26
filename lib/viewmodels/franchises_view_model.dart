@@ -37,8 +37,6 @@ class FranchisesViewModel extends ChangeNotifier {
     if (_searchQuery == query) return;
     _searchQuery = query;
     _offset = 0;
-    // Don't clear franchises immediately for a "realtime" feel
-    // _franchises = [];
     _hasMore = true;
     fetchFranchises(isSearch: true);
   }
