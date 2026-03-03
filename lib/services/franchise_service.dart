@@ -87,6 +87,30 @@ class FranchiseService {
     }
   }
 
+  Future<ApiResult<FranchiseDetailResponse>> getFranchiseDetailBySlug(
+    String slug,
+  ) async {
+    final url = '${ApiConstants.franchiseDetailBySlug}?link=$slug';
+    final result = await _apiClient.get(url);
+
+    if (result.isSuccess && result.data != null) {
+      try {
+        final response = FranchiseDetailResponse.fromJson(result.data!);
+        return ApiResult.success(response, statusCode: result.statusCode);
+      } catch (e) {
+        return ApiResult.failure(
+          'Parsing Error: $e',
+          statusCode: result.statusCode,
+        );
+      }
+    } else {
+      return ApiResult.failure(
+        result.error ?? 'Unknown Error',
+        statusCode: result.statusCode,
+      );
+    }
+  }
+
   Future<ApiResult<bool>> applyToFranchise({
     required int franchiseId,
     required String firstname,

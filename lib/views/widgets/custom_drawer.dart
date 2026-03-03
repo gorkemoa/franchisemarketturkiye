@@ -12,6 +12,7 @@ import 'package:franchisemarketturkiye/views/magazine/magazine_reader_view.dart'
 import 'package:franchisemarketturkiye/views/notification/notifications_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/notification_view_model.dart';
 import 'package:franchisemarketturkiye/views/contact/contact_view.dart';
+import 'package:franchisemarketturkiye/views/profile/writer_application_view.dart';
 
 class GlobalScaffold extends StatefulWidget {
   final Widget body;
@@ -476,23 +477,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     _buildMenuItem(
                       'YAZAR BAŞVURUSU',
                       isSelected:
-                          widget.selectedItem ==
-                          'Yazar Başvurusu', // Direct match
+                          widget.selectedItem == 'Yazar Başvurusu',
                       onTap: () {
-                        if (widget.onProfileSectionSelected != null) {
-                          widget.onProfileSectionSelected!('Yazar Başvurusu');
-                        } else {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomeView(
-                                initialIndex: 4,
-                                initialProfileSection: 'Yazar Başvurusu',
-                              ),
-                            ),
-                            (route) => false,
-                          );
-                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const WriterApplicationView(),
+                          ),
+                        );
                       },
                     ),
                     _buildMenuItem(

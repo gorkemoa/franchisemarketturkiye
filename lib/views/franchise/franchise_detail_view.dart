@@ -157,7 +157,9 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
+                          // ignore: deprecated_member_use
                           AppTheme.primaryColor.withOpacity(0.1),
+                          // ignore: deprecated_member_use
                           AppTheme.primaryColor.withOpacity(0.02),
                         ],
                       ),
@@ -166,6 +168,7 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                       child: Icon(
                         Icons.image_outlined,
                         size: 40,
+                        // ignore: deprecated_member_use
                         color: AppTheme.primaryColor.withOpacity(0.2),
                       ),
                     ),
@@ -290,6 +293,7 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF9F9F9),
+        // ignore: deprecated_member_use
         border: Border.all(color: AppTheme.borderColor.withOpacity(0.5)),
       ),
       child: Row(
@@ -554,14 +558,17 @@ class _FranchiseDetailViewState extends State<FranchiseDetailView> {
                                   if (!mounted) return;
 
                                   if (success) {
+                                    // ignore: use_build_context_synchronously
                                     Navigator.pop(context);
                                     AppDialogs.showStatusDialog(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       title: 'Başarılı',
                                       message: 'Başvurunuz başarıyla alındı.',
                                     );
                                   } else {
                                     AppDialogs.showStatusDialog(
+                                      // ignore: use_build_context_synchronously
                                       context,
                                       title: 'Hata',
                                       message:

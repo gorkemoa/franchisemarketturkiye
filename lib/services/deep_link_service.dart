@@ -27,6 +27,7 @@ import 'package:franchisemarketturkiye/views/profile/profile_view.dart';
 import 'package:franchisemarketturkiye/viewmodels/franchises_view_model.dart';
 import 'package:franchisemarketturkiye/services/link_service.dart';
 import 'package:franchisemarketturkiye/services/author_service.dart';
+import 'package:franchisemarketturkiye/services/franchise_service.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -192,6 +193,21 @@ class DeepLinkService {
         return;
       }
 
+      // Franchise slug: direkt FranchiseService ile çöz
+      if ([
+        'franchise-dosyasi',
+        'franchise',
+        'marka',
+        'markalar',
+      ].contains(normalizedType)) {
+        developer.log(
+          '🔍 Franchise slug detected: $id, resolving via FranchiseService...',
+          name: 'DeepLink',
+        );
+        _resolveFranchiseBySlug(id);
+        return;
+      }
+
       final String? mappedType = _getMappedType(type);
       if (mappedType != null) {
         developer.log(
@@ -244,6 +260,37 @@ class DeepLinkService {
     } catch (e) {
       developer.log('❌ Error in _resolveAuthorBySlug: $e', name: 'DeepLink');
       handleNavigation('yazarlar', null);
+    }
+  }
+
+  /// Resolves a franchise slug via FranchiseService and navigates to detail
+  Future<void> _resolveFranchiseBySlug(String slug) async {
+    try {
+      final result = await FranchiseService().getFranchiseDetailBySlug(slug);
+      if (result.isSuccess && result.data != null) {
+        final franchise = result.data!.data.item;
+        developer.log(
+          '✅ Franchise resolved: ID ${franchise.id} for slug: $slug',
+          name: 'DeepLink',
+        );
+        _push(
+          MaterialPageRoute(
+            builder: (_) => FranchiseDetailView(franchiseId: franchise.id),
+          ),
+        );
+      } else {
+        developer.log(
+          '❌ Franchise slug resolve failed: $slug → ${result.error}',
+          name: 'DeepLink',
+        );
+        handleNavigation('markalar', null);
+      }
+    } catch (e) {
+      developer.log(
+        '❌ Error in _resolveFranchiseBySlug: $e',
+        name: 'DeepLink',
+      );
+      handleNavigation('markalar', null);
     }
   }
 
@@ -329,7 +376,7 @@ class DeepLinkService {
         _push(
           MaterialPageRoute(
             builder: (_) => FranchisesView(
-              viewModel: FranchisesViewModel()..fetchFranchises(),
+              viewModel: FranchisesViewModel(),
             ),
           ),
         );

@@ -28,6 +28,7 @@ class ApiConstants {
   static String authorBlogs(int id) => '$baseUrl/api/v1/authors/$id/blogs';
   static const String updateProfile = '$baseUrl/api/v1/customers/profile';
   static const String franchises = '$baseUrl/api/v1/franchises';
+  static const String franchiseDetailBySlug = '$baseUrl/api/v1/franchises/link';
   static const String franchiseCategories =
       '$baseUrl/api/v1/franchise-categories';
   static const String searchBlogs = '$baseUrl/api/v1/blogs/search';
